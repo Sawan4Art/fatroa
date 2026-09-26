@@ -1,0 +1,6 @@
+{
+  "name": "فاتورة ستون",
+  "description": "تطبيق متكامل لإدارة فواتير ومخزون الرخام والجرانيت وإدارة المصروفات والأرباح الشهرية ويوميات العمال وسندات القبض",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

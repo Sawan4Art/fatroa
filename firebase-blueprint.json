@@ -1,0 +1,53 @@
+{
+  "entities": {
+    "Workshop": {
+      "title": "Workshop",
+      "description": "Marble workshop / factory shared workspace",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "code": { "type": "string", "maxLength": 32 },
+        "name": { "type": "string", "maxLength": 200 },
+        "ownerEmail": { "type": "string", "maxLength": 254 },
+        "ownerUid": { "type": "string", "maxLength": 128 },
+        "ownerName": { "type": "string", "maxLength": 200 },
+        "craftsmen": { "type": "array" },
+        "craftsmenEmails": { "type": "array" },
+        "createdAt": { "type": "string", "maxLength": 64 },
+        "updatedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "code", "name"]
+    },
+    "Invoice": {
+      "title": "Invoice",
+      "description": "Invoices belonging to a workshop",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "workshopId": { "type": "string", "maxLength": 128 },
+        "workshopCode": { "type": "string", "maxLength": 32 },
+        "invNum": { "type": "string", "maxLength": 64 },
+        "client": { "type": "string", "maxLength": 200 },
+        "phone": { "type": "string", "maxLength": 64 },
+        "dateText": { "type": "string", "maxLength": 64 },
+        "net": { "type": "string", "maxLength": 64 },
+        "paid": { "type": "string", "maxLength": 64 },
+        "remaining": { "type": "string", "maxLength": 64 },
+        "creatorName": { "type": "string", "maxLength": 200 },
+        "creatorEmail": { "type": "string", "maxLength": 254 },
+        "creatorRole": { "type": "string", "maxLength": 32 }
+      },
+      "required": ["id", "workshopId", "client"]
+    }
+  },
+  "firestore": {
+    "/workshops/{workshopId}": {
+      "schema": "Workshop",
+      "description": "Stores workshop profile, owner and members"
+    },
+    "/workshops/{workshopId}/invoices/{invoiceId}": {
+      "schema": "Invoice",
+      "description": "Invoices created by manager or craftsmen in this workshop"
+    }
+  }
+}
