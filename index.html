@@ -125,8 +125,11 @@
         border-top: 1px solid var(--gold-line);
         box-shadow: 0 -8px 21px rgba(0,0,0,0.14);
       }
-      body { padding-bottom: calc(55px + env(safe-area-inset-bottom)); }
+      body { padding-bottom: calc(86px + env(safe-area-inset-bottom)); }
     }
+    /* شاشة الآلة الحاسبة ملء الشاشة مركزة — الشريط السفلي مخفي عشان مغطيش أزرار الآلة */
+    body:has(#calculatorView.active-view) .lux-bottom-nav { display: none !important; }
+    body:has(#calculatorView.active-view) { padding-bottom: 0 !important; }
     .lux-nav-btn {
       flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
       gap: 3px; min-height: 48px; background: none; border: none; cursor: pointer;
@@ -2205,10 +2208,10 @@
         margin: 0 auto;
         display: flex;
         flex-direction: column;
-        background-color: transparent;
-        border: 2px solid color-mix(in srgb, var(--primary) 60%, transparent);
-        border-radius: 24px;
-        box-shadow: 0 0 25px color-mix(in srgb, var(--primary) 40%, transparent), inset 0 0 25px color-mix(in srgb, var(--primary) 20%, transparent);
+        background: linear-gradient(165deg, color-mix(in srgb, var(--primary) 7%, var(--card-bg)), var(--card-bg) 55%, color-mix(in srgb, var(--secondary) 5%, var(--card-bg)));
+        border: 1.5px solid color-mix(in srgb, var(--primary) 42%, var(--border));
+        border-radius: 28px;
+        box-shadow: 0 22px 44px -18px color-mix(in srgb, var(--primary) 45%, transparent), inset 0 1px 0 color-mix(in srgb, var(--primary) 12%, transparent);
         backdrop-filter: blur(10px);
         position: relative;
         box-sizing: border-box;
@@ -2246,12 +2249,12 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        background: var(--calc-display);
+        background: linear-gradient(180deg, color-mix(in srgb, var(--primary) 12%, var(--card-bg-alt)), var(--card-bg-alt));
         border-radius: 20px;
         padding: 14px 18px 10px 18px;
         margin-bottom: 14px;
-        box-shadow: inset 0 -2px 0 rgba(255,255,255,.08);
-        border: 2px solid var(--border);
+        box-shadow: inset 0 2px 10px rgba(0,0,0,.10), inset 0 0 0 1px color-mix(in srgb, var(--primary) 16%, transparent);
+        border: 1.5px solid color-mix(in srgb, var(--primary) 30%, var(--border));
         box-sizing: border-box;
         min-height: clamp(120px, 18vh, 160px);
     }
@@ -2316,7 +2319,7 @@
         font-size: clamp(20px, 3.2vh, 32px);
         font-weight: 800;
         border: 0;
-        border-radius: 10px;
+        border-radius: 14px;
         background: var(--calc-key);
         color: var(--calc-key-text);
         cursor: pointer;
@@ -2336,64 +2339,70 @@
         grid-column: span 2;
         border-radius: 10px;
     }
-    /* Clear All Button - Distinctive Vibrant Red (Identical across both calculators) */
+    /* Clear All Button — بلون الخطر من الثيم الحالي (بدل الأحمر الثابت) */
     #calculatorView .calc-btn.calc-clear,
     .calc-modal .calc-btn.calc-clear,
     .calc-btn.calc-clear {
-        background: #ef4444 !important;
+        background: var(--danger) !important;
         color: #ffffff !important;
-        box-shadow: 0 4px 0 #b91c1c !important;
+        box-shadow: 0 4px 0 color-mix(in srgb, var(--danger) 62%, #000) !important;
     }
     #calculatorView .calc-btn.calc-clear:hover,
     .calc-modal .calc-btn.calc-clear:hover,
     .calc-btn.calc-clear:hover {
-        background: #dc2626 !important;
-        filter: brightness(1.12);
+        background: color-mix(in srgb, var(--danger) 86%, #fff) !important;
+        filter: brightness(1.08);
         transform: translateY(-2px);
     }
     #calculatorView .calc-btn.calc-clear:active,
     .calc-modal .calc-btn.calc-clear:active,
     .calc-btn.calc-clear:active {
         transform: translateY(2px) scale(0.96);
-        box-shadow: 0 1px 0 #b91c1c !important;
+        box-shadow: 0 1px 0 color-mix(in srgb, var(--danger) 62%, #000) !important;
     }
-    /* History Button - Distinctive Blue */
+    /* History Button — بلون هوية الثيم الحالي (بدل الأزرق الثابت) */
     #calculatorView .calc-btn.calc-history-btn,
     .calc-modal .calc-btn.calc-history-btn,
     .calc-btn.calc-history-btn {
-        background: #2563eb !important;
-        color: #ffffff !important;
-        box-shadow: 0 4px 0 #1d4ed8 !important;
+        background: color-mix(in srgb, var(--primary) 82%, var(--secondary)) !important;
+        color: var(--on-primary) !important;
+        box-shadow: 0 4px 0 color-mix(in srgb, var(--primary) 58%, #000) !important;
     }
     #calculatorView .calc-btn.calc-history-btn:hover,
     .calc-modal .calc-btn.calc-history-btn:hover,
     .calc-btn.calc-history-btn:hover {
-        background: #1d4ed8 !important;
-        filter: brightness(1.12);
+        background: color-mix(in srgb, var(--primary) 70%, #fff) !important;
+        filter: brightness(1.08);
         transform: translateY(-2px);
     }
     #calculatorView .calc-btn.calc-history-btn:active,
     .calc-modal .calc-btn.calc-history-btn:active,
     .calc-btn.calc-history-btn:active {
         transform: translateY(2px) scale(0.96);
-        box-shadow: 0 1px 0 #1e40af !important;
+        box-shadow: 0 1px 0 color-mix(in srgb, var(--primary) 58%, #000) !important;
     }
     #calculatorView .calc-btn.calc-history-btn svg,
     .calc-modal .calc-btn.calc-history-btn svg,
     .calc-btn.calc-history-btn svg {
-        stroke: #ffffff !important;
-        color: #ffffff !important;
+        stroke: var(--on-primary) !important;
+        color: var(--on-primary) !important;
     }
-    /* Operators & Equals - Uniform Keypad Theme (Identical Color & Styling) */
+    /* Operators — لمسة ثيم أقوى، Equals — هوية الثيم الكاملة */
     #calculatorView .calc-btn.calc-op,
     .calc-modal .calc-btn.calc-op,
+    .calc-btn.calc-op {
+        background: color-mix(in srgb, var(--primary) 24%, var(--card-bg-alt)) !important;
+        color: var(--primary) !important;
+        box-shadow: 0 4px 0 color-mix(in srgb, var(--primary) 30%, transparent) !important;
+        font-weight: 900;
+    }
     #calculatorView .calc-btn.calc-eq,
     .calc-modal .calc-btn.calc-eq,
-    .calc-btn.calc-op,
     .calc-btn.calc-eq {
-        background: var(--calc-key) !important;
-        color: var(--calc-key-text) !important;
-        box-shadow: 0 4px 0 var(--calc-key-shadow) !important;
+        background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+        color: var(--on-primary) !important;
+        box-shadow: 0 4px 0 color-mix(in srgb, var(--primary) 55%, #000) !important;
+        font-weight: 900;
     }
     #calculatorView .calc-btn.calc-op:hover,
     .calc-modal .calc-btn.calc-op:hover,
@@ -2401,7 +2410,7 @@
     .calc-modal .calc-btn.calc-eq:hover,
     .calc-btn.calc-op:hover,
     .calc-btn.calc-eq:hover {
-        filter: brightness(1.12);
+        filter: brightness(1.1);
         transform: translateY(-2px);
     }
     #calculatorView .calc-btn.calc-op:active,
@@ -2411,7 +2420,7 @@
     .calc-btn.calc-op:active,
     .calc-btn.calc-eq:active {
         transform: translateY(2px) scale(0.96);
-        box-shadow: 0 1px 0 var(--calc-key-shadow) !important;
+        box-shadow: 0 1px 0 color-mix(in srgb, var(--primary) 40%, transparent) !important;
     }
     /* Compact Backspace Icon Button - Positioned at Bottom Right of Calculator Screen */
     .calc-display-footer {
@@ -4732,94 +4741,69 @@
 .skin-en { font-size:9px; color:var(--text-light); font-weight:600; }
 
 /* ============================================================
-   ⑧ بوب-أب كود الورشة — «الانفجار البالوني»
-   أنيميشن دخول انفجاري + جسيمات متطايرة + طفو بالوني مستمر
+   ⑧ بوب-أب كود الورشة — نافذة صغيرة أنيقة تحت الأيقونات الثلاث
+   نسخة ناعمة غير انفجارية (بطلب المالك): ظهور هادئ + تثبيت أسفل الأيقونات
    ============================================================ */
-.ws-burst-overlay {
-  position: fixed; inset: 0; z-index: 100000;
-  background: rgba(15, 12, 30, 0.66);
-  backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px);
-  display: flex; align-items: center; justify-content: center; padding: 21px;
-  animation: wsFadeIn .22s ease both;
+.ws-pop-catch {
+  position: fixed; inset: 0; z-index: 99998;
+  background: rgba(15, 12, 30, 0.16);
+  animation: wsFadeIn .18s ease both;
 }
 @keyframes wsFadeIn { from { opacity: 0; } to { opacity: 1; } }
-.ws-burst-card {
-  position: relative; width: min(400px, 92vw); box-sizing: border-box;
+.ws-pop-card {
+  position: fixed; top: 150px; right: 12px;
+  width: min(318px, calc(100vw - 24px)); box-sizing: border-box;
   background: linear-gradient(160deg, var(--card-bg), var(--card-bg-alt));
-  border: 1.5px solid color-mix(in srgb, var(--primary) 35%, var(--border));
+  border: 1.5px solid color-mix(in srgb, var(--primary) 38%, var(--border));
   border-radius: var(--radius-phi-xl);
   padding: var(--sp-4) var(--sp-3) var(--sp-3);
   text-align: center; overflow: visible;
-  animation: wsExplode .62s cubic-bezier(.18, 1.4, .28, 1) both, wsFloaty 3.4s ease-in-out .7s infinite alternate;
-  box-shadow: 0 30px 60px -12px color-mix(in srgb, var(--primary) 40%, transparent),
-              0 0 0 6px color-mix(in srgb, var(--primary) 12%, transparent);
+  transform-origin: top right;
+  animation: wsPopIn .34s cubic-bezier(.24, 1.08, .32, 1) both;
+  box-shadow: 0 24px 48px -14px rgba(0,0,0,.45),
+              0 0 0 5px color-mix(in srgb, var(--primary) 10%, transparent);
 }
-@keyframes wsExplode {
-  0%   { transform: scale(.15) rotate(-14deg); opacity: 0; filter: blur(6px); }
-  55%  { transform: scale(1.12) rotate(3deg); opacity: 1; filter: blur(0); }
-  75%  { transform: scale(.96) rotate(-1.5deg); }
-  100% { transform: scale(1) rotate(0); opacity: 1; }
+/* سهم صغير يشير لأعلى نحو مجموعة الأيقونات الثلاث */
+.ws-pop-card::before {
+  content: ''; position: absolute; top: -7.5px; right: 30px;
+  width: 14px; height: 14px; transform: rotate(45deg);
+  background: var(--card-bg);
+  border-top: 1.5px solid color-mix(in srgb, var(--primary) 38%, var(--border));
+  border-right: 1.5px solid color-mix(in srgb, var(--primary) 38%, var(--border));
+  border-radius: 3px 0 0 0;
 }
-@keyframes wsFloaty {
-  from { transform: translateY(-5px); }
-  to   { transform: translateY(5px); }
+@keyframes wsPopIn {
+  from { opacity: 0; transform: translateY(-9px) scale(.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
-.ws-burst-particles { position: absolute; inset: 0; pointer-events: none; }
-.ws-burst-particles span {
-  position: absolute; top: 50%; left: 50%; width: 9px; height: 9px; border-radius: 50%;
-  background: var(--primary); opacity: 0;
-  animation: wsParticle .9s cubic-bezier(.15, .85, .35, 1) .12s both;
-  box-shadow: 0 0 10px color-mix(in srgb, var(--primary) 60%, transparent);
-}
-.ws-burst-particles span:nth-child(3n)   { background: var(--secondary); }
-.ws-burst-particles:nth-child(2) span { background: #f59e0b; border-radius: 3px; width: 7px; height: 13px; }
-@keyframes wsParticle {
-  0%   { transform: translate(-50%,-50%) scale(0); opacity: 0; }
-  25%  { opacity: 1; }
-  100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0); opacity: 0; }
-}
-.ws-burst-ring {
-  position: absolute; top: 50%; left: 50%; width: 21px; height: 21px; border-radius: 50%;
-  border: 3px solid var(--primary); transform: translate(-50%,-50%);
-  animation: wsRing .8s ease-out .1s both; pointer-events: none;
-}
-@keyframes wsRing {
-  from { transform: translate(-50%,-50%) scale(1); opacity: .9; }
-  to   { transform: translate(-50%,-50%) scale(11); opacity: 0; }
-}
-.ws-burst-badge {
-  width: 55px; height: 55px; margin: 0 auto var(--sp-2);
+.ws-pop-badge {
+  width: 46px; height: 46px; margin: 0 auto var(--sp-2);
   border-radius: 34%;
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   display: flex; align-items: center; justify-content: center;
-  color: var(--on-primary); box-shadow: 0 8px 20px -6px color-mix(in srgb, var(--primary) 55%, transparent);
-  animation: wsBadgeSpin .9s cubic-bezier(.18,1.4,.28,1) both;
+  color: var(--on-primary); box-shadow: 0 8px 18px -6px color-mix(in srgb, var(--primary) 55%, transparent);
 }
-@keyframes wsBadgeSpin {
-  from { transform: scale(0) rotate(-180deg); }
-  to   { transform: scale(1) rotate(0); }
-}
-.ws-burst-title { font-size: 18px; font-weight: 900; color: var(--text); margin: 0 0 4px; }
-.ws-burst-sub { font-size: 12px; color: var(--text-muted); margin: 0 0 var(--sp-2); line-height: 1.6; }
-.ws-burst-code {
+.ws-pop-title { font-size: 16.5px; font-weight: 900; color: var(--text); margin: 0 0 4px; }
+.ws-pop-sub { font-size: 11.5px; color: var(--text-muted); margin: 0 0 var(--sp-2); line-height: 1.6; }
+.ws-pop-code {
   display: inline-flex; align-items: center; gap: 8px;
   background: color-mix(in srgb, var(--primary) 9%, var(--card-bg));
   border: 1.5px dashed color-mix(in srgb, var(--primary) 45%, transparent);
-  border-radius: 999px; padding: 9px 18px; margin-bottom: var(--sp-2);
-  font-size: 23px; font-weight: 900; letter-spacing: 1.5px;
+  border-radius: 999px; padding: 8px 16px; margin-bottom: var(--sp-2);
+  font-size: 21px; font-weight: 900; letter-spacing: 1.5px;
   color: var(--primary); cursor: pointer; direction: ltr; unicode-bidi: embed;
   transition: transform .15s ease; user-select: all;
 }
-.ws-burst-code:active { transform: scale(.94); }
-.ws-burst-hint { font-size: 10.5px; color: var(--text-light); margin: 0 0 var(--sp-2); }
-.ws-burst-actions { display: flex; gap: 8px; }
-.ws-burst-actions button {
-  flex: 1; padding: 11px 8px; border-radius: var(--radius-phi);
-  font-size: 12.5px; font-weight: 900; cursor: pointer; font-family: inherit;
+.ws-pop-code:active { transform: scale(.94); }
+.ws-pop-hint { font-size: 10.5px; color: var(--text-light); margin: 0 0 var(--sp-2); }
+.ws-pop-actions { display: flex; gap: 8px; }
+.ws-pop-actions button {
+  flex: 1; padding: 10px 8px; border-radius: var(--radius-phi);
+  font-size: 12px; font-weight: 900; cursor: pointer; font-family: inherit;
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   transition: transform .15s ease, box-shadow .15s ease;
 }
-.ws-burst-actions button:active { transform: scale(.95); }
+.ws-pop-actions button:active { transform: scale(.95); }
 .ws-btn-generate {
   border: none; color: var(--on-primary);
   background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 86%, #000), var(--primary));
@@ -4830,12 +4814,14 @@
   border: 1.5px solid var(--border);
 }
 @media (prefers-reduced-motion: reduce) {
-  .ws-burst-card, .ws-burst-particles span, .ws-burst-ring, .ws-burst-badge, .ws-burst-overlay { animation: none !important; }
+  .ws-pop-card, .ws-pop-catch { animation: none !important; }
 }
 
 /* ---------- ⑨ توحيد أزرار الرئيسية: بطاقات محايدة بهوية كل ثيم ----------
    الألوان الثابتة القديمة (أزرق/تيل/برتقالي/أخضر) اتشالت بطلب المالك —
-   الثيم هو اللي بيملي الألوان. زر الإنشاء (البطل) هو الوحيد الملون بهوية الثيم */
+   الثيم هو اللي بيملي الألوان. زر الإنشاء (البطل) هو الوحيد الملون بهوية الثيم
+   + الثيم الذهبي (marble) بقى كمان بياخد الألوان من الثيم — الأيقونات بتغير ألوانها */
+:root[data-skin="marble"] .dash-grid-item,
 :root[data-skin="modern"] .dash-grid-item,
 :root[data-skin="minimal"] .dash-grid-item,
 :root[data-skin="pro"] .dash-grid-item,
@@ -4844,10 +4830,19 @@
   color: var(--text) !important;
   border: 1px solid var(--border) !important;
 }
+:root[data-skin="marble"] .dash-grid-item .icon-svg,
 :root[data-skin="modern"] .dash-grid-item .icon-svg,
 :root[data-skin="minimal"] .dash-grid-item .icon-svg,
 :root[data-skin="pro"] .dash-grid-item .icon-svg,
 :root[data-skin="glass"] .dash-grid-item .icon-svg { color: var(--primary) !important; }
+/* البطل (إنشاء فاتورة) — الهوية الملونة لكل ثيم */
+:root[data-skin="marble"] .dash-grid-item.create-invoice {
+  background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+  color: var(--on-primary) !important; border-color: transparent !important;
+  box-shadow: 0 10px 24px -6px color-mix(in srgb, var(--primary) 50%, transparent) !important;
+}
+:root[data-skin="marble"] .dash-grid-item.create-invoice .icon-svg { color: var(--on-primary) !important; }
+:root[data-skin="marble"] .dash-grid-item.create-invoice:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -8px color-mix(in srgb, var(--primary) 55%, transparent) !important; }
 /* البطل (إنشاء فاتورة) — الهوية الملونة لكل ثيم */
 :root[data-skin="modern"] .dash-grid-item.create-invoice {
   background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
@@ -4860,6 +4855,22 @@
 :root[data-skin="minimal"] .dash-grid-item.create-invoice .icon-svg { color: var(--on-primary) !important; }
 :root[data-skin="pro"] .dash-grid-item.create-invoice .icon-svg { color: #ffffff !important; background: rgba(255,255,255,.18); }
 :root[data-skin="glass"] .dash-grid-item.create-invoice .icon-svg { color: #ffffff !important; }
+
+/* ---------- ⑩ طبقة التناسق العامة: خط ↔ أيقونة (بطلب المالك — الخط كان يبدو أكبر من الأيقونات)
+   الحجم المرجعي: الأيقونة الأساسية 19px، والنصوص حواليها بتراتب φ متزن بدل إحساس الزوم ---------- */
+body { font-size: 14px; }
+.icon-svg { width: 19px; height: 19px; }
+/* جداول أنحف وأصغر حجماً (تحسين شكلي فقط — بدون أي مساس بالمنطق) */
+table { font-size: 12px; }
+th { padding: 8px 6px; font-size: 11px; }
+td { padding: 8px 6px; font-size: 12px; }
+.m-card-lbl { font-size: 9.5px !important; }
+.menu-btn { font-size: 13px; padding: 13px; }
+.settings-grid-item { font-size: 13px; }
+.page-title-neon { font-size: 14.5px; }
+.lux-nav-btn svg { width: 22px; height: 22px; }
+.dash-grid-item { font-size: 13px; }
+.lux-search input { font-size: 13.5px; }
 </style>
   <meta property="og:image" content="https://bolt.new/static/og_default.png">
     <meta name="twitter:card" content="summary_large_image">
@@ -4957,25 +4968,11 @@
     </div>
 
     <div id="dashboardOverdueBanner" class="overdue-banner" style="display:none; cursor:pointer;" onclick="openDueRemindersModal()">
-      <span id="dashboardOverdueText" style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; text-align:center;" data-i18n="payment_due_alert">تنبيه استحقاق سداد</span>
+      <span id="dashboardOverdueText" style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; text-align:center;">تنبيه استحقاق سداد</span>
     </div>
 
-    <div class="lux-stats no-print" id="luxStatsRow">
-        <button type="button" class="lux-stat-card" onclick="switchView('reportView')" title="تقارير المبيعات">
-          <span class="lux-stat-lbl"><svg class="icon-svg" viewBox="0 0 24 24" style="width:13px;height:13px;"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="8"/><rect x="12" y="6" width="3" height="12"/></svg> مبيعات الشهر</span>
-          <span class="lux-stat-num" id="luxStatSales">0 ج.م</span>
-          <span class="lux-stat-sub" id="luxStatCount">0 فاتورة هذا الشهر</span>
-        </button>
-        <button type="button" class="lux-stat-card" onclick="switchView('reportView')" title="المُحصل">
-          <span class="lux-stat-lbl"><svg class="icon-svg" viewBox="0 0 24 24" style="width:13px;height:13px;"><path d="M20 6 9 17l-5-5"/></svg> المُحصل</span>
-          <span class="lux-stat-num" id="luxStatPaid">0 ج.م</span>
-        </button>
-        <button type="button" class="lux-stat-card lux-stat-main" onclick="switchView('archiveView')" title="المتأخرات">
-          <span class="lux-stat-lbl"><svg class="icon-svg" viewBox="0 0 24 24" style="width:13px;height:13px;"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> المتأخرات</span>
-          <span class="lux-stat-num" id="luxStatOverdue">0 ج.م</span>
-          <span class="lux-stat-sub">تتبع التحصيل</span>
-        </button>
-      </div>
+      <!-- صف بطاقات الإحصائيات الثلاث (المبيعات/المُحصل/المتأخرات) اتشال بالكامل بطلب المالك —
+           الأرقام بتتحسب برضه في الخلفية (window.__luxRefreshStats) والبنر الأحمر للمتأخرات فوق مكان -->
       <div class="lux-search no-print">
         <svg class="lux-search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
         <input type="search" id="luxGlobalSearch" placeholder="بحث سريع: عميل، رقم فاتورة، هاتف..." autocomplete="off">
@@ -7517,9 +7514,9 @@
     function convertArabicNumerals(str) { if (!str) return ''; const ar = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩']; return String(str).replace(/[٠-٩]/g, d => ar.indexOf(d)); }
 
     /* ===== Theme ===== */
-    /* 5 ثيمات (skins) × وضع فاتح/داكن — marble يحافظ على نظام الألوان الأصلي */
+    /* 5 ثيمات (skins) × وضع فاتح/داكن — الذهبي (golden) يحافظ على نظام الألوان الأصلي الفخم */
     const APP_SKINS = [
-      { id: 'marble',  name: 'رخامي',   en: 'Marble',       dots: ['#f6f2ea', '#b8860b', '#171412'] },
+      { id: 'marble',  name: 'ذهبي',    en: 'Golden',        dots: ['#f6f2ea', '#b8860b', '#171412'] },
       { id: 'modern',  name: 'عصري',    en: 'Modern',       dots: ['#f4f6fb', '#4f46e5', '#7c3aed'] },
       { id: 'minimal', name: 'بسيط',    en: 'Minimal',      dots: ['#ffffff', '#171717', '#a3a3a3'] },
       { id: 'pro',     name: 'احترافي', en: 'Professional', dots: ['#f5f8fb', '#0f4c81', '#1d6fb8'] },
@@ -10710,6 +10707,77 @@
       return 'due';
     }
 
+    /* ═══ إشعارات الأقساط المتأخرة — داخل التطبيق + على الهاتف حتى لو التطبيق مغلق ═══
+       - داخل التطبيق: البنر الأحمر أعلى الرئيسية (checkOverdueNotifications) + إشعار متصفح خفيف
+       - على الهاتف (APK): Capacitor LocalNotifications — تذكير يومي الساعة 9:00 صباحاً لكل فاتورة
+         متأخرة أو مستحقة اليوم، وبيستمر حتى لو التطبيق مقفول (وبعد ريستارت الجهاز) */
+    window.FatoraNotifySync = function () {
+      try {
+        var LN = (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) || null;
+        var db = [];
+        try { db = JSON.parse(localStorage.getItem('marbleArchiveV2')) || []; } catch (e) { db = []; }
+        var items = [];
+        db.forEach(function (r) {
+          if (!r) return;
+          var remaining = parseFloat(String(r.remaining).replace(/[^\d.-]/g, '')) || 0;
+          if (remaining <= 0) return;
+          var info = (typeof getInvoiceDueInfo === 'function') ? getInvoiceDueInfo(r) : null;
+          var isOver = !!(info && info.isOverdue), isToday = !!(info && info.isDueToday);
+          if (!isOver && !isToday) return;
+          items.push({
+            rid: r.id,
+            num: r.invoiceNumber || r.number || r.id,
+            client: r.customerName || r.clientName || r.name || '',
+            remaining: remaining,
+            today: isToday
+          });
+        });
+        /* ويب (غير مثبت كتطبيق): إشعار متصفح مرة واحدة يومياً لو الإذن متاح */
+        if (!LN) {
+          try {
+            if (window.Notification && Notification.permission === 'granted' && items.length) {
+              var k = 'fatoraWebNotifDay', today = new Date().toDateString();
+              if (localStorage.getItem(k) !== today) {
+                localStorage.setItem(k, today);
+                new Notification('فاتورة ستون — تنبيه أقساط', { body: 'لديك ' + items.length + ' قسط/أقساط متأخرة أو مستحقة اليوم — افتح التطبيق للتفاصيل' });
+              }
+            }
+          } catch (e) {}
+          return;
+        }
+        /* أندرويد/أصلي: صلاحيات ← قناة إشعارات ← جدولة يومية 9:00 ص */
+        LN.checkPermissions().then(function (st) {
+          var p = (st && st.display) || 'prompt';
+          if (p === 'granted') return true;
+          return LN.requestPermissions().then(function (r2) { return !!(r2 && r2.display === 'granted'); }).catch(function () { return false; });
+        }).then(function (ok) {
+          if (!ok) return false;
+          return LN.createChannel({ id: 'fatora-overdue', name: 'تنبيهات الأقساط المتأخرة', description: 'تذكير بالأقساط والسدادات المتأخرة', importance: 5, visibility: 'PUBLIC' }).catch(function () {}).then(function () { return true; });
+        }).then(function (ok) {
+          if (!ok) return;
+          /* نظف الجدولة القديمة بتاعتنا قبل إعادة الجدولة */
+          return LN.getPending().then(function (cur) {
+            var old = ((cur && cur.notifications) ? cur.notifications : []).filter(function (n) { return n.id >= 900000 && n.id < 1000000; });
+            if (old.length) return LN.cancel({ notifications: old.map(function (n) { return { id: n.id }; }) }).catch(function () {});
+          }).then(function () {
+            if (!items.length) return;
+            var notifs = items.slice(0, 40).map(function (it) {
+              var nid = 900000 + (((String(it.rid).split('').reduce(function (a, c) { return (a * 31 + c.charCodeAt(0)) % 99991; }, 7)) % 9999) * 10 + (it.today ? 1 : 0));
+              var title = it.today ? 'قسط مستحق اليوم — فاتورة ستون' : 'قسط متأخر — فاتورة ستون';
+              var body = 'فاتورة #' + it.num + (it.client ? ' — ' + it.client : '') + ' — المتبقي ' + (Math.round(it.remaining * 100) / 100) + ' ج.م';
+              return {
+                id: nid, title: title, body: body,
+                schedule: { on: { hour: 9, minute: 0 }, allowWhileIdle: true },
+                channelId: 'fatora-overdue',
+                extra: { fatora: 'overdue', rid: String(it.rid) }
+              };
+            });
+            return LN.schedule({ notifications: notifs }).catch(function (e) { console.warn('[notify] schedule failed', e); });
+          });
+        }).catch(function (e) { console.warn('[notify] sync failed', e); });
+      } catch (e) { console.warn('[notify] init failed', e); }
+    };
+
     function checkOverdueNotifications() {
       archiveDB = JSON.parse(localStorage.getItem('marbleArchiveV2')) || [];
       let cntDueToday = 0;
@@ -10742,6 +10810,8 @@
           banner.style.display = 'none';
         }
       }
+      /* مزامنة الإشعارات: داخل التطبيق + على الهاتف حتى لو التطبيق مغلق */
+      if (typeof window.FatoraNotifySync === 'function') { try { window.FatoraNotifySync(); } catch (e) {} }
     }
 
     function loadArchive() {
@@ -13351,38 +13421,31 @@
       }
     }
 
-    /* ═══ بوب-أب كود الورشة «الانفجار البالوني» — بديل confirm() القبيح ═══ */
+    /* ═══ بوب-أب كود الورشة «نافذة صغيرة تحت الأيقونات الثلاث» — ناعمة وغير انفجارية ═══ */
     function openWorkshopCodeBurst() {
-      const existing = document.getElementById('wsBurstOverlay');
+      const existing = document.getElementById('wsBurstModal');
       if (existing) existing.remove();
       const ws = typeof getActiveWorkshopInfo === 'function' ? getActiveWorkshopInfo() : { code: 'WRK-1001' };
       const currentCode = ws ? ws.code : 'WRK-1001';
 
-      const overlay = document.createElement('div');
-      overlay.id = 'wsBurstOverlay';
-      overlay.className = 'ws-burst-overlay';
-      overlay.onclick = (e) => { if (e.target === overlay) closeWorkshopCodeBurst(); };
+      const catcher = document.createElement('div');
+      catcher.id = 'wsBurstModal';
+      catcher.className = 'ws-pop-catch';
 
-      /* جسيمات الانفجار: 14 جسيماً باتجاهات موزعة */
-      let particles = '';
-      for (let i = 0; i < 14; i++) {
-        const ang = (i / 14) * Math.PI * 2;
-        const dist = 130 + (i % 3) * 39;
-        particles += `<span style="--dx:${Math.cos(ang) * dist}px; --dy:${Math.sin(ang) * dist}px; animation-delay:${.12 + (i % 4) * .05}s;"></span>`;
-      }
-
-      overlay.innerHTML = `
-        <div class="ws-burst-card" role="dialog" aria-modal="true" aria-label="كود الورشة">
-          <div class="ws-burst-particles">${particles}</div>
-          <div class="ws-burst-ring"></div>
-          <div class="ws-burst-badge">
-            <svg class="icon-svg" style="width:27px; height:27px; margin:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M3 21h18M3 7v14M21 7v14M6 11h4M6 15h4M14 11h4M14 15h4M9 3l3 4 3-4"/></svg>
+      const card = document.createElement('div');
+      card.className = 'ws-pop-card';
+      card.setAttribute('role', 'dialog');
+      card.setAttribute('aria-modal', 'true');
+      card.setAttribute('aria-label', 'كود الورشة');
+      card.innerHTML = `
+          <div class="ws-pop-badge">
+            <svg class="icon-svg" style="width:24px; height:24px; margin:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M3 21h18M3 7v14M21 7v14M6 11h4M6 15h4M14 11h4M14 15h4M9 3l3 4 3-4"/></svg>
           </div>
-          <h3 class="ws-burst-title">كود الورشة</h3>
-          <p class="ws-burst-sub">شارك الكود ده مع الصنايعية عشان ينضموا لورشتك ويشوفوا الفواتير المخصصة ليهم</p>
-          <div class="ws-burst-code" onclick="copyWorkshopCodeFromBurst('${currentCode}')" title="اضغط لنسخ الكود">${currentCode}</div>
-          <p class="ws-burst-hint">اضغط على الكود لنسخه</p>
-          <div class="ws-burst-actions">
+          <h3 class="ws-pop-title">كود الورشة</h3>
+          <p class="ws-pop-sub">شارك الكود ده مع الصنايعية عشان ينضموا لورشتك ويشوفوا الفواتير المخصصة ليهم</p>
+          <div class="ws-pop-code" onclick="copyWorkshopCodeFromBurst('${currentCode}')" title="اضغط لنسخ الكود">${currentCode}</div>
+          <p class="ws-pop-hint">اضغط على الكود لنسخه</p>
+          <div class="ws-pop-actions">
             <button type="button" class="ws-btn-generate" onclick="regenerateWorkshopFromBurst()">
               <svg class="icon-svg" style="width:14px; height:14px; margin:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
               توليد كود جديد
@@ -13391,9 +13454,27 @@
               <svg class="icon-svg" style="width:14px; height:14px; margin:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
               إدارة الورشة
             </button>
-          </div>
-        </div>`;
-      document.body.appendChild(overlay);
+          </div>`;
+
+      catcher.appendChild(card);
+      catcher.onclick = (e) => { if (e.target === catcher) closeWorkshopCodeBurst(); };
+      document.body.appendChild(catcher);
+      catcher.style.display = 'block';
+
+      /* التثبيت أسفل مجموعة الأيقونات الثلاث (يمين أعلى) بمحاذاتها */
+      try {
+        const anchor = document.getElementById('dashTopRightActions');
+        if (anchor) {
+          const r = anchor.getBoundingClientRect();
+          const cw = card.offsetWidth || 318, ch = card.offsetHeight || 300;
+          let top = r.bottom + 9;
+          if (top + ch > window.innerHeight - 14) top = Math.max(12, r.top - ch - 9);
+          const right = Math.max(10, Math.min(window.innerWidth - r.right, window.innerWidth - cw - 10));
+          card.style.top = Math.max(10, top) + 'px';
+          card.style.right = right + 'px';
+        }
+      } catch (e) {}
+
       /* ترجمة ديناميكية لو اللغة مش عربي */
       try { if (typeof translateAppDOM === 'function' && typeof getAppLanguage === 'function') translateAppDOM(getAppLanguage()); } catch (e) {}
       /* Escape يقفل */
@@ -13401,7 +13482,7 @@
       document.addEventListener('keydown', onKey);
     }
     function closeWorkshopCodeBurst() {
-      const o = document.getElementById('wsBurstOverlay');
+      const o = document.getElementById('wsBurstModal');
       if (o) o.remove();
     }
     function copyWorkshopCodeFromBurst(code) {
@@ -22206,7 +22287,8 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       "المُحصل": "Collected",
       "مبيعات الشهر": "Monthly Sales",
       "تتبع التحصيل": "Collection tracking",
-      "رخامي": "Marble",
+      "ذهبي": "Golden",
+      "ذهبي — Golden": "Golden",
       "عصري": "Modern",
       "بسيط": "Minimal",
       "احترافي": "Professional",
@@ -23874,7 +23956,8 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       "المُحصل": "已收款",
       "مبيعات الشهر": "本月销售",
       "تتبع التحصيل": "回款跟踪",
-      "رخامي": "大理石",
+      "ذهبي": "金色",
+      "ذهبي — Golden": "金色",
       "عصري": "现代",
       "بسيط": "极简",
       "احترافي": "专业",
