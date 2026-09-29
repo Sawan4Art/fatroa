@@ -13,6 +13,18 @@
   <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
   <link href="assets/fonts/cairo.css" rel="stylesheet">
   <script src="assets/vendor/html2pdf.bundle.min.js"></script>
+  <!-- حزم اللغات الإضافية — محلية أوفلاين (قاعدة 3: لا CDN وقت التشغيل) -->
+  <script src="assets/i18n/fr.js"></script>
+  <script src="assets/i18n/fr-map1.js"></script>
+  <script src="assets/i18n/fr-map2.js"></script>
+  <script src="assets/i18n/fr-map3.js"></script>
+  <script src="assets/i18n/es.js"></script>
+  <script src="assets/i18n/es-map2.js"></script>
+  <script src="assets/i18n/tr.js"></script>
+  <script src="assets/i18n/tr-map2.js"></script>
+  <script src="assets/i18n/ur.js"></script>
+  <script src="assets/i18n/ur-map2.js"></script>
+  <script src="assets/i18n/dyn.js"></script>
   <style>
     :root {
       /* Marble Luxury — ivory light theme (golden ratio tokens appended in luxury layer) */
@@ -291,9 +303,7 @@
     .settings-section p { font-size: 12px; color: var(--text-muted); margin: 0 0 10px; line-height: 1.6; }
 
     .theme-grid { display: flex; gap: 10px; flex-wrap: wrap; }
-    .color-swatch { width: 36px; height: 36px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: transform 0.15s; box-shadow: var(--shadow-sm); }
-    .color-swatch:hover { transform: scale(1.12); }
-    .color-swatch.active { border-color: var(--text); transform: scale(1.12); }
+    .color-swatch { width: 36px; height: 36px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: transform 0.15s; box-shadow: var(--shadow-sm); } /* نظام الألوان القديم اتشال — بقي للتوافق */
     .mode-toggle { display: flex; gap: 8px; }
     .mode-btn { flex: 1; padding: 10px 6px; border-radius: 10px; border: 2px solid var(--border); background: var(--card-bg); color: var(--text); font-weight: bold; cursor: pointer; transition: all 0.15s; font-size: 12px; text-align: center; }
     .mode-btn.active { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 12%, transparent); color: var(--primary); }
@@ -1059,6 +1069,14 @@
     .pdf-render-mode .btn-del-table,
     .pdf-render-mode .btn-add-size-prominent,
     .pdf-render-mode .table-card-subactions { display: none !important; }
+    /* أثناء توليد الـPDF: قتل الانتقالات والحركات — getComputedStyle أثناء transition يرجع قيم oklab انتقالية
+       html2canvas لا يفهمها → يفشل التوليد. مع إيقاف الحركة القيم تثبت فوراً */
+    html.pdf-generating *,
+    html.pdf-generating *::before,
+    html.pdf-generating *::after {
+      transition: none !important;
+      animation: none !important;
+    }
     .pdf-render-mode .table-responsive { overflow: visible !important; padding: 0 !important; }
     .pdf-render-mode .table-responsive table { display: table !important; width: 100% !important; border-collapse: collapse !important; }
     .pdf-render-mode .table-responsive thead { display: table-header-group !important; }
@@ -4330,271 +4348,518 @@
       border: 1px solid rgba(139, 92, 246, 0.25);
     }
 
-    /* ============================================================
-       themeSkinsLayer — 5 ثيمات × وضع فاتح/داكن
-       (RULES.md قاعدة 1: شكل فقط — لا يلمس منطق الجداول التسعة إطلاقاً)
-       الزوايا على خط فيبوناتشي 8·13·21·34 (φ=1.618) — قاعدة 2
-       marble = الهوية الأصلية المرجعية (بدون تجاوز)
-       ============================================================ */
-    /* ---------- ② عصري Modern — نيلي/بنفسجي حيوي ---------- */
-    :root[data-skin="modern"] {
-      --primary:#4f46e5; --secondary:#7c3aed; --on-primary:#ffffff;
-      --gold:#4f46e5; --gold-bright:#6366f1; --gold-soft:rgba(99,102,241,.12);
-      --gold-line:rgba(99,102,241,.35);
-      --bg:#f4f6fb; --card-bg:#ffffff; --card-bg-alt:#f8fafc;
-      --text:#0f172a; --text-muted:#64748b; --text-light:#94a3b8;
-      --border:#e2e8f0; --border-dark:#cbd5e1;
-      --input-bg:#ffffff; --input-border:#cbd5e1; --input-text:#0f172a;
-      --header-grad:linear-gradient(135deg,#4f46e5,#7c3aed);
-      --th-bg:#eef2ff; --th-text:#3730a3; --th-border:#c7d2fe;
-      --subtotal-bg:#eef2ff;
-      --grand-row-bg:#f8fafc; --grand-row-text:#0f172a; --grand-row-border:#e2e8f0;
-      --grand-final-bg:#4f46e5; --grand-final-text:#ffffff;
-      --radius:34px; --radius-sm:21px; --radius-phi:21px; --radius-phi-lg:34px; --radius-phi-xl:55px;
-      --shadow-sm:0 1px 3px rgba(79,70,229,.08),0 1px 2px rgba(15,23,42,.05);
-      --shadow-md:0 6px 12px -2px rgba(79,70,229,.12),0 3px 6px -2px rgba(15,23,42,.06);
-      --shadow-lg:0 14px 24px -4px rgba(79,70,229,.16),0 6px 10px -4px rgba(15,23,42,.07);
-      --shadow-xl:0 24px 36px -6px rgba(79,70,229,.20),0 10px 16px -6px rgba(15,23,42,.08);
-    }
-    :root[data-skin="modern"][data-theme="dark"],
-    :root[data-skin="modern"][data-theme="amoled"] {
-      --primary:#818cf8; --secondary:#a78bfa; --on-primary:#0b1020;
-      --gold:#818cf8; --gold-bright:#a5b4fc; --gold-soft:rgba(129,140,248,.16);
-      --gold-line:rgba(129,140,248,.38);
-      --bg:#0b1020; --card-bg:#151b2e; --card-bg-alt:#1a2138;
-      --text:#eef2ff; --text-muted:#94a3b8; --text-light:#64748b;
-      --border:#232b45; --border-dark:#303a5c;
-      --input-bg:#1a2138; --input-border:#303a5c; --input-text:#eef2ff;
-      --header-grad:linear-gradient(135deg,#4f46e5,#7c3aed);
-      --th-bg:#1e2745; --th-text:#c7d2fe; --th-border:#303a5c;
-      --subtotal-bg:#1a2138;
-      --grand-row-bg:#1a2138; --grand-row-text:#eef2ff; --grand-row-border:#232b45;
-      --grand-final-bg:#818cf8; --grand-final-text:#0b1020;
-      --shadow-sm:0 1px 3px rgba(0,0,0,.4); --shadow-md:0 6px 10px rgba(0,0,0,.5);
-      --shadow-lg:0 14px 20px rgba(0,0,0,.6); --shadow-xl:0 24px 30px rgba(0,0,0,.7);
-    }
+/* ============================================================
+   themeSkinsLayer v3 — خمسة ثيمات «شخصيات كاملة» × فاتح/داكن
+   (RULES.md قاعدة 1: شكل فقط — لا يلمس منطق الجداول التسعة إطلاقاً)
+   قاعدة 2: الزوايا والمسافات على فيبوناتشي 8·13·21·34·55 (φ=1.618)
+   كل ثيم بيغير: الألوان + شكل الأيقونات + هندسة الزوايا + الهيدر
+   + شريط التنقل + لغة الأزرار + الظلال + الخلفية — بدون استثناء
+   ============================================================ */
 
-    /* ---------- ③ بسيط Minimal — أحادي مسطح ---------- */
-    :root[data-skin="minimal"] {
-      --primary:#171717; --secondary:#404040; --on-primary:#ffffff;
-      --gold:#171717; --gold-bright:#404040; --gold-soft:rgba(0,0,0,.06);
-      --gold-line:#e5e5e5;
-      --bg:#fafafa; --card-bg:#ffffff; --card-bg-alt:#f5f5f5;
-      --text:#171717; --text-muted:#737373; --text-light:#a3a3a3;
-      --border:#e5e5e5; --border-dark:#d4d4d4;
-      --input-bg:#ffffff; --input-border:#d4d4d4; --input-text:#171717;
-      --header-grad:linear-gradient(135deg,#171717,#171717);
-      --th-bg:#f5f5f5; --th-text:#171717; --th-border:#e5e5e5;
-      --subtotal-bg:#f5f5f5;
-      --grand-row-bg:#fafafa; --grand-row-text:#171717; --grand-row-border:#e5e5e5;
-      --grand-final-bg:#171717; --grand-final-text:#ffffff;
-      --radius:13px; --radius-sm:8px; --radius-phi:8px; --radius-phi-lg:13px; --radius-phi-xl:21px;
-      --shadow-sm:0 1px 2px rgba(0,0,0,.05);
-      --shadow-md:0 2px 4px rgba(0,0,0,.06);
-      --shadow-lg:0 4px 8px rgba(0,0,0,.07);
-      --shadow-xl:0 6px 12px rgba(0,0,0,.08);
-    }
-    :root[data-skin="minimal"][data-theme="dark"],
-    :root[data-skin="minimal"][data-theme="amoled"] {
-      --primary:#fafafa; --secondary:#d4d4d4; --on-primary:#0a0a0a;
-      --gold:#fafafa; --gold-bright:#d4d4d4; --gold-soft:rgba(255,255,255,.07);
-      --gold-line:#262626;
-      --bg:#0a0a0a; --card-bg:#141414; --card-bg-alt:#1a1a1a;
-      --text:#fafafa; --text-muted:#a3a3a3; --text-light:#737373;
-      --border:#262626; --border-dark:#333333;
-      --input-bg:#1a1a1a; --input-border:#333333; --input-text:#fafafa;
-      --header-grad:linear-gradient(135deg,#141414,#141414);
-      --th-bg:#1f1f1f; --th-text:#fafafa; --th-border:#262626;
-      --subtotal-bg:#1a1a1a;
-      --grand-row-bg:#1a1a1a; --grand-row-text:#fafafa; --grand-row-border:#262626;
-      --grand-final-bg:#fafafa; --grand-final-text:#0a0a0a;
-      --shadow-sm:0 1px 2px rgba(0,0,0,.5); --shadow-md:0 2px 4px rgba(0,0,0,.55);
-      --shadow-lg:0 4px 8px rgba(0,0,0,.6); --shadow-xl:0 6px 12px rgba(0,0,0,.65);
-    }
+/* ---------- ① رخامي Marble — «الديوانية الذهبية» ---------- */
+/* الهوية الأصلية من :root — شخصيته: دفء دهبي، زوايا دائرية، خط دهبي فاصل */
+:root[data-skin="marble"] .dash-title::after {
+  content: ''; display: block; width: 55px; height: 2px; margin: 6px auto 0;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  border-radius: 999px;
+}
+:root[data-skin="marble"] .dash-grid-item {
+  border: 1px solid color-mix(in srgb, var(--gold) 22%, transparent);
+  box-shadow: var(--shadow-sm), inset 0 1px 0 color-mix(in srgb, var(--gold) 25%, transparent);
+}
+:root[data-skin="marble"] .icon-svg { stroke-linecap: round; stroke-linejoin: round; }
 
-    /* ---------- ④ احترافي Professional — كحلي مؤسسي ---------- */
-    :root[data-skin="pro"] {
-      --primary:#0f4c81; --secondary:#1d6fb8; --on-primary:#ffffff;
-      --gold:#0f4c81; --gold-bright:#1d6fb8; --gold-soft:rgba(15,76,129,.10);
-      --gold-line:rgba(15,76,129,.30);
-      --bg:#eef2f7; --card-bg:#ffffff; --card-bg-alt:#f5f8fb;
-      --text:#1e293b; --text-muted:#5a6b7f; --text-light:#8ea0b5;
-      --border:#d8e0ea; --border-dark:#c2cedd;
-      --input-bg:#ffffff; --input-border:#c2cedd; --input-text:#1e293b;
-      --header-grad:linear-gradient(135deg,#0f4c81,#1d6fb8);
-      --th-bg:#e3ebf4; --th-text:#0f3a61; --th-border:#c2cedd;
-      --subtotal-bg:#e3ebf4;
-      --grand-row-bg:#f5f8fb; --grand-row-text:#1e293b; --grand-row-border:#d8e0ea;
-      --grand-final-bg:#0f4c81; --grand-final-text:#ffffff;
-      --radius:21px; --radius-sm:13px; --radius-phi:13px; --radius-phi-lg:21px; --radius-phi-xl:34px;
-      --shadow-sm:0 1px 3px rgba(15,40,80,.08),0 1px 2px rgba(15,40,80,.05);
-      --shadow-md:0 5px 10px -2px rgba(15,40,80,.13),0 3px 5px -2px rgba(15,40,80,.07);
-      --shadow-lg:0 12px 20px -4px rgba(15,40,80,.16),0 5px 9px -4px rgba(15,40,80,.08);
-      --shadow-xl:0 20px 30px -6px rgba(15,40,80,.19),0 9px 14px -6px rgba(15,40,80,.09);
-    }
-    :root[data-skin="pro"][data-theme="dark"],
-    :root[data-skin="pro"][data-theme="amoled"] {
-      --primary:#4d9fdc; --secondary:#6cb1e8; --on-primary:#0d1420;
-      --gold:#4d9fdc; --gold-bright:#6cb1e8; --gold-soft:rgba(77,159,220,.14);
-      --gold-line:rgba(77,159,220,.35);
-      --bg:#0d1420; --card-bg:#14202f; --card-bg-alt:#18283c;
-      --text:#e6edf5; --text-muted:#93a7bd; --text-light:#64809c;
-      --border:#24354a; --border-dark:#31465f;
-      --input-bg:#18283c; --input-border:#31465f; --input-text:#e6edf5;
-      --header-grad:linear-gradient(135deg,#0f4c81,#1d6fb8);
-      --th-bg:#1a2c42; --th-text:#bcd9f0; --th-border:#31465f;
-      --subtotal-bg:#18283c;
-      --grand-row-bg:#18283c; --grand-row-text:#e6edf5; --grand-row-border:#24354a;
-      --grand-final-bg:#14508c; --grand-final-text:#e6f0fa;
-      --shadow-sm:0 1px 3px rgba(0,0,0,.4); --shadow-md:0 5px 9px rgba(0,0,0,.5);
-      --shadow-lg:0 12px 18px rgba(0,0,0,.6); --shadow-xl:0 20px 28px rgba(0,0,0,.7);
-    }
+/* ---------- ② عصري Modern — «الساكل النيلي» ---------- */
+:root[data-skin="modern"] {
+  --primary:#4f46e5; --secondary:#7c3aed; --on-primary:#ffffff;
+  --gold:#4f46e5; --gold-bright:#6366f1; --gold-soft:rgba(99,102,241,.12);
+  --gold-line:rgba(99,102,241,.35);
+  --bg:#eef1f8; --card-bg:#ffffff; --card-bg-alt:#f7f9fd;
+  --text:#0f172a; --text-muted:#64748b; --text-light:#94a3b8;
+  --border:#e2e8f0; --border-dark:#cbd5e1;
+  --input-bg:#ffffff; --input-border:#cbd5e1; --input-text:#0f172a;
+  --header-grad:linear-gradient(135deg,#4f46e5,#7c3aed);
+  --th-bg:#eef2ff; --th-text:#3730a3; --th-border:#c7d2fe;
+  --subtotal-bg:#eef2ff;
+  --grand-row-bg:#f8fafc; --grand-row-text:#0f172a; --grand-row-border:#e2e8f0;
+  --grand-final-bg:#4f46e5; --grand-final-text:#ffffff;
+  --radius:34px; --radius-sm:21px; --radius-phi:21px; --radius-phi-lg:34px; --radius-phi-xl:55px;
+  --shadow-sm:0 1px 3px rgba(79,70,229,.08),0 1px 2px rgba(15,23,42,.05);
+  --shadow-md:0 6px 12px -2px rgba(79,70,229,.12),0 3px 6px -2px rgba(15,23,42,.06);
+  --shadow-lg:0 14px 24px -4px rgba(79,70,229,.16),0 6px 10px -4px rgba(15,23,42,.07);
+  --shadow-xl:0 24px 36px -6px rgba(79,70,229,.20),0 10px 16px -6px rgba(15,23,42,.08);
+}
+:root[data-skin="modern"][data-theme="dark"],
+:root[data-skin="modern"][data-theme="amoled"] {
+  --primary:#818cf8; --secondary:#a78bfa; --on-primary:#0b1020;
+  --gold:#818cf8; --gold-bright:#a5b4fc; --gold-soft:rgba(129,140,248,.16);
+  --gold-line:rgba(129,140,248,.38);
+  --bg:#0b1020; --card-bg:#151b2e; --card-bg-alt:#1a2138;
+  --text:#eef2ff; --text-muted:#94a3b8; --text-light:#64748b;
+  --border:#232b45; --border-dark:#303a5c;
+  --input-bg:#1a2138; --input-border:#303a5c; --input-text:#eef2ff;
+  --header-grad:linear-gradient(135deg,#4f46e5,#7c3aed);
+  --th-bg:#1e2745; --th-text:#c7d2fe; --th-border:#303a5c;
+  --subtotal-bg:#1a2138;
+  --grand-row-bg:#1a2138; --grand-row-text:#eef2ff; --grand-row-border:#232b45;
+  --grand-final-bg:#818cf8; --grand-final-text:#0b1020;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.4); --shadow-md:0 6px 10px rgba(0,0,0,.5);
+  --shadow-lg:0 14px 20px rgba(0,0,0,.6); --shadow-xl:0 24px 30px rgba(0,0,0,.7);
+}
+/* شخصية عصري: أيقونات سمينة داخل شيبس ساكل + زوايا كبيرة + شريط عائم */
+:root[data-skin="modern"] .icon-svg { stroke-width: 2.7; stroke-linecap: round; stroke-linejoin: round; }
+:root[data-skin="modern"] .dash-grid-item { border-radius: 26px; }
+:root[data-skin="modern"] .dash-grid-item .icon-svg {
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+  border-radius: 34%; padding: 7px; box-sizing: content-box;
+}
+:root[data-skin="modern"] .dash-grid-item.create-invoice .icon-svg,
+:root[data-skin="modern"] .lux-stat-main .icon-svg {
+  background: rgba(255,255,255,.22); border-radius: 34%; padding: 7px; box-sizing: content-box;
+}
+:root[data-skin="modern"] .dash-header-card {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #ffffff; border: none; border-radius: 0 0 var(--radius-phi-xl) var(--radius-phi-xl);
+  box-shadow: 0 14px 34px -8px rgba(79,70,229,.45);
+}
+:root[data-skin="modern"] .dash-header-card .dash-title,
+:root[data-skin="modern"] .dash-header-card .dash-subtitle { color: #ffffff; }
+:root[data-skin="modern"] .dash-header-card #logoContainer div,
+:root[data-skin="modern"] .dash-header-card #logoContainer img { border-color: rgba(255,255,255,.45) !important; }
+:root[data-skin="modern"] .lux-bottom-nav {
+  bottom: 13px; inset-inline: 13px; width: auto;
+  border-radius: 999px; border: 1px solid var(--border);
+  background: var(--card-bg); box-shadow: var(--shadow-xl); padding: 8px 10px;
+}
+:root[data-skin="modern"] .lux-nav-fab {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  box-shadow: 0 8px 20px -4px rgba(124,58,237,.55); border-radius: 50%;
+}
+:root[data-skin="modern"] .lux-search input { border-radius: 999px; }
+:root[data-skin="modern"] .btn-primary,
+:root[data-skin="modern"] .btn-success,
+:root[data-skin="modern"] .btn-danger {
+  border-radius: 999px; background-image: linear-gradient(135deg, color-mix(in srgb, var(--primary) 88%, #000), var(--primary));
+}
+:root[data-skin="modern"] .settings-grid-item,
+:root[data-skin="modern"] .settings-section { border-radius: 26px; }
 
-    /* ---------- ⑤ زجاجي Glass — زجاج مصنفر شفاف ---------- */
-    :root[data-skin="glass"] {
-      --primary:#7c3aed; --secondary:#a855f7; --on-primary:#ffffff;
-      --gold:#7c3aed; --gold-bright:#a855f7; --gold-soft:rgba(168,85,247,.13);
-      --gold-line:rgba(168,85,247,.32);
-      --bg:linear-gradient(160deg,#e0e7ff 0%,#fce7f3 48%,#dbeafe 100%);
-      --card-bg:rgba(255,255,255,.62); --card-bg-alt:rgba(255,255,255,.45);
-      --text:#1e1b4b; --text-muted:#6b6390; --text-light:#9c94c4;
-      --border:rgba(255,255,255,.75); --border-dark:rgba(255,255,255,.9);
-      --input-bg:rgba(255,255,255,.70); --input-border:rgba(255,255,255,.9); --input-text:#1e1b4b;
-      --header-grad:linear-gradient(135deg,rgba(124,58,237,.94),rgba(168,85,247,.94));
-      --th-bg:rgba(255,255,255,.60); --th-text:#4c1d95; --th-border:rgba(255,255,255,.8);
-      --subtotal-bg:rgba(255,255,255,.55);
-      --grand-row-bg:rgba(255,255,255,.45); --grand-row-text:#1e1b4b; --grand-row-border:rgba(255,255,255,.7);
-      --grand-final-bg:#7c3aed; --grand-final-text:#ffffff;
-      --radius:34px; --radius-sm:21px; --radius-phi:21px; --radius-phi-lg:34px; --radius-phi-xl:55px;
-      --shadow-sm:0 2px 8px rgba(124,58,237,.08);
-      --shadow-md:0 8px 20px -4px rgba(124,58,237,.14);
-      --shadow-lg:0 16px 32px -6px rgba(124,58,237,.18);
-      --shadow-xl:0 24px 44px -8px rgba(124,58,237,.22);
-    }
-    :root[data-skin="glass"][data-theme="dark"],
-    :root[data-skin="glass"][data-theme="amoled"] {
-      --primary:#c4b5fd; --secondary:#a78bfa; --on-primary:#1e1b4b;
-      --gold:#c4b5fd; --gold-bright:#ddd6fe; --gold-soft:rgba(196,181,253,.14);
-      --gold-line:rgba(196,181,253,.30);
-      --bg:linear-gradient(160deg,#1e1b4b 0%,#312e81 42%,#4c1d95 78%,#312e81 100%);
-      --card-bg:rgba(255,255,255,.08); --card-bg-alt:rgba(255,255,255,.055);
-      --text:#f5f3ff; --text-muted:#a99fd1; --text-light:#7f75a8;
-      --border:rgba(255,255,255,.14); --border-dark:rgba(255,255,255,.22);
-      --input-bg:rgba(255,255,255,.09); --input-border:rgba(255,255,255,.20); --input-text:#f5f3ff;
-      --header-grad:linear-gradient(135deg,rgba(124,58,237,.55),rgba(168,85,247,.45));
-      --th-bg:rgba(255,255,255,.09); --th-text:#ddd6fe; --th-border:rgba(255,255,255,.16);
-      --subtotal-bg:rgba(255,255,255,.07);
-      --grand-row-bg:rgba(255,255,255,.06); --grand-row-text:#f5f3ff; --grand-row-border:rgba(255,255,255,.13);
-      --grand-final-bg:#c4b5fd; --grand-final-text:#1e1b4b;
-      --shadow-sm:0 2px 8px rgba(0,0,0,.30); --shadow-md:0 8px 18px rgba(0,0,0,.38);
-      --shadow-lg:0 16px 28px rgba(0,0,0,.46); --shadow-xl:0 24px 40px rgba(0,0,0,.55);
-    }
-    :root[data-skin="glass"] body { background-attachment:fixed; }
-    :root[data-skin="glass"] .lux-stat-card,
-    :root[data-skin="glass"] .dash-grid-item,
-    :root[data-skin="glass"] .lux-search {
-      backdrop-filter:blur(18px) saturate(160%); -webkit-backdrop-filter:blur(18px) saturate(160%);
-    }
-    :root[data-skin="glass"] .lux-bottom-nav {
-      background:rgba(255,255,255,.55);
-      backdrop-filter:blur(22px) saturate(170%); -webkit-backdrop-filter:blur(22px) saturate(170%);
-    }
-    :root[data-skin="glass"][data-theme="dark"] .lux-bottom-nav,
-    :root[data-skin="glass"][data-theme="amoled"] .lux-bottom-nav { background:rgba(30,27,75,.58); }
-    :root[data-skin="glass"] .overdue-banner {
-      background:linear-gradient(135deg,rgba(220,38,38,.92),rgba(190,18,60,.92)) !important;
-      color:#ffffff !important;
-    }
-    :root[data-skin="glass"] .overdue-banner * { color:#ffffff !important; }
+/* ---------- ③ بسيط Minimal — «الحبر الأبيض» ---------- */
+:root[data-skin="minimal"] {
+  --primary:#171717; --secondary:#404040; --on-primary:#ffffff;
+  --gold:#171717; --gold-bright:#404040; --gold-soft:rgba(0,0,0,.06);
+  --gold-line:#e5e5e5;
+  --bg:#fafafa; --card-bg:#ffffff; --card-bg-alt:#f5f5f5;
+  --text:#171717; --text-muted:#737373; --text-light:#a3a3a3;
+  --border:#e5e5e5; --border-dark:#d4d4d4;
+  --input-bg:#ffffff; --input-border:#d4d4d4; --input-text:#171717;
+  --header-grad:linear-gradient(135deg,#171717,#171717);
+  --th-bg:#f5f5f5; --th-text:#171717; --th-border:#e5e5e5;
+  --subtotal-bg:#f5f5f5;
+  --grand-row-bg:#fafafa; --grand-row-text:#171717; --grand-row-border:#e5e5e5;
+  --grand-final-bg:#171717; --grand-final-text:#ffffff;
+  --radius:13px; --radius-sm:8px; --radius-phi:8px; --radius-phi-lg:13px; --radius-phi-xl:21px;
+  --shadow-sm:none; --shadow-md:none; --shadow-lg:none; --shadow-xl:none;
+}
+:root[data-skin="minimal"][data-theme="dark"],
+:root[data-skin="minimal"][data-theme="amoled"] {
+  --primary:#fafafa; --secondary:#d4d4d4; --on-primary:#0a0a0a;
+  --gold:#fafafa; --gold-bright:#d4d4d4; --gold-soft:rgba(255,255,255,.07);
+  --gold-line:#262626;
+  --bg:#0a0a0a; --card-bg:#141414; --card-bg-alt:#1a1a1a;
+  --text:#fafafa; --text-muted:#a3a3a3; --text-light:#737373;
+  --border:#262626; --border-dark:#333333;
+  --input-bg:#1a1a1a; --input-border:#333333; --input-text:#fafafa;
+  --header-grad:linear-gradient(135deg,#141414,#141414);
+  --th-bg:#1f1f1f; --th-text:#fafafa; --th-border:#262626;
+  --subtotal-bg:#1a1a1a;
+  --grand-row-bg:#141414; --grand-row-text:#fafafa; --grand-row-border:#262626;
+  --grand-final-bg:#fafafa; --grand-final-text:#0a0a0a;
+  --shadow-sm:none; --shadow-md:none; --shadow-lg:none; --shadow-xl:none;
+}
+/* شخصية بسيط: أيقونات رفيعة حادة، صفر ظلال، حدود شعرية، هوية انعكاسية */
+:root[data-skin="minimal"] .icon-svg { stroke-width: 1.6; stroke-linecap: butt; stroke-linejoin: miter; }
+:root[data-skin="minimal"] .dash-grid-item {
+  border-radius: 8px; border: 1px solid var(--border) !important;
+  box-shadow: none !important; transition: background .15s ease, color .15s ease;
+}
+:root[data-skin="minimal"] .dash-grid-item:hover { background: var(--primary); color: var(--on-primary) !important; }
+:root[data-skin="minimal"] .dash-grid-item:hover .icon-svg { color: var(--on-primary); }
+:root[data-skin="minimal"] .dash-grid-item .icon-svg { color: var(--primary); }
+:root[data-skin="minimal"] .dash-grid-item.create-invoice { background: var(--primary) !important; color: var(--on-primary) !important; }
+:root[data-skin="minimal"] .dash-grid-item.create-invoice .icon-svg { color: var(--on-primary); }
+:root[data-skin="minimal"] .dash-grid-item.create-invoice:hover { filter: none; opacity: .85; }
+:root[data-skin="minimal"] .dash-header-card { border-radius: 0; border: none; border-bottom: 1px solid var(--border); background: var(--card-bg); box-shadow: none; }
+:root[data-skin="minimal"] .dash-title::after { content: none; }
+:root[data-skin="minimal"] .lux-stat-card { border-radius: 8px; border: 1px solid var(--border); box-shadow: none !important; }
+:root[data-skin="minimal"] .lux-stat-main { background: var(--primary) !important; color: var(--on-primary) !important; border-color: var(--primary); }
+:root[data-skin="minimal"] .lux-stat-main .lux-stat-lbl,
+:root[data-skin="minimal"] .lux-stat-main .lux-stat-num,
+:root[data-skin="minimal"] .lux-stat-main .lux-stat-sub { color: var(--on-primary) !important; }
+:root[data-skin="minimal"] .lux-bottom-nav {
+  bottom: 0; inset-inline: 0; width: 100%;
+  border-radius: 0; border: none; border-top: 1px solid var(--border);
+  background: var(--card-bg); box-shadow: none; padding: 6px 4px;
+}
+:root[data-skin="minimal"] .lux-nav-fab { border-radius: 8px; background: var(--primary); box-shadow: none; }
+:root[data-skin="minimal"] .btn-primary,
+:root[data-skin="minimal"] .btn-success,
+:root[data-skin="minimal"] .btn-danger { border-radius: 8px; background-image: none; }
+:root[data-skin="minimal"] .settings-grid-item,
+:root[data-skin="minimal"] .settings-section { border-radius: 8px; box-shadow: none !important; }
+:root[data-skin="minimal"] .settings-grid-item { border: 1px solid var(--border) !important; }
+:root[data-skin="minimal"] .overdue-banner { border-radius: 0; box-shadow: none; }
+:root[data-skin="minimal"] .lux-search input { border-radius: 8px; border: 1px solid var(--border); }
+:root[data-skin="minimal"] .skin-card.active { box-shadow: none; border-color: var(--primary); background: var(--gold-soft); }
+:root[data-skin="minimal"] .toast,
+:root[data-skin="minimal"] [class*="modal-overlay"] > div,
+:root[data-skin="minimal"] [id$="Modal"] > div { border-radius: 8px; }
 
-    /* ---------- توحيد العناصر التي كانت بألوان ثابتة (غير الرخامي) ---------- */
-    :root[data-skin="modern"] .dash-grid-item,
-    :root[data-skin="minimal"] .dash-grid-item,
-    :root[data-skin="pro"] .dash-grid-item,
-    :root[data-skin="glass"] .dash-grid-item {
-      background: var(--card-bg);
-      color: var(--text);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-sm);
-    }
-    :root[data-skin="modern"] .dash-grid-item .icon-svg,
-    :root[data-skin="minimal"] .dash-grid-item .icon-svg,
-    :root[data-skin="pro"] .dash-grid-item .icon-svg,
-    :root[data-skin="glass"] .dash-grid-item .icon-svg { color: var(--primary); }
-    :root[data-skin="modern"] .dash-grid-item.create-invoice,
-    :root[data-skin="minimal"] .dash-grid-item.create-invoice,
-    :root[data-skin="pro"] .dash-grid-item.create-invoice,
-    :root[data-skin="glass"] .dash-grid-item.create-invoice {
-      background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 88%, #000), var(--primary));
-      color: var(--on-primary) !important;
-      border-color: color-mix(in srgb, var(--primary) 55%, transparent);
-      box-shadow: var(--shadow-md);
-    }
-    :root[data-skin="modern"] .dash-grid-item.create-invoice .icon-svg,
-    :root[data-skin="minimal"] .dash-grid-item.create-invoice .icon-svg,
-    :root[data-skin="pro"] .dash-grid-item.create-invoice .icon-svg,
-    :root[data-skin="glass"] .dash-grid-item.create-invoice .icon-svg { color: var(--on-primary); }
-    :root[data-skin="modern"] .lux-stat-main,
-    :root[data-skin="minimal"] .lux-stat-main,
-    :root[data-skin="pro"] .lux-stat-main,
-    :root[data-skin="glass"] .lux-stat-main {
-      background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 82%, #000), var(--primary));
-      border-color: color-mix(in srgb, var(--primary) 55%, transparent);
-      color: var(--on-primary);
-    }
-    :root[data-skin="modern"] .lux-stat-main .lux-stat-lbl,
-    :root[data-skin="modern"] .lux-stat-main .lux-stat-num,
-    :root[data-skin="modern"] .lux-stat-main .lux-stat-sub,
-    :root[data-skin="minimal"] .lux-stat-main .lux-stat-lbl,
-    :root[data-skin="minimal"] .lux-stat-main .lux-stat-num,
-    :root[data-skin="minimal"] .lux-stat-main .lux-stat-sub,
-    :root[data-skin="pro"] .lux-stat-main .lux-stat-lbl,
-    :root[data-skin="pro"] .lux-stat-main .lux-stat-num,
-    :root[data-skin="pro"] .lux-stat-main .lux-stat-sub,
-    :root[data-skin="glass"] .lux-stat-main .lux-stat-lbl,
-    :root[data-skin="glass"] .lux-stat-main .lux-stat-num,
-    :root[data-skin="glass"] .lux-stat-main .lux-stat-sub { color: var(--on-primary); }
-    :root[data-skin="minimal"] .lux-stat-card,
-    :root[data-skin="minimal"] .dash-grid-item { box-shadow:none; }
-    /* قائمة الإعدادات: بطاقات بألوان inline → تُوحَّد بالقوة خارج ثيم رخامي */
-    :root[data-skin="modern"] .settings-grid-item,
-    :root[data-skin="minimal"] .settings-grid-item,
-    :root[data-skin="pro"] .settings-grid-item,
-    :root[data-skin="glass"] .settings-grid-item {
-      background: var(--card-bg) !important;
-      color: var(--text) !important;
-      border: 1px solid var(--border) !important;
-    }
-    :root[data-skin="modern"] .settings-grid-item .icon-svg,
-    :root[data-skin="minimal"] .settings-grid-item .icon-svg,
-    :root[data-skin="pro"] .settings-grid-item .icon-svg,
-    :root[data-skin="glass"] .settings-grid-item .icon-svg { color: var(--primary) !important; }
-    /* زر إضافة مقاس داخل الجداول: شكل فقط — يتبع لون الثيم (المنطق لم يُلمس) */
-    :root[data-skin="modern"] .btn-add-size-prominent,
-    :root[data-skin="minimal"] .btn-add-size-prominent,
-    :root[data-skin="pro"] .btn-add-size-prominent,
-    :root[data-skin="glass"] .btn-add-size-prominent {
-      background: var(--primary) !important;
-      color: var(--on-primary) !important;
-      border-radius: var(--radius-sm) !important;
-    }
+/* ---------- ④ احترافي Pro — «الكراسة الكحلية» ---------- */
+:root[data-skin="pro"] {
+  --primary:#0f4c81; --secondary:#1d6fb8; --on-primary:#ffffff;
+  --gold:#0f4c81; --gold-bright:#1d6fb8; --gold-soft:rgba(15,76,129,.10);
+  --gold-line:rgba(15,76,129,.30);
+  --bg:#edf1f6; --card-bg:#ffffff; --card-bg-alt:#f4f7fb;
+  --text:#1a2332; --text-muted:#5a6b80; --text-light:#8b9aad;
+  --border:#dbe3ec; --border-dark:#c3cfdd;
+  --input-bg:#ffffff; --input-border:#c3cfdd; --input-text:#1a2332;
+  --header-grad:linear-gradient(135deg,#0f4c81,#1d6fb8);
+  --th-bg:#e8eef5; --th-text:#0f4c81; --th-border:#c3cfdd;
+  --subtotal-bg:#e8eef5;
+  --grand-row-bg:#f4f7fb; --grand-row-text:#1a2332; --grand-row-border:#dbe3ec;
+  --grand-final-bg:#0f4c81; --grand-final-text:#ffffff;
+  --radius:13px; --radius-sm:8px; --radius-phi:13px; --radius-phi-lg:21px; --radius-phi-xl:21px;
+  --shadow-sm:0 1px 2px rgba(15,40,70,.08);
+  --shadow-md:0 3px 8px rgba(15,40,70,.10);
+  --shadow-lg:0 8px 18px rgba(15,40,70,.12);
+  --shadow-xl:0 16px 28px rgba(15,40,70,.16);
+}
+:root[data-skin="pro"][data-theme="dark"],
+:root[data-skin="pro"][data-theme="amoled"] {
+  --primary:#5b9bd5; --secondary:#7fb3e0; --on-primary:#0d1420;
+  --gold:#5b9bd5; --gold-bright:#7fb3e0; --gold-soft:rgba(91,155,213,.14);
+  --gold-line:rgba(91,155,213,.32);
+  --bg:#0d1420; --card-bg:#14202f; --card-bg-alt:#192939;
+  --text:#e6eef7; --text-muted:#8b9aad; --text-light:#5a6b80;
+  --border:#243447; --border-dark:#314459;
+  --input-bg:#192939; --input-border:#314459; --input-text:#e6eef7;
+  --header-grad:linear-gradient(135deg,#0f4c81,#1d6fb8);
+  --th-bg:#1c2c3f; --th-text:#a8c8e8; --th-border:#314459;
+  --subtotal-bg:#192939;
+  --grand-row-bg:#192939; --grand-row-text:#e6eef7; --grand-row-border:#243447;
+  --grand-final-bg:#5b9bd5; --grand-final-text:#0d1420;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.4); --shadow-md:0 4px 10px rgba(0,0,0,.5);
+  --shadow-lg:0 10px 20px rgba(0,0,0,.6); --shadow-xl:0 18px 30px rgba(0,0,0,.7);
+}
+/* شخصية احترافي: أيقونات مربعة الزوايا، شريط جانبي كحلي على البطاقات، هيدر بانر رسمي */
+:root[data-skin="pro"] .icon-svg { stroke-width: 2; stroke-linecap: square; stroke-linejoin: miter; }
+:root[data-skin="pro"] .dash-grid-item {
+  border-radius: 8px; border: 1px solid var(--border) !important;
+  border-inline-start: 3px solid var(--primary) !important;
+  color: var(--text) !important;
+}
+:root[data-skin="pro"] .dash-grid-item .icon-svg { color: var(--primary); background: var(--gold-soft); border-radius: 6px; padding: 5px; box-sizing: content-box; }
+:root[data-skin="pro"] .dash-grid-item.create-invoice {
+  background: linear-gradient(135deg, #0f4c81, #1d6fb8) !important;
+  color: #ffffff !important; border-color: transparent !important;
+}
+:root[data-skin="pro"] .dash-grid-item.create-invoice .icon-svg { color: #ffffff; background: rgba(255,255,255,.18); }
+:root[data-skin="pro"] .dash-header-card {
+  border-radius: 0 0 8px 8px; background: linear-gradient(135deg, #0f4c81, #1d6fb8);
+  color: #ffffff; border: none; box-shadow: var(--shadow-lg);
+}
+:root[data-skin="pro"] .dash-header-card .dash-title,
+:root[data-skin="pro"] .dash-header-card .dash-subtitle { color: #ffffff; }
+:root[data-skin="pro"] .dash-title::after { content: none; }
+:root[data-skin="pro"] .lux-stat-card { border-radius: 8px; }
+:root[data-skin="pro"] .lux-stat-main {
+  background: linear-gradient(135deg, #0f4c81, #1d6fb8) !important;
+  border-color: transparent; color: #ffffff;
+}
+:root[data-skin="pro"] .lux-stat-main .lux-stat-lbl,
+:root[data-skin="pro"] .lux-stat-main .lux-stat-num,
+:root[data-skin="pro"] .lux-stat-main .lux-stat-sub { color: #ffffff !important; }
+:root[data-skin="pro"] .lux-bottom-nav {
+  bottom: 0; inset-inline: 0; width: 100%;
+  border-radius: 0; border: none; background: #0f4c81; padding: 6px 4px;
+  box-shadow: 0 -2px 10px rgba(15,40,70,.18);
+}
+:root[data-skin="pro"] .lux-nav-btn { color: rgba(255,255,255,.75); }
+:root[data-skin="pro"] .lux-nav-btn.active { color: #ffd166; }
+:root[data-skin="pro"] .lux-nav-btn.active svg { filter: drop-shadow(0 0 3px rgba(255,209,102,.4)); }
+:root[data-skin="pro"] .lux-nav-fab { background: #ffd166; color: #0f4c81; border-radius: 8px; }
+:root[data-skin="pro"] .btn-primary,
+:root[data-skin="pro"] .btn-success,
+:root[data-skin="pro"] .btn-danger { border-radius: 6px; background-image: none; }
+:root[data-skin="pro"] .btn-primary { background: var(--primary); }
+:root[data-skin="pro"] .settings-grid-item,
+:root[data-skin="pro"] .settings-section { border-radius: 8px; }
+:root[data-skin="pro"] .settings-grid-item { border: 1px solid var(--border) !important; border-inline-start: 3px solid var(--primary) !important; }
+:root[data-skin="pro"] .settings-grid-item .icon-svg { color: var(--primary) !important; }
+:root[data-skin="pro"] .overdue-banner { border-radius: 0 0 8px 8px; }
+:root[data-skin="pro"] .lux-search input { border-radius: 6px; }
 
-    /* ---------- بطاقات اختيار الثيم في الإعدادات (φ) ---------- */
-    .skin-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:var(--sp-1); margin-bottom:var(--sp-2); }
-    @media (max-width:360px) { .skin-grid { grid-template-columns:repeat(3,1fr); } }
-    .skin-card {
-      background:var(--card-bg); border:1.5px solid var(--border); border-radius:var(--radius-phi);
-      padding:var(--sp-1) 4px 8px; cursor:pointer; text-align:center;
-      transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease;
-      display:flex; flex-direction:column; align-items:center; gap:6px; font-family:inherit;
-    }
-    .skin-card:hover { transform:translateY(-2px); box-shadow:var(--shadow-md); }
-    .skin-card.active { border-color:var(--primary); box-shadow:0 0 0 3px var(--gold-soft); }
-    .skin-dots { display:flex; gap:4px; }
-    .skin-dot { width:13px; height:13px; border-radius:50%; box-shadow:inset 0 0 0 1px rgba(0,0,0,.08); }
-    .skin-name { font-size:11px; font-weight:800; color:var(--text); }
-    .skin-en { font-size:9px; color:var(--text-light); font-weight:600; }
+/* ---------- ⑤ زجاجي Glass — «المتحدر الزجاجي» ---------- */
+:root[data-skin="glass"] {
+  --primary:#7c3aed; --secondary:#a855f7; --on-primary:#ffffff;
+  --gold:#7c3aed; --gold-bright:#a855f7; --gold-soft:rgba(124,58,237,.14);
+  --gold-line:rgba(124,58,237,.32);
+  --bg:#e4e9fb; --card-bg:rgba(255,255,255,.62); --card-bg-alt:rgba(255,255,255,.45);
+  --text:#1e1b4b; --text-muted:#6d28d9; --text-light:#a78bfa;
+  --border:rgba(255,255,255,.75); --border-dark:rgba(255,255,255,.9);
+  --input-bg:rgba(255,255,255,.66); --input-border:rgba(124,58,237,.25); --input-text:#1e1b4b;
+  --header-grad:linear-gradient(135deg,#7c3aed,#a855f7);
+  --th-bg:rgba(124,58,237,.10); --th-text:#5b21b6; --th-border:rgba(124,58,237,.22);
+  --subtotal-bg:rgba(124,58,237,.08);
+  --grand-row-bg:rgba(255,255,255,.5); --grand-row-text:#1e1b4b; --grand-row-border:rgba(255,255,255,.8);
+  --grand-final-bg:#7c3aed; --grand-final-text:#ffffff;
+  --radius:26px; --radius-sm:21px; --radius-phi:26px; --radius-phi-lg:34px; --radius-phi-xl:55px;
+  --shadow-sm:0 2px 8px rgba(124,58,237,.08);
+  --shadow-md:0 8px 18px -4px rgba(124,58,237,.14);
+  --shadow-lg:0 16px 30px -6px rgba(124,58,237,.20);
+  --shadow-xl:0 26px 44px -8px rgba(124,58,237,.26);
+  --glass-blur: blur(18px) saturate(160%);
+}
+:root[data-skin="glass"] body {
+  background: linear-gradient(135deg, #e0e7ff 0%, #fce7f3 45%, #dbeafe 100%) fixed;
+}
+:root[data-skin="glass"][data-theme="dark"],
+:root[data-skin="glass"][data-theme="amoled"] {
+  --primary:#a78bfa; --secondary:#c084fc; --on-primary:#231a3d;
+  --gold:#a78bfa; --gold-bright:#c084fc; --gold-soft:rgba(167,139,250,.16);
+  --gold-line:rgba(167,139,250,.34);
+  --bg:#171233; --card-bg:rgba(49,46,129,.42); --card-bg-alt:rgba(67,56,202,.32);
+  --text:#f1ecff; --text-muted:#c4b5fd; --text-light:#8b7fd6;
+  --border:rgba(196,181,253,.25); --border-dark:rgba(196,181,253,.4);
+  --input-bg:rgba(30,27,75,.55); --input-border:rgba(196,181,253,.3); --input-text:#f1ecff;
+  --header-grad:linear-gradient(135deg,#7c3aed,#a855f7);
+  --th-bg:rgba(124,58,237,.18); --th-text:#ddd6fe; --th-border:rgba(196,181,253,.25);
+  --subtotal-bg:rgba(124,58,237,.14);
+  --grand-row-bg:rgba(49,46,129,.5); --grand-row-text:#f1ecff; --grand-row-border:rgba(196,181,253,.25);
+  --grand-final-bg:#a78bfa; --grand-final-text:#231a3d;
+  --shadow-sm:0 2px 10px rgba(0,0,0,.35); --shadow-md:0 8px 20px rgba(0,0,0,.45);
+  --shadow-lg:0 16px 32px rgba(0,0,0,.55); --shadow-xl:0 26px 46px rgba(0,0,0,.65);
+}
+:root[data-skin="glass"][data-theme="dark"] body,
+:root[data-skin="glass"][data-theme="amoled"] body {
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%) fixed;
+}
+/* شخصية زجاجي: كل الأسطح زجاج ضبابي + هالات ملونة + أيقونات متوهجة */
+:root[data-skin="glass"] .dash-header-card,
+:root[data-skin="glass"] .settings-section,
+:root[data-skin="glass"] .lux-stat-card,
+:root[data-skin="glass"] .dash-grid-item,
+:root[data-skin="glass"] .settings-grid-item,
+:root[data-skin="glass"] .lux-search {
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1.5px solid var(--border) !important;
+}
+:root[data-skin="glass"] .dash-header-card { border-radius: var(--radius-phi-xl); overflow: hidden; position: relative; }
+:root[data-skin="glass"] .dash-header-card::before {
+  content: ''; position: absolute; inset: -40%;
+  background: radial-gradient(circle at 30% 30%, rgba(124,58,237,.25), transparent 60%),
+              radial-gradient(circle at 75% 70%, rgba(236,72,153,.18), transparent 55%);
+  animation: glassDrift 9s ease-in-out infinite alternate; pointer-events: none;
+}
+@keyframes glassDrift {
+  from { transform: translate(-4%, -2%) scale(1); }
+  to   { transform: translate(4%, 3%) scale(1.08); }
+}
+:root[data-skin="glass"] .dash-title {
+  background: linear-gradient(90deg, #7c3aed, #ec4899);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+:root[data-skin="glass"] .icon-svg { stroke-width: 2.2; stroke-linecap: round; }
+:root[data-skin="glass"] .dash-grid-item .icon-svg { filter: drop-shadow(0 0 6px rgba(124,58,237,.4)); }
+:root[data-skin="glass"] .dash-grid-item { border-radius: 26px; }
+:root[data-skin="glass"] .dash-grid-item.create-invoice {
+  background: linear-gradient(135deg, #7c3aed, #ec4899) !important;
+  border: none !important; box-shadow: 0 10px 26px -6px rgba(124,58,237,.5) !important;
+}
+:root[data-skin="glass"] .lux-stat-main {
+  background: linear-gradient(135deg, #7c3aed, #ec4899) !important;
+  border: none !important; color: #ffffff;
+}
+:root[data-skin="glass"] .lux-stat-main .lux-stat-lbl,
+:root[data-skin="glass"] .lux-stat-main .lux-stat-num,
+:root[data-skin="glass"] .lux-stat-main .lux-stat-sub { color: #ffffff !important; }
+:root[data-skin="glass"] .lux-bottom-nav {
+  bottom: 13px; inset-inline: 13px; width: auto; border-radius: 999px;
+  background: var(--card-bg); backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1.5px solid var(--border); box-shadow: var(--shadow-lg); padding: 8px 10px;
+}
+:root[data-skin="glass"] .lux-nav-fab {
+  background: linear-gradient(135deg, #7c3aed, #ec4899);
+  border-radius: 50%; box-shadow: 0 8px 22px -4px rgba(236,72,153,.55);
+}
+:root[data-skin="glass"] .btn-primary {
+  border-radius: 999px; background: linear-gradient(135deg, #7c3aed, #a855f7);
+  box-shadow: 0 6px 16px -4px rgba(124,58,237,.45);
+}
+:root[data-skin="glass"] .overdue-banner {
+  background: linear-gradient(135deg, #dc2626, #f43f5e) !important;
+  border: none !important; border-radius: 999px; box-shadow: 0 8px 20px -4px rgba(220,38,38,.4);
+}
+:root[data-skin="glass"] .overdue-banner * { color: #ffffff !important; }
+:root[data-skin="glass"] .lux-search input { border-radius: 999px; }
+:root[data-skin="glass"] .settings-grid-item,
+:root[data-skin="glass"] .settings-section { border-radius: 26px; }
+:root[data-skin="glass"] .toast { backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border-radius: 999px; }
 
+/* ---------- ⑥ توحيد الأزرار العلوية في الرئيسية لكل ثيم (شكل فقط) ---------- */
+:root[data-skin="modern"] #dashTopRightActions button,
+:root[data-skin="pro"] #dashTopRightActions button { box-shadow: var(--shadow-sm); }
+:root[data-skin="minimal"] #dashTopRightActions button { box-shadow: none; border: 1px solid var(--border); }
+
+/* ---------- ⑦ بطاقات اختيار الثيم في الإعدادات (φ) ---------- */
+.skin-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:var(--sp-1); margin-bottom:var(--sp-2); }
+@media (max-width:360px) { .skin-grid { grid-template-columns:repeat(3,1fr); } }
+.skin-card {
+  background:var(--card-bg); border:1.5px solid var(--border); border-radius:var(--radius-phi);
+  padding:var(--sp-1) 4px 8px; cursor:pointer; text-align:center;
+  transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+  display:flex; flex-direction:column; align-items:center; gap:6px; font-family:inherit;
+}
+.skin-card:hover { transform:translateY(-2px); box-shadow:var(--shadow-md); }
+.skin-card.active { border-color:var(--primary); box-shadow:0 0 0 3px var(--gold-soft); }
+.skin-dots { display:flex; gap:4px; }
+.skin-dot { width:13px; height:13px; border-radius:50%; box-shadow:inset 0 0 0 1px rgba(0,0,0,.08); }
+.skin-name { font-size:11px; font-weight:800; color:var(--text); }
+.skin-en { font-size:9px; color:var(--text-light); font-weight:600; }
+
+/* ============================================================
+   ⑧ بوب-أب كود الورشة — «الانفجار البالوني»
+   أنيميشن دخول انفجاري + جسيمات متطايرة + طفو بالوني مستمر
+   ============================================================ */
+.ws-burst-overlay {
+  position: fixed; inset: 0; z-index: 100000;
+  background: rgba(15, 12, 30, 0.66);
+  backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px);
+  display: flex; align-items: center; justify-content: center; padding: 21px;
+  animation: wsFadeIn .22s ease both;
+}
+@keyframes wsFadeIn { from { opacity: 0; } to { opacity: 1; } }
+.ws-burst-card {
+  position: relative; width: min(400px, 92vw); box-sizing: border-box;
+  background: linear-gradient(160deg, var(--card-bg), var(--card-bg-alt));
+  border: 1.5px solid color-mix(in srgb, var(--primary) 35%, var(--border));
+  border-radius: var(--radius-phi-xl);
+  padding: var(--sp-4) var(--sp-3) var(--sp-3);
+  text-align: center; overflow: visible;
+  animation: wsExplode .62s cubic-bezier(.18, 1.4, .28, 1) both, wsFloaty 3.4s ease-in-out .7s infinite alternate;
+  box-shadow: 0 30px 60px -12px color-mix(in srgb, var(--primary) 40%, transparent),
+              0 0 0 6px color-mix(in srgb, var(--primary) 12%, transparent);
+}
+@keyframes wsExplode {
+  0%   { transform: scale(.15) rotate(-14deg); opacity: 0; filter: blur(6px); }
+  55%  { transform: scale(1.12) rotate(3deg); opacity: 1; filter: blur(0); }
+  75%  { transform: scale(.96) rotate(-1.5deg); }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+@keyframes wsFloaty {
+  from { transform: translateY(-5px); }
+  to   { transform: translateY(5px); }
+}
+.ws-burst-particles { position: absolute; inset: 0; pointer-events: none; }
+.ws-burst-particles span {
+  position: absolute; top: 50%; left: 50%; width: 9px; height: 9px; border-radius: 50%;
+  background: var(--primary); opacity: 0;
+  animation: wsParticle .9s cubic-bezier(.15, .85, .35, 1) .12s both;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--primary) 60%, transparent);
+}
+.ws-burst-particles span:nth-child(3n)   { background: var(--secondary); }
+.ws-burst-particles:nth-child(2) span { background: #f59e0b; border-radius: 3px; width: 7px; height: 13px; }
+@keyframes wsParticle {
+  0%   { transform: translate(-50%,-50%) scale(0); opacity: 0; }
+  25%  { opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0); opacity: 0; }
+}
+.ws-burst-ring {
+  position: absolute; top: 50%; left: 50%; width: 21px; height: 21px; border-radius: 50%;
+  border: 3px solid var(--primary); transform: translate(-50%,-50%);
+  animation: wsRing .8s ease-out .1s both; pointer-events: none;
+}
+@keyframes wsRing {
+  from { transform: translate(-50%,-50%) scale(1); opacity: .9; }
+  to   { transform: translate(-50%,-50%) scale(11); opacity: 0; }
+}
+.ws-burst-badge {
+  width: 55px; height: 55px; margin: 0 auto var(--sp-2);
+  border-radius: 34%;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  display: flex; align-items: center; justify-content: center;
+  color: var(--on-primary); box-shadow: 0 8px 20px -6px color-mix(in srgb, var(--primary) 55%, transparent);
+  animation: wsBadgeSpin .9s cubic-bezier(.18,1.4,.28,1) both;
+}
+@keyframes wsBadgeSpin {
+  from { transform: scale(0) rotate(-180deg); }
+  to   { transform: scale(1) rotate(0); }
+}
+.ws-burst-title { font-size: 18px; font-weight: 900; color: var(--text); margin: 0 0 4px; }
+.ws-burst-sub { font-size: 12px; color: var(--text-muted); margin: 0 0 var(--sp-2); line-height: 1.6; }
+.ws-burst-code {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: color-mix(in srgb, var(--primary) 9%, var(--card-bg));
+  border: 1.5px dashed color-mix(in srgb, var(--primary) 45%, transparent);
+  border-radius: 999px; padding: 9px 18px; margin-bottom: var(--sp-2);
+  font-size: 23px; font-weight: 900; letter-spacing: 1.5px;
+  color: var(--primary); cursor: pointer; direction: ltr; unicode-bidi: embed;
+  transition: transform .15s ease; user-select: all;
+}
+.ws-burst-code:active { transform: scale(.94); }
+.ws-burst-hint { font-size: 10.5px; color: var(--text-light); margin: 0 0 var(--sp-2); }
+.ws-burst-actions { display: flex; gap: 8px; }
+.ws-burst-actions button {
+  flex: 1; padding: 11px 8px; border-radius: var(--radius-phi);
+  font-size: 12.5px; font-weight: 900; cursor: pointer; font-family: inherit;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.ws-burst-actions button:active { transform: scale(.95); }
+.ws-btn-generate {
+  border: none; color: var(--on-primary);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 86%, #000), var(--primary));
+  box-shadow: 0 8px 18px -6px color-mix(in srgb, var(--primary) 60%, transparent);
+}
+.ws-btn-manage {
+  background: var(--card-bg-alt); color: var(--text);
+  border: 1.5px solid var(--border);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ws-burst-card, .ws-burst-particles span, .ws-burst-ring, .ws-burst-badge, .ws-burst-overlay { animation: none !important; }
+}
+
+/* ---------- ⑨ توحيد أزرار الرئيسية: بطاقات محايدة بهوية كل ثيم ----------
+   الألوان الثابتة القديمة (أزرق/تيل/برتقالي/أخضر) اتشالت بطلب المالك —
+   الثيم هو اللي بيملي الألوان. زر الإنشاء (البطل) هو الوحيد الملون بهوية الثيم */
+:root[data-skin="modern"] .dash-grid-item,
+:root[data-skin="minimal"] .dash-grid-item,
+:root[data-skin="pro"] .dash-grid-item,
+:root[data-skin="glass"] .dash-grid-item {
+  background: var(--card-bg) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+}
+:root[data-skin="modern"] .dash-grid-item .icon-svg,
+:root[data-skin="minimal"] .dash-grid-item .icon-svg,
+:root[data-skin="pro"] .dash-grid-item .icon-svg,
+:root[data-skin="glass"] .dash-grid-item .icon-svg { color: var(--primary) !important; }
+/* البطل (إنشاء فاتورة) — الهوية الملونة لكل ثيم */
+:root[data-skin="modern"] .dash-grid-item.create-invoice {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+  color: #ffffff !important; border-color: transparent !important;
+  box-shadow: 0 10px 24px -6px rgba(79,70,229,.5) !important;
+}
+:root[data-skin="modern"] .dash-grid-item.create-invoice .icon-svg {
+  color: #ffffff !important; background: rgba(255,255,255,.22);
+}
+:root[data-skin="minimal"] .dash-grid-item.create-invoice .icon-svg { color: var(--on-primary) !important; }
+:root[data-skin="pro"] .dash-grid-item.create-invoice .icon-svg { color: #ffffff !important; background: rgba(255,255,255,.18); }
+:root[data-skin="glass"] .dash-grid-item.create-invoice .icon-svg { color: #ffffff !important; }
 </style>
   <meta property="og:image" content="https://bolt.new/static/og_default.png">
     <meta name="twitter:card" content="summary_large_image">
@@ -4622,19 +4887,14 @@
   </div>
 
   
-  <!-- Global Back Button -->
-  <button id="globalBackButton" class="no-print" style="display:none; position:fixed; top:20px; left:20px; background:var(--card-bg); color:var(--text); border:1.5px solid var(--border); box-shadow:var(--shadow-lg); border-radius:50%; width:44px; height:44px; align-items:center; justify-content:center; z-index:9000; cursor:pointer;" onclick="if(isViewingArchive) { clearInvoiceDraft(); switchView('archiveView'); } else if(document.getElementById('settingsView')?.classList.contains('in-subpage')) { history.back(); } else { switchView('loginView'); }">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:2px;"><polyline points="10 18 16 12 10 6"></polyline></svg>
-  </button>
+  <!-- Global Back Button: اتشال نهائياً بطلب المالك — الرجوع يعتمد على زر الرجوع في الموبايل (onBackPressed → __handleAndroidBack) وازرار الرجوع داخل الشاشات -->
 
   <div id="toast-container" class="toast-container"></div>
 
   <!-- Login / Dashboard -->
   <div id="loginView" class="view-container active-view">
     <div class="dash-header-card">
-      <button type="button" onclick="switchView('settingsView'); loadSettingsForm();" style="position: absolute; top: 14px; left: 14px; width: 35px; height: 35px; background: color-mix(in srgb, var(--primary) 10%, transparent); border: none; color: var(--primary); cursor: pointer; padding: 6px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.2s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.05);" title="إعدادات النظام" data-i18n-title="system_settings" onmouseover="this.style.background='color-mix(in srgb, var(--primary) 20%, transparent)'; this.style.transform='scale(1.05)';" onmouseout="this.style.background='color-mix(in srgb, var(--primary) 10%, transparent)'; this.style.transform='scale(1)';">
-        <svg class="icon-svg" style="width: 20px; height: 20px; stroke-width: 2.1; margin: 0;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-      </button>
+      <!-- زر الترس العلوي اتشال بطلب المالك — الإعدادات بقى ليها زر الترس في شريط التنقل السفلي مكان "المزيد" -->
 
       <!-- مجموعة الأزرار العلوية باليمين: 1. الملف والحساب | 2. مؤشر الوضع الحالي (مدير/صنايعي) | 3. توليد كود الورشة -->
       <div id="dashTopRightActions" style="position: absolute; top: 14px; right: 14px; display: flex; flex-direction: column; align-items: center; gap: 6px; z-index: 10;">
@@ -4861,10 +5121,7 @@
             </div>
             <h4 style="margin:2px 0 6px; font-size:12px;">ثيم التطبيق</h4>
             <div class="skin-grid" id="skinCardsContainer"></div>
-            <div id="accentColorSection">
-              <h4 style="margin:4px 0 6px; font-size:12px;">لون التطبيق</h4>
-              <div class="theme-grid" id="colorSwatchesContainer"></div>
-            </div>
+            <!-- قسم "لون التطبيق" (23 لون قديم) اتشال بطلب المالك — الثيمات الخمسة لوحاتها كاملة -->
 
             <!-- Interface & Buttons Customizer Section Inside Theme Page -->
             <div style="margin-top:20px; padding:16px; border-radius:14px; background:var(--card-bg-alt); border:1.5px solid var(--border); box-shadow:var(--shadow-sm);">
@@ -6874,32 +7131,8 @@
     });
 
     /* ===== Theme Colors ===== */
-    const THEME_COLORS = [
-      { id: 'gold', primary: '#a87f0a', secondary: '#b8860b' },
-      { id: 'red', primary: '#ef4444', secondary: '#f87171' },
-      { id: 'orange', primary: '#f97316', secondary: '#fb923c' },
-      { id: 'amber', primary: '#f59e0b', secondary: '#fbbf24' },
-      { id: 'yellow', primary: '#eab308', secondary: '#facc15' },
-      { id: 'lime', primary: '#84cc16', secondary: '#a3e635' },
-      { id: 'green', primary: '#22c55e', secondary: '#4ade80' },
-      { id: 'emerald', primary: '#10b981', secondary: '#34d399' },
-      { id: 'teal', primary: '#14b8a6', secondary: '#2dd4bf' },
-      { id: 'cyan', primary: '#06b6d4', secondary: '#22d3ee' },
-      { id: 'sky', primary: '#0ea5e9', secondary: '#38bdf8' },
-      { id: 'blue', primary: '#3b82f6', secondary: '#60a5fa' },
-      { id: 'indigo', primary: '#6366f1', secondary: '#818cf8' },
-      { id: 'violet', primary: '#8b5cf6', secondary: '#a78bfa' },
-      { id: 'purple', primary: '#a855f7', secondary: '#c084fc' },
-      { id: 'fuchsia', primary: '#d946ef', secondary: '#e879f9' },
-      { id: 'pink', primary: '#ec4899', secondary: '#f472b6' },
-      { id: 'rose', primary: '#f43f5e', secondary: '#fb7185' },
-      { id: 'slate', primary: '#64748b', secondary: '#94a3b8' },
-      { id: 'brown', primary: '#8B4513', secondary: '#D2691E' },
-      { id: 'navy', primary: '#1e3a8a', secondary: '#3b82f6' },
-      { id: 'black', primary: '#000000', secondary: '#333333' },
-      { id: 'white', primary: '#f1f5f9', secondary: '#e2e8f0' }
-    ];
-    function THEME_COLORS_FIND(id) { return THEME_COLORS.find(c => c.id === id) || THEME_COLORS[0]; }
+    /* نظام ألوان التطبيق القديم (23 لون accent) اتشال بطلب المالك — كل ثيم دلوقتي لوحته كاملة
+       ورخامي رجع للهوية الدهبية الثابتة من :root. (الثيمات الخمسة في themeSkinsLayer) */
 
     /* ===== Table Type Definitions ===== */
     const BUILTIN_TABLE_TYPES = [
@@ -7300,61 +7533,20 @@
       document.documentElement.setAttribute('data-theme', mode);
       document.documentElement.setAttribute('data-skin', skin);
 
-      if (skin === 'marble') {
-        /* الهوية الأصلية: نظام ألوان التطبيق (accent) كما هو */
-        const cid = localStorage.getItem('appAccent') || 'gold';
-        const c = THEME_COLORS_FIND(cid);
-        let pColor = c.primary;
-        let sColor = c.secondary;
-        let onPColor = (c.id === 'white') ? '#000000' : '#ffffff';
-
-        if (c.id === 'gold' && (mode === 'dark' || mode === 'amoled')) {
-           /* brighter gold on dark for WCAG-safe contrast */
-           pColor = '#d4af37';
-           sColor = '#e2c258';
-           onPColor = '#171412';
-        } else if (c.id === 'white' && mode === 'light') {
-           pColor = '#0f172a';
-           sColor = '#334155';
-           onPColor = '#ffffff';
-        } else if (c.id === 'black' && (mode === 'dark' || mode === 'amoled')) {
-           pColor = '#f8fafc';
-           sColor = '#e2e8f0';
-           onPColor = '#000000';
-        } else if (c.id === 'white') {
-           pColor = '#f1f5f9';
-           sColor = '#e2e8f0';
-           onPColor = '#000000';
-        } else if (c.id === 'black') {
-           pColor = '#000000';
-           sColor = '#333333';
-           onPColor = '#ffffff';
-        }
-
-        document.documentElement.style.setProperty('--primary', pColor);
-        document.documentElement.style.setProperty('--secondary', sColor);
-        document.documentElement.style.setProperty('--on-primary', onPColor);
-        document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.toggle('active', sw.dataset.id === cid));
-      } else {
-        /* باقي الثيمات: لوحة الألوان تأتي من themeSkinsLayer في الـCSS */
-        ['--primary', '--secondary', '--on-primary'].forEach(v => document.documentElement.style.removeProperty(v));
-        document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.remove('active'));
-      }
+      /* كل الثيمات (ومنهم رخامي) لوحاتها كاملة من الـCSS — نشيل أي override قديم */
+      ['--primary', '--secondary', '--on-primary'].forEach(v => document.documentElement.style.removeProperty(v));
 
       ['btnModeLight','btnModeDark','btnModeAmoled'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.remove('active'); });
       const activeBtn = document.getElementById('btnMode' + mode.charAt(0).toUpperCase() + mode.slice(1));
       if (activeBtn) activeBtn.classList.add('active');
 
       document.querySelectorAll('.skin-card').forEach(card => card.classList.toggle('active', card.dataset.skin === skin));
-      const accentSection = document.getElementById('accentColorSection');
-      if (accentSection) accentSection.style.display = (skin === 'marble') ? '' : 'none';
 
       const meta = document.querySelector('meta[name="theme-color"]');
       if (meta) meta.setAttribute('content', mode === 'light' ? (SKIN_META_COLOR[skin] || SKIN_META_COLOR.marble) : '#000000');
     }
     function setAppMode(mode) { localStorage.setItem('appMode', mode); applyTheme(); }
     function setAppSkin(id) { if (!APP_SKINS.some(s => s.id === id)) return; localStorage.setItem('appSkin', id); applyTheme(); try { showToast && showToast('تم تطبيق الثيم: ' + (APP_SKINS.find(s => s.id === id) || {}).name); } catch (e) {} }
-    function setAccentColor(id) { localStorage.setItem('appAccent', id); applyTheme(); }
     function initThemeUI() {
       /* بطاقات الثيمات الخمسة (skins) */
       const skinRow = document.getElementById('skinCardsContainer');
@@ -7376,19 +7568,6 @@
           skinRow.appendChild(card);
         });
         skinRow.dataset.built = '1';
-      }
-      /* ألوان التطبيق (لثيم رخامي فقط) */
-      const container = document.getElementById('colorSwatchesContainer');
-      if (container && !container.dataset.built) {
-        container.innerHTML = '';
-        THEME_COLORS.forEach(c => {
-          const d = document.createElement('div');
-          d.className = 'color-swatch'; d.dataset.id = c.id;
-          d.style.background = `linear-gradient(135deg, ${c.primary}, ${c.secondary})`;
-          d.onclick = () => setAccentColor(c.id);
-          container.appendChild(d);
-        });
-        container.dataset.built = '1';
       }
       applyTheme();
     }
@@ -7487,10 +7666,7 @@
       if (v) { v.classList.add('active-view'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
       
       const backBtn = document.getElementById('globalBackButton');
-      if (backBtn) {
-          if (viewId === 'loginView') backBtn.style.display = 'none';
-          else backBtn.style.display = 'flex';
-      }
+      if (backBtn) backBtn.style.display = 'none'; /* الزر اتشال — خلية أمان للنسخ القديمة */
       
       const isFullScreenNoScroll = (
         viewId === 'calculatorView' || 
@@ -11206,6 +11382,206 @@
       setTimeout(() => { try { document.body.removeChild(link); } catch(e){} URL.revokeObjectURL(url); }, 3000);
     }
 
+    /* ═══════ PDF Color Sanitizer ═══════
+       html2canvas (داخل html2pdf) لا يفهم دوال الألوان الحديثة (color(srgb)/oklch/oklab/lab/lch)
+   التي يرجعها getComputedStyle في كروم الحديث → يفشل توليد الـPDF بـ"unsupported color function".
+       الحل: قبل التصيير نحوّل أي قيمة لون حديثة إلى rgb() مكافئ ونثبتها inline على العناصر،
+       وبعد التصيير نعيد الحالة كما كانت. (قاعدة 1: تجميلي خالص — لا يلمس أي منطق) */
+    const __PDF_COLOR_PROPS = [
+      ['color','color'], ['backgroundColor','background-color'],
+      ['borderTopColor','border-top-color'], ['borderRightColor','border-right-color'],
+      ['borderBottomColor','border-bottom-color'], ['borderLeftColor','border-left-color'],
+      ['outlineColor','outline-color'], ['textDecorationColor','text-decoration-color'],
+      ['columnRuleColor','column-rule-color'], ['caretColor','caret-color'],
+      ['fill','fill'], ['stroke','stroke'], ['stopColor','stop-color'],
+      ['backgroundImage','background-image'], ['boxShadow','box-shadow'], ['filter','filter'],
+      ['textShadow','text-shadow'], ['webkitTextStrokeColor','-webkit-text-stroke-color'],
+      ['scrollbarColor','scrollbar-color']
+    ];
+    const __MODERN_COLOR_RE = /(oklch|oklab|color-mix|color\(|lab\(|lch\()/i;
+
+    function __pdfOklabToRgbStr(L, A, B, alpha) {
+      const cl = v => Math.max(0, Math.min(1, v));
+      const gam = r => Math.round(Math.max(0, Math.min(1, r)) * 255);
+      const l_ = L + 0.3963377774 * A + 0.2158037573 * B;
+      const m_ = L - 0.1055613458 * A - 0.0638541728 * B;
+      const s_ = L - 0.0894841775 * A - 1.2914855480 * B;
+      const l = l_ ** 3, m = m_ ** 3, s2 = s_ ** 3;
+      let r =  4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s2;
+      let g = -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s2;
+      let b = -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s2;
+      const lin = v => v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(v, 1 / 2.4) - 0.055;
+      r = cl(lin(r)); g = cl(lin(g)); b = cl(lin(b));
+      const a = (alpha == null) ? null : cl(alpha);
+      return 'rgb' + (a !== null && a < 1 ? 'a' : '') + '(' + gam(r) + ',' + gam(g) + ',' + gam(b) + (a !== null && a < 1 ? ',' + (Math.round(a * 1000) / 1000) : '') + ')';
+    }
+    function __pdfLabToRgbStr(L, a, b, alpha) {
+      const ke = 216 / 24389, ke1 = 24389 / 27;
+      const f1 = (L + 16) / 116, f2 = a / 500 + f1, f3 = f1 - b / 200;
+      const xr = Math.pow(f2, 3) > ke ? Math.pow(f2, 3) : (116 * f2 - 16) / ke1;
+      const yr = L > ke1 * 8 ? Math.pow((L + 16) / 116, 3) : L / ke1;
+      const zr = Math.pow(f3, 3) > ke ? Math.pow(f3, 3) : (116 * f3 - 16) / ke1;
+      // D50
+      let X = xr * 0.9642956764, Y = yr, Z = zr * 0.8251046025;
+      // Bradford D50 → D65
+      const M = [[0.9555766,-0.0230393,0.0631636],[-0.0282895,1.0099416,0.0210077],[0.0122982,-0.0204830,1.3299098]];
+      const X2 = M[0][0]*X + M[0][1]*Y + M[0][2]*Z;
+      const Y2 = M[1][0]*X + M[1][1]*Y + M[1][2]*Z;
+      const Z2 = M[2][0]*X + M[2][1]*Y + M[2][2]*Z;
+      // XYZ(D65) → linear sRGB
+      let r =  3.2404542*X2 - 1.5371385*Y2 - 0.4985314*Z2;
+      let g = -0.9692660*X2 + 1.8760108*Y2 + 0.0415560*Z2;
+      let bb =  0.0556434*X2 - 0.2040259*Y2 + 1.0572252*Z2;
+      const cl = v => Math.max(0, Math.min(1, v));
+      const gam = r2 => Math.round(Math.max(0, Math.min(1, r2)) * 255);
+      const lin = v => v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(v, 1 / 2.4) - 0.055;
+      r = cl(lin(r)); g = cl(lin(g)); bb = cl(lin(bb));
+      const a2 = (alpha == null) ? null : cl(alpha);
+      return 'rgb' + (a2 !== null && a2 < 1 ? 'a' : '') + '(' + gam(r) + ',' + gam(g) + ',' + gam(bb) + (a2 !== null && a2 < 1 ? ',' + (Math.round(a2 * 1000) / 1000) : '') + ')';
+    }
+    function __pdfModernColorToRgb(raw) {
+      const s = raw.trim().toLowerCase();
+      const pct = (t, scale) => t.endsWith('%') ? parseFloat(t) / 100 * (scale || 1) : parseFloat(t);
+      let m = s.match(/^oklch\(([-+.\d]+%?)\s+([-+.\d]+%?)\s+([-+.\d]+)(?:deg)?(?:\s*\/\s*([\d.]+%?))?\)$/);
+      if (m) {
+        const L = m[1].endsWith('%') ? parseFloat(m[1]) / 100 : parseFloat(m[1]);
+        const C = pct(m[2]);
+        const hRad = parseFloat(m[3]) * Math.PI / 180;
+        const alpha = m[4] ? (m[4].endsWith('%') ? parseFloat(m[4]) / 100 : parseFloat(m[4])) : null;
+        return __pdfOklabToRgbStr(L, C * Math.cos(hRad), C * Math.sin(hRad), alpha);
+      }
+      m = s.match(/^oklab\(([-+.\d]+%?)\s+([-+.\d]+%?)\s+([-+.\d]+%?)(?:\s*\/\s*([\d.]+%?))?\)$/);
+      if (m) {
+        const L = m[1].endsWith('%') ? parseFloat(m[1]) / 100 : parseFloat(m[1]);
+        const alpha = m[4] ? (m[4].endsWith('%') ? parseFloat(m[4]) / 100 : parseFloat(m[4])) : null;
+        return __pdfOklabToRgbStr(L, pct(m[2]), pct(m[3]), alpha);
+      }
+      m = s.match(/^lab\(([-+.\d]+%?)\s+([-+.\d]+%?)\s+([-+.\d]+%?)(?:\s*\/\s*([\d.]+%?))?\)$/);
+      if (m) {
+        const L = m[1].endsWith('%') ? parseFloat(m[1]) * 1 : parseFloat(m[1]);
+        const alpha = m[4] ? (m[4].endsWith('%') ? parseFloat(m[4]) / 100 : parseFloat(m[4])) : null;
+        return __pdfLabToRgbStr(L, pct(m[2], 125), pct(m[3], 125), alpha);
+      }
+      m = s.match(/^lch\(([-+.\d]+%?)\s+([-+.\d]+%?)\s+([-+.\d]+)(?:deg)?(?:\s*\/\s*([\d.]+%?))?\)$/);
+      if (m) {
+        const L = m[1].endsWith('%') ? parseFloat(m[1]) * 1 : parseFloat(m[1]);
+        const C = pct(m[2], 150);
+        const hRad = parseFloat(m[3]) * Math.PI / 180;
+        const alpha = m[4] ? (m[4].endsWith('%') ? parseFloat(m[4]) / 100 : parseFloat(m[4])) : null;
+        return __pdfLabToRgbStr(L, C * Math.cos(hRad), C * Math.sin(hRad), alpha);
+      }
+      return null;
+    }
+    /* color(srgb r g b / a) — تحويل مباشر */
+    function __pdfColorFnToRgb(raw) {
+      const s = raw.trim().toLowerCase();
+      const m = s.match(/^color\((srgb|srgb-linear|display-p3)\s+([-+.\d]+%?)\s+([-+.\d]+%?)\s+([-+.\d]+%?)(?:\s*\/\s*([\d.]+%?))?\)$/);
+      if (!m) return __pdfModernColorToRgb(raw);
+      const cl = v => Math.max(0, Math.min(1, v));
+      const gam = r => Math.round(Math.max(0, Math.min(1, r)) * 255);
+      const conv = t => {
+        let x = t.endsWith('%') ? parseFloat(t) / 100 : parseFloat(t);
+        x = cl(x);
+        if (m[1] === 'srgb-linear') x = x <= 0.0031308 ? 12.92 * x : 1.055 * Math.pow(x, 1 / 2.4) - 0.055;
+        return x;
+      };
+      let r = conv(m[2]), g = conv(m[3]), b = conv(m[4]);
+      if (m[1] === 'display-p3') {
+        /* تقريب: تحويل P3 → sRGB خطي عبر مصفوفة تقريبية */
+        const lr = r, lg = g, lb = b;
+        r =  2.4934969*lr - 0.9313836*lg - 0.4027108*lb;
+        g = -0.8294890*lr + 1.7626641*lg + 0.0236247*lb;
+        b =  0.0358458*lr - 0.0761724*lg + 0.9568845*lb;
+      }
+      const alpha = m[5] ? (m[5].endsWith('%') ? parseFloat(m[5]) / 100 : parseFloat(m[5])) : null;
+      const a = (alpha == null) ? null : cl(alpha);
+      const lin = v => v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(v, 1 / 2.4) - 0.055;
+      const R = gam(cl(m[1] === 'srgb' ? r : lin(r))), G = gam(cl(m[1] === 'srgb' ? g : lin(g))), B = gam(cl(m[1] === 'srgb' ? b : lin(b)));
+      return 'rgb' + (a !== null && a < 1 ? 'a' : '') + '(' + R + ',' + G + ',' + B + (a !== null && a < 1 ? ',' + (Math.round(a * 1000) / 1000) : '') + ')';
+    }
+    function __pdfSanitizeColorString(str) {
+      if (!__MODERN_COLOR_RE.test(str)) return null;
+      let out = str, guard = 0, changed = false;
+      while (guard++ < 80) {
+        /* داخلي-الأول: آخر مجموعة قوسين بلا قوسين داخلية لكل دالة لون */
+        const m = out.match(/(oklch|oklab|color-mix|color|lab|lch)\(([^()]*)\)/i);
+        if (!m) break;
+        const conv = __pdfColorFnToRgb(m[0]);
+        if (conv) { out = out.slice(0, m.index) + conv + out.slice(m.index + m[0].length); changed = true; }
+        else break;
+      }
+      return changed ? out : null;
+    }
+    function __pdfSanitizeColors(root) {
+      const restore = [];
+      const pseudoRules = [];
+      const els = [root, ...root.querySelectorAll('*')];
+      let pseudoIdx = 0;
+      for (const el of els) {
+        if (!(el instanceof Element)) continue;
+        let cs;
+        try { cs = getComputedStyle(el); } catch (e) { continue; }
+        let elUndo = null;
+        for (const [prop, cssProp] of __PDF_COLOR_PROPS) {
+          let v;
+          try { v = cs[prop]; } catch (e) { continue; }
+          if (!v || typeof v !== 'string' || !__MODERN_COLOR_RE.test(v)) continue;
+          const nv = __pdfSanitizeColorString(v);
+          if (!nv) continue;
+          if (!elUndo) elUndo = [];
+          elUndo.push([cssProp, el.style.getPropertyValue(cssProp), el.style.getPropertyPriority(cssProp)]);
+          try { el.style.setProperty(cssProp, nv, 'important'); } catch (e) {}
+        }
+        /* الأشكال الزائفة ::before/::after — لا يمكن inline، نجهز قواعد CSS تُحقن في نسخة html2canvas عبر onclone */
+        for (const pseudo of ['::before', '::after']) {
+          let pcs;
+          try { pcs = getComputedStyle(el, pseudo); } catch (e) { continue; }
+          if (!pcs || pcs.content === 'none' || !pcs.content) continue;
+          const decls = [];
+          for (const [prop, cssProp] of __PDF_COLOR_PROPS) {
+            let v;
+            try { v = pcs[prop]; } catch (e) { continue; }
+            if (!v || typeof v !== 'string' || !__MODERN_COLOR_RE.test(v)) continue;
+            const nv = __pdfSanitizeColorString(v);
+            if (!nv) continue;
+            decls.push(cssProp + ':' + nv + '!important');
+          }
+          if (decls.length) {
+            if (!el.hasAttribute('data-pdf-pseudo')) el.setAttribute('data-pdf-pseudo', String(pseudoIdx++));
+            const sel = '[data-pdf-pseudo="' + el.getAttribute('data-pdf-pseudo') + '"]' + pseudo;
+            pseudoRules.push(sel + '{' + decls.join(';') + '}');
+          }
+        }
+        if (elUndo) restore.push([el, elUndo]);
+      }
+      /* الصيغ الزائفة: نطبق قواعد مؤقتة في الدوكيومنت الأصلي — النسخة المستنسخة ترثها تلقائياً */
+      let styleEl = null;
+      if (pseudoRules.length) {
+        styleEl = document.createElement('style');
+        styleEl.id = 'pdf-pseudo-sanitize';
+        styleEl.textContent = pseudoRules.join('\n');
+        document.head.appendChild(styleEl);
+      }
+      return { restore, styleEl };
+    }
+    function __pdfRestoreColors(restoreObj) {
+      const restore = Array.isArray(restoreObj) ? restoreObj : (restoreObj && restoreObj.restore) || [];
+      for (const [el, undo] of restore) {
+        if (!el || !el.style) continue;
+        for (const [cssProp, oldVal, oldPrio] of undo) {
+          try {
+            if (oldVal) el.style.setProperty(cssProp, oldVal, oldPrio);
+            else el.style.removeProperty(cssProp);
+          } catch (e) {}
+        }
+      }
+      /* إزالة قواعد الصيغ الزائفة + وسوم التتبع */
+      const st = document.getElementById('pdf-pseudo-sanitize');
+      if (st && st.parentNode) st.parentNode.removeChild(st);
+      document.querySelectorAll('[data-pdf-pseudo]').forEach(el => el.removeAttribute('data-pdf-pseudo'));
+    }
+    /* ═══════ نهاية PDF Color Sanitizer ═══════ */
+
     async function getPdfBlob(client, element, viewActions) {
       if (typeof applyPdfConfig === 'function') applyPdfConfig();
       if(viewActions) viewActions.style.display = 'none';
@@ -11223,6 +11599,22 @@
       // Force hide calc backspace button during PDF generation just in case
       element.querySelectorAll('.no-print').forEach(el => el.style.display = 'none');
       element.classList.add('pdf-render-mode');
+      /* إيقاف الانتقالات والحركات: القيم الانتقالية (oklab) تربك html2canvas */
+      document.documentElement.classList.add('pdf-generating');
+      /* صور فاضية/مكسورة (src="" أو فشل التحميل) → بكسل شفاف مؤقتاً: html2canvas يرفض توليد PDF لو فشل تحميل أي صورة */
+      const __PX = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+      const __imgUndo = [];
+      document.querySelectorAll('img').forEach(img => {
+        const src = img.getAttribute('src');
+        if (!src || ((img.complete && img.naturalWidth === 0) && !src.startsWith('data:'))) {
+          __imgUndo.push([img, src]);
+          img.setAttribute('src', __PX);
+        }
+      });
+      /* تحويل الألوان الحديثة → rgb() قبل التصيير (إصلاح unsupported color function)
+         المعالجة على جذر الدوكيومنت كاملة: html2canvas يقرأ حتى scrollbar-color على <html> وجدوال ألوان عناصر خارج الفاتورة */
+      const __san = __pdfSanitizeColors(document.documentElement);
+      const __colorRestore = __san.restore;
       const opt = {
         margin:       10,
         filename:     client + '.pdf',
@@ -11230,18 +11622,20 @@
         html2canvas:  { scale: 2, useCORS: true },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
       };
-      
+
       try {
         const pdfWorker = await html2pdf().set(opt).from(element).output('blob');
-        element.classList.remove('pdf-render-mode');
-        if(viewActions) viewActions.style.display = 'flex';
         return { pdfWorker, opt };
       } catch (error) {
-        element.classList.remove('pdf-render-mode');
-        if(viewActions) viewActions.style.display = 'flex';
         console.error("PDF Gen Error: ", error);
         showToast('<svg class="icon-svg" style="width:1.2em; height:1.2em; margin:0 4px 0 0; vertical-align:-3px; display:inline-block; color:inherit;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> حدث خطأ أثناء إنشاء الـ PDF');
         return null;
+      } finally {
+        __pdfRestoreColors(__colorRestore);
+        __imgUndo.forEach(([img, src]) => { try { if (src === null) img.removeAttribute('src'); else img.setAttribute('src', src); } catch (e) {} });
+        document.documentElement.classList.remove('pdf-generating');
+        element.classList.remove('pdf-render-mode');
+        if(viewActions) viewActions.style.display = 'flex';
       }
     }
 
@@ -12957,21 +13351,81 @@
       }
     }
 
+    /* ═══ بوب-أب كود الورشة «الانفجار البالوني» — بديل confirm() القبيح ═══ */
+    function openWorkshopCodeBurst() {
+      const existing = document.getElementById('wsBurstOverlay');
+      if (existing) existing.remove();
+      const ws = typeof getActiveWorkshopInfo === 'function' ? getActiveWorkshopInfo() : { code: 'WRK-1001' };
+      const currentCode = ws ? ws.code : 'WRK-1001';
+
+      const overlay = document.createElement('div');
+      overlay.id = 'wsBurstOverlay';
+      overlay.className = 'ws-burst-overlay';
+      overlay.onclick = (e) => { if (e.target === overlay) closeWorkshopCodeBurst(); };
+
+      /* جسيمات الانفجار: 14 جسيماً باتجاهات موزعة */
+      let particles = '';
+      for (let i = 0; i < 14; i++) {
+        const ang = (i / 14) * Math.PI * 2;
+        const dist = 130 + (i % 3) * 39;
+        particles += `<span style="--dx:${Math.cos(ang) * dist}px; --dy:${Math.sin(ang) * dist}px; animation-delay:${.12 + (i % 4) * .05}s;"></span>`;
+      }
+
+      overlay.innerHTML = `
+        <div class="ws-burst-card" role="dialog" aria-modal="true" aria-label="كود الورشة">
+          <div class="ws-burst-particles">${particles}</div>
+          <div class="ws-burst-ring"></div>
+          <div class="ws-burst-badge">
+            <svg class="icon-svg" style="width:27px; height:27px; margin:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M3 21h18M3 7v14M21 7v14M6 11h4M6 15h4M14 11h4M14 15h4M9 3l3 4 3-4"/></svg>
+          </div>
+          <h3 class="ws-burst-title">كود الورشة</h3>
+          <p class="ws-burst-sub">شارك الكود ده مع الصنايعية عشان ينضموا لورشتك ويشوفوا الفواتير المخصصة ليهم</p>
+          <div class="ws-burst-code" onclick="copyWorkshopCodeFromBurst('${currentCode}')" title="اضغط لنسخ الكود">${currentCode}</div>
+          <p class="ws-burst-hint">اضغط على الكود لنسخه</p>
+          <div class="ws-burst-actions">
+            <button type="button" class="ws-btn-generate" onclick="regenerateWorkshopFromBurst()">
+              <svg class="icon-svg" style="width:14px; height:14px; margin:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              توليد كود جديد
+            </button>
+            <button type="button" class="ws-btn-manage" onclick="manageWorkshopFromBurst()">
+              <svg class="icon-svg" style="width:14px; height:14px; margin:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              إدارة الورشة
+            </button>
+          </div>
+        </div>`;
+      document.body.appendChild(overlay);
+      /* ترجمة ديناميكية لو اللغة مش عربي */
+      try { if (typeof translateAppDOM === 'function' && typeof getAppLanguage === 'function') translateAppDOM(getAppLanguage()); } catch (e) {}
+      /* Escape يقفل */
+      const onKey = (e) => { if (e.key === 'Escape') { closeWorkshopCodeBurst(); document.removeEventListener('keydown', onKey); } };
+      document.addEventListener('keydown', onKey);
+    }
+    function closeWorkshopCodeBurst() {
+      const o = document.getElementById('wsBurstOverlay');
+      if (o) o.remove();
+    }
+    function copyWorkshopCodeFromBurst(code) {
+      const done = () => { try { showToast('تم نسخ الكود: ' + code); } catch (e) {} };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(code).then(done).catch(() => { done(); });
+      else { const ta = document.createElement('textarea'); ta.value = code; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (e) {} ta.remove(); done(); }
+    }
+    function regenerateWorkshopFromBurst() {
+      closeWorkshopCodeBurst();
+      generateNewWorkshopCode(true);
+    }
+    function manageWorkshopFromBurst() {
+      closeWorkshopCodeBurst();
+      if (typeof openWorkshopModal === 'function') openWorkshopModal();
+    }
+    window.closeWorkshopCodeBurst = closeWorkshopCodeBurst;
+    window.copyWorkshopCodeFromBurst = copyWorkshopCodeFromBurst;
+
     function handleQuickWorkshopCodeAction() {
       if (typeof isCraftsmanRole === 'function' && isCraftsmanRole()) {
         if (typeof openWorkshopModal === 'function') openWorkshopModal();
         return;
       }
-      const ws = typeof getActiveWorkshopInfo === 'function' ? getActiveWorkshopInfo() : { code: 'WRK-1001' };
-      const currentCode = ws ? ws.code : 'WRK-1001';
-      const wantsNew = confirm(`كود الورشة الحالي: ${currentCode}\n\n• انقر [موافق / OK] لتوليد كود ورشة جديد الآن ومشاركته.\n• انقر [إلغاء / Cancel] لفتح لوحة إدارة الورشة والصنايعية.`);
-      if (wantsNew) {
-        generateNewWorkshopCode(true);
-      } else {
-        if (typeof openWorkshopModal === 'function') {
-          openWorkshopModal();
-        }
-      }
+      openWorkshopCodeBurst();
     }
 
     async function joinWorkshopByCode() {
@@ -21535,7 +21989,233 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       "تم": "تم",
       "ت:": "ت:",
       "ع:": "ع:"
-},
+,
+      "(الآن)": "(now)",
+      "(التوقيع هنا)": "(Signature here)",
+      "(العبارة التمهيدية قبل المبلغ)": "(Introductory phrase before the amount)",
+      "(فارغ = استخدام اسم المصنع من الإعدادات)": "(Empty = use factory name from settings)",
+      "(مثل: الإجمالي: أو المبلغ الكلي: أو الحساب:)": "(e.g., Total: or Grand Total: or Account:)",
+      "(مثل: المبلغ المتبقي: أو الباقي المطلوب:)": "(e.g., Remaining Amount: or Balance Due:)",
+      "(مثل: المتبقي: أو الباقي:)": "(e.g., Remaining: or Balance:)",
+      "(مثل: شكراً لثقتكم الغالية ونسعد بخدمتكم دائماً!)": "(e.g., Thank you for your trust — we are always happy to serve you!)",
+      "(مثل: فاتورة رقم: أو كود الفاتورة:)": "(e.g., Invoice No.: or Invoice Code:)",
+      "(مثل: مرحباً بك يا، عزيزنا)": "(e.g., Welcome, our dear)",
+      "(يوضع اسم العميل بعدها تلقائياً)": "(Client name is inserted after it automatically)",
+      "* تنبيه الورشة: التقطيع يبدأ من الأطوال الكبيرة أولاً للاستفادة من الفضلات في المقاسات الأصغر.": "* Workshop note: Cutting starts with the largest lengths first so offcuts serve smaller sizes.",
+      "0 ج": "0 EGP",
+      "0 ج.م": "0 EGP",
+      "0 حركة": "0 movements",
+      "0 ملف": "0 files",
+      "0 نسخة": "1 copy",
+      "8 - 15 خانة": "8-15 characters",
+      "Google متصل": "Google connected",
+      "[اسم العميل]": "[Client name]",
+      "| الأطوال:": "| Lengths:",
+      "| القطع:": "| Pieces:",
+      "،": ",",
+      "، و": ", and",
+      "، يحتوي على": ", contains",
+      "أحمد محمود": "Ahmed Mahmoud",
+      "أحمد محمود (مثال تجريبي)": "Ahmed Mahmoud (demo)",
+      "أخضر زمردي": "Emerald Green",
+      "أداء فائق وغير متداخل:": "Superior non-intrusive performance:",
+      "أدخل الكمية": "Enter quantity",
+      "أدخل رمز أمان المدير (PIN):": "Enter manager security code (PIN):",
+      "أرقام": "Digits",
+      "أزرار الشاشة الرئيسية": "Home screen buttons",
+      "أزرار صفحة الإعدادات": "Settings page buttons",
+      "أسبوعياً": "Weekly",
+      "أسود كربوني": "Carbon Black",
+      "أضف ملاحظات (مثال: طريقة النقل، مواصفات خاصة للرخام، الخ...)": "Add notes (e.g., delivery method, special marble specs, etc.)",
+      "أطوال وقصاير": "Lengths & Shorts",
+      "أطوال وقصاير (سعرين + تحديد أقصى طول للقصاير)": "Lengths & Shorts (two prices + max short length)",
+      "أعد كتابة الرمز نفسه": "Re-type the same code",
+      "أعلاه، أو تم إرسالها إليه": "above, or it has been sent to him",
+      "ألواح (لوح)": "Slabs (slab)",
+      "أمر تشغيل وتقطيع الورشة (مرتب من الأكبر للأصغر)": "Workshop cutting work order (sorted largest to smallest)",
+      "أي تغيير تكتبه في الخانات ينعكس": "Any change you type in the fields is reflected",
+      "أيام": "days",
+      "إجابة سؤال الأمان:": "Security question answer:",
+      "إجمالي الأصناف": "Total items",
+      "إجمالي الحساب:": "Account total:",
+      "إجمالي الفاتورة": "Invoice total",
+      "إجمالي القطع": "Total pieces",
+      "إجمالي الكميات": "Total quantities",
+      "إجمالي المستحق": "Total due",
+      "إجمالي المسدد": "Total paid",
+      "إجمالي المسطح": "Total area",
+      "إخفاء": "Hide",
+      "إدارة المخزون": "Inventory",
+      "إذا كان المدير متواجداً معك، أدخل رمز الأمان للموافقة فوراً": "If the manager is with you, enter the security code to approve instantly",
+      "إرسال شكاوى ومقترحات": "Send complaints & suggestions",
+      "إرسال عبر واتساب": "Send via WhatsApp",
+      "إرسال للورشة عبر واتساب": "Send to workshop via WhatsApp",
+      "إضافة": "Add",
+      "إضافة صنف جديد": "Add new item",
+      "إضافة صنف جديد للمخزون": "Add new item to inventory",
+      "إضافة نوع جدول جديد": "Add new table type",
+      "إضافة وارد (+)": "Add stock (+)",
+      "إطار متين، ترويسة متوازنة، شريط إجمالي عريض للمطالبات الرسمية": "Sturdy frame, balanced header, wide total bar for official claims",
+      "إطار مزدوج وزخرفة رصينة تعطي طابع شهادات الضمان والجودة العالية": "Double frame and formal ornament with a certificate-of-quality character",
+      "إظهار": "Show",
+      "إظهار إن وجد مدفوع": "Show if paid exists",
+      "إظهار التاريخ": "Show date",
+      "إظهار التفقيط (المبلغ كتابة بالأحرف العربية)": "Show amount in words (Arabic letters)",
+      "إظهار الفاصل": "Show separator",
+      "إظهار بند حماية المستهلك وإخلاء المسؤولية القانوني": "Show consumer-protection & legal disclaimer clause",
+      "إظهار بيانات التواصل (العنوان والهاتف) في الترويسة": "Show contact info (address & phone) in header",
+      "إظهار تاريخ ووقت الطباعة": "Show print date & time",
+      "إظهار خانة توقيع واستلام العميل": "Show client signature & receipt box",
+      "إظهار شعار الشركة / المصنع": "Show company / factory logo",
+      "إظهار في الرسالة": "Show in message",
+      "إظهار كود التحقق والباركود الأمني (QR / Hash)": "Show verification code & security barcode (QR / Hash)",
+      "إعادة": "Reset",
+      "إعادة تعيين العلامات": "Reset markers",
+      "إعادة تعيين علامات التقطيع": "Reset cutting markers",
+      "إعدادات استرداد الرمز (في حال نسيانه):": "Code recovery settings (in case it is forgotten):",
+      "إعدادات التقسيط": "Installment settings",
+      "إعدادات النظام": "System Settings",
+      "إغلاق": "Close",
+      "إكرامية / بقشيش (اختياري):": "Tip / gratuity (optional):",
+      "إلغاء": "Cancel",
+      "إلغاء نظام التقسيط": "Cancel installments",
+      "إنستاباي (InstaPay)": "InstaPay",
+      "إنشاء فاتورة جديدة": "Create Invoice",
+      "احترافي": "Professional",
+      "احترافي — Professional": "Professional — Pro",
+      "اختر اسم الخامة ونوع الجدول المستهدف لعرض وتعديل نفس جدول الأسعار والمقاسات، وحفظ الأسعار مباشرة لتظهر تلقائياً بالفاتورة.": "Pick the material name and target table type to view and edit the same price/size table, and save prices directly so they appear automatically in invoices.",
+      "استعادة": "Restore",
+      "استعادة الإعدادات الافتراضية": "Restore default settings",
+      "استعادة الافتراضي": "Restore defaults",
+      "استعادة من ملف": "Restore from file",
+      "استعادة وتعيين رمز أمان المدير": "Restore & set manager security code",
+      "استيراد": "Import",
+      "استيراد خامات الأسعار غير الموجودة في المخزون": "Import price materials not yet in inventory",
+      "اسم الخامة": "Material name"
+      ,
+      "1 نسخة": "1 copy",
+      "اكتب إجابة سؤال الأمان هنا": "Type the security answer here",
+      "الأرشيف": "Archive",
+      "التحقق عبر حساب Google": "Verify via Google account",
+      "التحقق من الموافقة ↻": "Approval check ↻",
+      "الترتيب كما يظهر بالواجهة": "Order as shown in the UI",
+      "التكرار الزمني": "Time frequency",
+      "الحجم:": "Size:",
+      "الرئيسية": "Home",
+      "الربط بورشة العمل المشتركة": "Link to shared workshop",
+      "الفترة الزمنية:": "Period:",
+      "المدير": "Manager",
+      "المزيد": "More",
+      "المستخدم": "User",
+      "المظهر وتخصيص الواجهة": "Appearance & UI customization",
+      "الملف الشخصي والحساب": "Profile & Account",
+      "الملف والحساب": "Profile & Account",
+      "المُحصل": "Collected",
+      "النسخة القادمة": "Next release",
+      "بانتظار موافقة المدير": "Awaiting manager approval",
+      "بسيط": "Minimal",
+      "بسيط — Minimal": "Minimal — Min",
+      "تبديل المكانين فورا": "Swap the two instantly",
+      "تتبع التحصيل": "Collection tracking",
+      "تحديث القائمة": "Refresh list",
+      "تحريك لأسفل": "Move down",
+      "تحريك لأعلى": "Move up",
+      "تحقق من إجابة الأمان": "Verify security answer",
+      "تخصيص وترتيب أزرار الرئيسية والإعدادات": "Customize & arrange home and settings buttons",
+      "تخصيص وترتيب أزرار الواجهة": "Customize & arrange UI buttons",
+      "ترابيع": "Tiles",
+      "تنزيل": "Download",
+      "تنزيل كملف (JSON)": "Download as (JSON)",
+      "تنزيل كملف JSON": "Download as JSON",
+      "ثيم التطبيق": "App theme",
+      "جاري فحص الحساب المتصل...": "Checking connected account...",
+      "حالة الطلب:": "Request status:",
+      "حروف": "Letters",
+      "خامة": "Material",
+      "رفع نسخة لـ Google Drive": "Upload a copy to Google Drive",
+      "رمز أمان المدير الحالي:": "Current manager security code:",
+      "رمز الأمان الجديد (من 8 إلى 15 خانة):": "New security code (8-15 characters):",
+      "رموز خاصة": "Special symbols",
+      "زجاجي": "Glass",
+      "زجاجي — Glass": "Glass — Glass",
+      "زر من الرئيسية:": "Button from home:",
+      "شروط رمز الأمان المطلوب:": "Required code conditions:",
+      "عدّل أماكن الأزرار، رتّبها لأعلى وأسفل، أو انقل واستبدل أي زر بين الشاشة الرئيسية وقائمة الإعدادات": "Reposition buttons, move them up/down, or swap any button between home and settings",
+      "عصري": "Modern",
+      "عصري — Modern": "Modern — Mod",
+      "غير متصل": "Offline",
+      "ف": "F",
+      "فتح أداة تخصيص وترتيب الأزرار": "Open the button customizer",
+      "كامل": "Full",
+      "م": "M",
+      "مبيعات الشهر": "Monthly Sales",
+      "مجموعة #1": "Group #1",
+      "مجموعة #2": "Group #2",
+      "مدير": "manager",
+      "مفعّل": "Enabled",
+      "نسخ": "Copy",
+      "نفس طريقة الترابيع": "Same method as Tiles",
+      "نقل للإعدادات": "Move to settings",
+      "نقل للرئيسية": "Move to home",
+      "نقل هذا الزر إلى الشاشة الرئيسية": "Move this button to the home screen",
+      "نقل هذا الزر إلى قائمة الإعدادات": "Move this button to the settings list",
+      "نوع الحركة": "Movement type",
+      "وقت تقديم الطلب:": "Request time:",
+      "يمكن نقل أي منها للرئيسية": "Any of them can be moved to home",
+      "يمكنك تخصيص وضع تشغيل التطبيق بين": "You can customize the app mode between",
+      "٠٧:٣٨ م": "07:38 PM",
+      "٢٩‏/٩‏/٢٠٢٦ - ٠٧:٣٨ م": "29/9/2026 - 07:38 PM",
+      "ℹ️ شروط الرمز:": "ℹ️ Code rules:",
+      "⚪ تطابق الرمزين": "⚪ Both codes match",
+      "⚪ يحتوي على حروف (عربية أو إنجليزية)": "⚪ Contains letters (Arabic or English)",
+      "🔑 موافقة برمز المدير": "🔑 Approve with manager code",
+      "🔑 هل نسيت الرمز؟": "🔑 Forgot the code?"
+      ,
+      "وضع المدير (كامل الصلاحيات)": "Manager mode (full permissions)",
+      "كود ورشتك:": "Your workshop code:",
+      "[إدارة/مشاركة]": "[Manage/Share]",
+      "فاتورة هذا الشهر": "invoices this month",
+      "هذا الشهر": "this month",
+      "+ إضافة الصنايعي واعتماده": "+ Add craftsman & approve",
+      "+ إضافة أيام العمل للمستحق": "+ Add work days to dues",
+      "+ حفظ العامل": "+ Save worker",
+      "+ توليد كود جديد": "+ Generate new code",
+      "-- اختر العامل الذي أخذ فلوس --": "-- Select worker who took money --",
+      "-- اختر العامل لتسجيل حضوره --": "-- Select worker to record attendance --",
+      "0 عامل": "0 workers",
+      "0 يوم": "0 days",
+      "1 يوم": "1 day",
+      "0 فاتورة مستحقة المتابعة والسداد": "0 invoices due for follow-up & payment",
+      "فاتورة مستحقة المتابعة والسداد": "invoices due for follow-up & payment",
+      "1. اسم العامل أو الصنايعي *": "1. Worker or craftsman name *",
+      "2. اليومية المعتمدة (ج.م) *": "2. Approved daily wage (EGP) *",
+      "اسم العامل أو الصنايعي *": "Worker or craftsman name *",
+      "اليومية المعتمدة (ج.م) *": "Approved daily wage (EGP) *",
+      "كود الانضمام لورشتك (Workshop Code):": "Join code for your workshop:",
+      "طلب الانضمام": "Join request",
+      "0 فاتورة": "0 invoices",
+      "الصلاحيات": "permissions",
+      "تسجيل حضور": "Record attendance",
+      "حضور": "attendance",
+      "انضم": "Join",
+      "كود ورشة": "Workshop code",
+      "كود الورشة": "Workshop code",
+      "ورشتك": "your workshop"
+      ,
+      "المتأخرات": "Overdue",
+      "المُحصل": "Collected",
+      "مبيعات الشهر": "Monthly Sales",
+      "تتبع التحصيل": "Collection tracking",
+      "رخامي": "Marble",
+      "عصري": "Modern",
+      "بسيط": "Minimal",
+      "احترافي": "Professional",
+      "زجاجي": "Glass",
+      "استعادة الترتيب الافتراضي": "Reset default order",
+      "حفظ وتطبيق الترتيب": "Save & apply order",
+      "أداة تخصيص وترتيب الأزرار": "Button customizer tool",
+      "كود ورشتك": "Your workshop code"
+      },
       zh: {
       "فاتورة ستون للرخام والجرانيت": "石材发票通 - 大理石与花岗岩",
       "فاتورة ستون": "石材发票通",
@@ -22977,7 +23657,233 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       "تم": "تم",
       "ت:": "ت:",
       "ع:": "ع:"
-}
+,
+      "(الآن)": "（现在）",
+      "(التوقيع هنا)": "（签名处）",
+      "(العبارة التمهيدية قبل المبلغ)": "（金额前的引导语）",
+      "(فارغ = استخدام اسم المصنع من الإعدادات)": "（留空 = 使用设置中的工厂名称）",
+      "(مثل: الإجمالي: أو المبلغ الكلي: أو الحساب:)": "（如：总计：或总金额：或账目：）",
+      "(مثل: المبلغ المتبقي: أو الباقي المطلوب:)": "（如：剩余金额：或应付余额：）",
+      "(مثل: المتبقي: أو الباقي:)": "（如：剩余：或尾款：）",
+      "(مثل: شكراً لثقتكم الغالية ونسعد بخدمتكم دائماً!)": "（如：感谢您的信任，我们随时竭诚为您服务！）",
+      "(مثل: فاتورة رقم: أو كود الفاتورة:)": "（如：发票号：或发票代码：）",
+      "(مثل: مرحباً بك يا، عزيزنا)": "（如：欢迎您，亲爱的）",
+      "(يوضع اسم العميل بعدها تلقائياً)": "（客户姓名将自动添加在其后）",
+      "* تنبيه الورشة: التقطيع يبدأ من الأطوال الكبيرة أولاً للاستفادة من الفضلات في المقاسات الأصغر.": "* 车间提示：先切长料，边料用于小尺寸。",
+      "0 ج": "0 埃镑",
+      "0 ج.م": "0 埃镑",
+      "0 حركة": "0 条记录",
+      "0 ملف": "0 个文件",
+      "0 نسخة": "1 份",
+      "8 - 15 خانة": "8-15 位",
+      "Google متصل": "Google 已连接",
+      "[اسم العميل]": "【客户姓名】",
+      "| الأطوال:": "| 长度：",
+      "| القطع:": "| 件数：",
+      "，": "，",
+      "، و": "、",
+      "، يحتوي على": "，包含",
+      "أحمد محمود": "艾哈迈德·马哈茂德",
+      "أحمد محمود (مثال تجريبي)": "艾哈迈德·马哈茂德（示例）",
+      "أخضر زمردي": "祖母绿",
+      "أداء فائق وغير متداخل:": "卓越且互不干扰的性能：",
+      "أدخل الكمية": "输入数量",
+      "أدخل رمز أمان المدير (PIN):": "输入管理员安全码（PIN）：",
+      "أرقام": "数字",
+      "أزرار الشاشة الرئيسية": "主屏按钮",
+      "أزرار صفحة الإعدادات": "设置页按钮",
+      "أسبوعياً": "每周",
+      "أسود كربوني": "碳黑",
+      "أضف ملاحظات (مثال: طريقة النقل، مواصفات خاصة للرخام، الخ...)": "添加备注（如：运输方式、大理石特殊规格等）",
+      "أطوال وقصاير": "长度与短料",
+      "أطوال وقصاير (سعرين + تحديد أقصى طول للقصاير)": "长度与短料（双价格 + 短料最大长度）",
+      "أعد كتابة الرمز نفسه": "再次输入相同密码",
+      "أعلاه، أو تم إرسالها إليه": "上方，或已发送给他",
+      "ألواح (لوح)": "板材（片）",
+      "أمر تشغيل وتقطيع الورشة (مرتب من الأكبر للأصغر)": "车间切割工单（从大到小排列）",
+      "أي تغيير تكتبه في الخانات ينعكس": "在输入框中所做的任何修改都会即时反映",
+      "أيام": "天",
+      "إجابة سؤال الأمان:": "安全问题答案：",
+      "إجمالي الأصناف": "品类总数",
+      "إجمالي الحساب:": "账目合计：",
+      "إجمالي الفاتورة": "发票总额",
+      "إجمالي القطع": "总件数",
+      "إجمالي الكميات": "总数量",
+      "إجمالي المستحق": "应收合计",
+      "إجمالي المسدد": "已付合计",
+      "إجمالي المسطح": "总面积",
+      "إخفاء": "隐藏",
+      "إدارة المخزون": "库存管理",
+      "إذا كان المدير متواجداً معك، أدخل رمز الأمان للموافقة فوراً": "如管理员在场，请输入安全码立即批准",
+      "إرسال شكاوى ومقترحات": "发送投诉与建议",
+      "إرسال عبر واتساب": "通过 WhatsApp 发送",
+      "إرسال للورشة عبر واتساب": "通过 WhatsApp 发送到车间",
+      "إضافة": "添加",
+      "إضافة صنف جديد": "新增品类",
+      "إضافة صنف جديد للمخزون": "向库存新增品类",
+      "إضافة نوع جدول جديد": "新增表格类型",
+      "إضافة وارد (+)": "入库（+）",
+      "إطار متين، ترويسة متوازنة، شريط إجمالي عريض للمطالبات الرسمية": "坚固边框、平衡页眉、宽总计栏，适合正式索赔",
+      "إطار مزدوج وزخرفة رصينة تعطي طابع شهادات الضمان والجودة العالية": "双线边框与庄重纹饰，呈现质检证书质感",
+      "إظهار": "显示",
+      "إظهار إن وجد مدفوع": "有付款时显示",
+      "إظهار التاريخ": "显示日期",
+      "إظهار التفقيط (المبلغ كتابة بالأحرف العربية)": "显示大写金额（阿拉伯文字）",
+      "إظهار الفاصل": "显示分隔线",
+      "إظهار بند حماية المستهلك وإخلاء المسؤولية القانوني": "显示消费者保护与免责条款",
+      "إظهار بيانات التواصل (العنوان والهاتف) في الترويسة": "在页眉显示联系方式（地址与电话）",
+      "إظهار تاريخ ووقت الطباعة": "显示打印日期与时间",
+      "إظهار خانة توقيع واستلام العميل": "显示客户签名与收货栏",
+      "إظهار شعار الشركة / المصنع": "显示公司 / 工厂标志",
+      "إظهار في الرسالة": "在消息中显示",
+      "إظهار كود التحقق والباركود الأمني (QR / Hash)": "显示验证码与安全条码（QR / Hash）",
+      "إعادة": "重置",
+      "إعادة تعيين العلامات": "重置标记",
+      "إعادة تعيين علامات التقطيع": "重置切割标记",
+      "إعدادات استرداد الرمز (في حال نسيانه):": "密码找回设置（以防遗忘）：",
+      "إعدادات التقسيط": "分期设置",
+      "إعدادات النظام": "系统设置",
+      "إغلاق": "关闭",
+      "إكرامية / بقشيش (اختياري):": "小费（可选）：",
+      "إلغاء": "取消",
+      "إلغاء نظام التقسيط": "取消分期",
+      "إنستاباي (InstaPay)": "InstaPay 即时支付",
+      "إنشاء فاتورة جديدة": "新建发票",
+      "احترافي": "专业",
+      "احترافي — Professional": "专业 — Pro",
+      "اختر اسم الخامة ونوع الجدول المستهدف لعرض وتعديل نفس جدول الأسعار والمقاسات، وحفظ الأسعار مباشرة لتظهر تلقائياً بالفاتورة.": "选择材料名称与目标表格类型，查看并编辑同一价格尺寸表，保存后价格自动应用到发票。",
+      "استعادة": "恢复",
+      "استعادة الإعدادات الافتراضية": "恢复默认设置",
+      "استعادة الافتراضي": "恢复默认",
+      "استعادة من ملف": "从文件恢复",
+      "استعادة وتعيين رمز أمان المدير": "找回并设置管理员安全码",
+      "استيراد": "导入",
+      "استيراد خامات الأسعار غير الموجودة في المخزون": "导入库存中尚不存在的价格材料",
+      "اسم الخامة": "材料名称"
+      ,
+      "1 نسخة": "1 份",
+      "اكتب إجابة سؤال الأمان هنا": "在此输入安全问题答案",
+      "الأرشيف": "归档",
+      "التحقق عبر حساب Google": "通过 Google 账号验证",
+      "التحقق من الموافقة ↻": "检查批准 ↻",
+      "الترتيب كما يظهر بالواجهة": "与界面显示顺序一致",
+      "التكرار الزمني": "时间频率",
+      "الحجم:": "字号：",
+      "الرئيسية": "主页",
+      "الربط بورشة العمل المشتركة": "加入共享车间",
+      "الفترة الزمنية:": "时间段：",
+      "المدير": "管理员",
+      "المزيد": "更多",
+      "المستخدم": "用户",
+      "المظهر وتخصيص الواجهة": "外观与界面定制",
+      "الملف الشخصي والحساب": "个人资料与账号",
+      "الملف والحساب": "资料与账号",
+      "المُحصل": "已收",
+      "النسخة القادمة": "下个版本",
+      "بانتظار موافقة المدير": "等待管理员批准",
+      "بسيط": "简约",
+      "بسيط — Minimal": "简约 — Min",
+      "تبديل المكانين فورا": "立即互换位置",
+      "تتبع التحصيل": "回款跟踪",
+      "تحديث القائمة": "刷新列表",
+      "تحريك لأسفل": "下移",
+      "تحريك لأعلى": "上移",
+      "تحقق من إجابة الأمان": "验证安全答案",
+      "تخصيص وترتيب أزرار الرئيسية والإعدادات": "自定义并排列主页和设置按钮",
+      "تخصيص وترتيب أزرار الواجهة": "自定义并排列界面按钮",
+      "ترابيع": "贴砖",
+      "تنزيل": "下载",
+      "تنزيل كملف (JSON)": "下载为 JSON",
+      "تنزيل كملف JSON": "下载 JSON 文件",
+      "ثيم التطبيق": "应用主题",
+      "جاري فحص الحساب المتصل...": "正在检查已连接账号…",
+      "حالة الطلب:": "申请状态：",
+      "حروف": "字母",
+      "خامة": "材料",
+      "رفع نسخة لـ Google Drive": "上传副本到 Google Drive",
+      "رمز أمان المدير الحالي:": "当前管理员安全码：",
+      "رمز الأمان الجديد (من 8 إلى 15 خانة):": "新安全码（8-15 位）：",
+      "رموز خاصة": "特殊符号",
+      "زجاجي": "玻璃",
+      "زجاجي — Glass": "玻璃 — Glass",
+      "زر من الرئيسية:": "主页按钮：",
+      "شروط رمز الأمان المطلوب:": "安全码要求：",
+      "عدّل أماكن الأزرار، رتّبها لأعلى وأسفل، أو انقل واستبدل أي زر بين الشاشة الرئيسية وقائمة الإعدادات": "调整按钮位置、上下排序，或在主页与设置之间移动/互换任意按钮",
+      "عصري": "现代",
+      "عصري — Modern": "现代 — Mod",
+      "غير متصل": "离线",
+      "ف": "ف",
+      "فتح أداة تخصيص وترتيب الأزرار": "打开按钮自定义工具",
+      "كامل": "完整",
+      "م": "م",
+      "مبيعات الشهر": "本月销售",
+      "مجموعة #1": "组 #1",
+      "مجموعة #2": "组 #2",
+      "مدير": "管理员",
+      "مفعّل": "已启用",
+      "نسخ": "复制",
+      "نفس طريقة الترابيع": "同贴砖方法",
+      "نقل للإعدادات": "移到设置",
+      "نقل للرئيسية": "移到主页",
+      "نقل هذا الزر إلى الشاشة الرئيسية": "将此按钮移到主屏",
+      "نقل هذا الزر إلى قائمة الإعدادات": "将此按钮移到设置列表",
+      "نوع الحركة": "记录类型",
+      "وقت تقديم الطلب:": "申请时间：",
+      "يمكن نقل أي منها للرئيسية": "任意按钮都可移到主页",
+      "يمكنك تخصيص وضع تشغيل التطبيق بين": "你可以自定义应用运行模式：",
+      "٠٧:٣٨ م": "19:38",
+      "٢٩‏/٩‏/٢٠٢٦ - ٠٧:٣٨ م": "2026/9/29 19:38",
+      "ℹ️ شروط الرمز:": "ℹ️ 密码规则：",
+      "⚪ تطابق الرمزين": "⚪ 两次密码一致",
+      "⚪ يحتوي على حروف (عربية أو إنجليزية)": "⚪ 包含字母（阿拉伯或英文）",
+      "🔑 موافقة برمز المدير": "🔑 管理员密码批准",
+      "🔑 هل نسيت الرمز؟": "🔑 忘记密码？"
+      ,
+      "وضع المدير (كامل الصلاحيات)": "管理员模式（全部权限）",
+      "كود ورشتك:": "你的车间代码：",
+      "[إدارة/مشاركة]": "[管理/分享]",
+      "فاتورة هذا الشهر": "本月发票",
+      "هذا الشهر": "本月",
+      "+ إضافة الصنايعي واعتماده": "+ 添加工匠并批准",
+      "+ إضافة أيام العمل للمستحق": "+ 将工作日加入应得",
+      "+ حفظ العامل": "+ 保存工人",
+      "+ توليد كود جديد": "+ 生成新代码",
+      "-- اختر العامل الذي أخذ فلوس --": "-- 选择取钱的工人 --",
+      "-- اختر العامل لتسجيل حضوره --": "-- 选择记录出勤的工人 --",
+      "0 عامل": "0 工人",
+      "0 يوم": "0 天",
+      "1 يوم": "1 天",
+      "0 فاتورة مستحقة المتابعة والسداد": "0 张待跟进付款的发票",
+      "فاتورة مستحقة المتابعة والسداد": "待跟进付款的发票",
+      "1. اسم العامل أو الصنايعي *": "1. 工人或工匠姓名 *",
+      "2. اليومية المعتمدة (ج.م) *": "2. 批准日薪 (EGP) *",
+      "اسم العامل أو الصنايعي *": "工人或工匠姓名 *",
+      "اليومية المعتمدة (ج.م) *": "批准日薪 (EGP) *",
+      "كود الانضمام لورشتك (Workshop Code):": "加入你车间的代码：",
+      "طلب الانضمام": "加入申请",
+      "0 فاتورة": "0 发票",
+      "الصلاحيات": "权限",
+      "تسجيل حضور": "记录出勤",
+      "حضور": "出勤",
+      "انضم": "加入",
+      "كود ورشة": "车间代码",
+      "كود الورشة": "车间代码",
+      "ورشتك": "你的车间"
+      ,
+      "المتأخرات": "逾期",
+      "المُحصل": "已收款",
+      "مبيعات الشهر": "本月销售",
+      "تتبع التحصيل": "回款跟踪",
+      "رخامي": "大理石",
+      "عصري": "现代",
+      "بسيط": "极简",
+      "احترافي": "专业",
+      "زجاجي": "玻璃",
+      "استعادة الترتيب الافتراضي": "重置默认顺序",
+      "حفظ وتطبيق الترتيب": "保存并应用顺序",
+      "أداة تخصيص وترتيب الأزرار": "按钮自定义工具",
+      "كود ورشتك": "你的车间代码"
+      }
     };
 
     // Pre-sorted translation keys (longest first) for optimal substring matching
@@ -22985,6 +23891,43 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       en: Object.keys(TEXT_TRANSLATION_MAP.en).sort((a, b) => b.length - a.length),
       zh: Object.keys(TEXT_TRANSLATION_MAP.zh).sort((a, b) => b.length - a.length)
     };
+
+    /* ===== دمج اللغات الإضافية المحملة من assets/i18n/*.js (أوفلاين بالكامل) ===== */
+    try {
+      if (window.I18N_EXTRA) {
+        for (var _lk in window.I18N_EXTRA) {
+          if (!I18N_DATA[_lk]) I18N_DATA[_lk] = window.I18N_EXTRA[_lk];
+        }
+      }
+      if (window.MAP_EXTRA) {
+        for (var _mk in window.MAP_EXTRA) {
+          if (TEXT_TRANSLATION_MAP[_mk]) Object.assign(TEXT_TRANSLATION_MAP[_mk], window.MAP_EXTRA[_mk]);
+          else TEXT_TRANSLATION_MAP[_mk] = window.MAP_EXTRA[_mk];
+          /* إعادة بناء المفاتيح المرتبة دائماً — يشمل en/zh المدمجين واللغات الجديدة */
+          SORTED_TRANS_KEYS[_mk] = Object.keys(TEXT_TRANSLATION_MAP[_mk]).sort((a, b) => b.length - a.length);
+        }
+      }
+      for (var _sk in TEXT_TRANSLATION_MAP) {
+        if (!SORTED_TRANS_KEYS[_sk]) {
+          SORTED_TRANS_KEYS[_sk] = Object.keys(TEXT_TRANSLATION_MAP[_sk]).sort((a, b) => b.length - a.length);
+        }
+      }
+    } catch (e) { console.warn('i18n merge warning:', e); }
+    /* ===== التواريخ والأوقات والأرقام تتبع لغة التطبيق (ar-EG للعربية فقط، والباقي لغاتها) ===== */
+    try {
+      const LOCALE_BY_LANG = { ar: 'ar-EG', en: 'en-US', zh: 'zh-CN', fr: 'fr-FR', es: 'es-ES', tr: 'tr-TR', ur: 'ur-PK' };
+      const __curLoc = () => LOCALE_BY_LANG[localStorage.getItem('app_language') || 'ar'] || 'ar-EG';
+      const __patchDate = (proto, orig) => function (...args) {
+        if (args[0] === 'ar-EG' && __curLoc() !== 'ar-EG') args[0] = __curLoc();
+        return orig.apply(this, args);
+      };
+      Date.prototype.toLocaleDateString = __patchDate(Date.prototype, Date.prototype.toLocaleDateString);
+      Date.prototype.toLocaleString = __patchDate(Date.prototype, Date.prototype.toLocaleString);
+      Date.prototype.toLocaleTimeString = __patchDate(Date.prototype, Date.prototype.toLocaleTimeString);
+      window.__APP_LOCALE = __curLoc;
+    } catch (e) { console.warn('locale shim warning:', e); }
+    /* قائمة كل اللغات المتاحة (المدمجة + الإضافية) */
+    const ALL_LANGS = ['ar', 'en', 'zh'].concat(Object.keys(I18N_DATA).filter(l => !['ar', 'en', 'zh'].includes(l)));
 
     let selectedLangCandidate = 'ar';
 
@@ -23018,11 +23961,10 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
     function updateQuickLangUI(lang) {
       const lbl = document.getElementById('quickLangCurrentLabel');
       if (lbl) {
-        if (lang === 'zh') lbl.textContent = '◇ 中文';
-        else if (lang === 'en') lbl.textContent = '◈ English';
-        else lbl.textContent = '◆ العربية';
+        const cfg = I18N_DATA[lang];
+        lbl.textContent = cfg ? cfg.name : '◆ العربية';
       }
-      ['ar', 'en', 'zh'].forEach(c => {
+      ALL_LANGS.forEach(c => {
         const chk = document.getElementById('quickCheck-' + c);
         if (chk) chk.style.display = (c === lang) ? 'inline-block' : 'none';
         const opt = document.getElementById('quickOpt-' + c);
@@ -23064,7 +24006,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       selectedLangCandidate = langCode;
 
       const activeSaved = getAppLanguage();
-      ['ar', 'en', 'zh'].forEach(c => {
+      ALL_LANGS.forEach(c => {
         const card = document.getElementById('langCard-' + c);
         const radio = document.getElementById('langRadio-' + c);
         const activeBadge = document.getElementById('activeBadge-' + c);
@@ -23094,6 +24036,31 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       }
     }
 
+    /* استبدال جزئي بحدود كلمات عربية — يمنع تمزيق الكلمات بالمفاتيح القصيرة */
+    function __i18nSubst(str, map, keys) {
+      let out = str;
+      for (let i = 0; i < keys.length; i++) {
+        const arKey = keys[i];
+        if (arKey.length >= 2 && out.includes(arKey)) {
+          const re = new RegExp('(^|[^\\u0621-\\u064A])' + arKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?![\\u0621-\\u064A])', 'g');
+          out = out.replace(re, (m, pre) => pre + map[arKey]);
+        }
+      }
+      return out;
+    }
+
+    /* خط اختبار تشخيصي: يجرّب ترجمة نص أصلي بدون لمس الـDOM (يُستخدم في الاختبارات الآلية فقط) */
+    window.__i18nProbe = function (str, lang) {
+      try {
+        const map = TEXT_TRANSLATION_MAP[lang];
+        if (!map) return str;
+        const s = String(str);
+        if (map[s.trim()]) return map[s.trim()];
+        const keys = SORTED_TRANS_KEYS[lang] || Object.keys(map).sort((a, b) => b.length - a.length);
+        return __i18nSubst(s, map, keys);
+      } catch (e) { return String(str); }
+    };
+
     // Deep recursive DOM text translation engine
     function translateDOMNode(node, langCode, map) {
       if (!node) return;
@@ -23121,21 +24088,15 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
           return;
         }
 
-        // Check if substring match applies using keys sorted from longest to shortest
-        let replaced = original;
-        let didReplace = false;
+        // Substring pass (word-boundary safe) using keys sorted from longest to shortest
         if (map) {
           const keys = (typeof SORTED_TRANS_KEYS !== 'undefined' && SORTED_TRANS_KEYS[langCode]) ? SORTED_TRANS_KEYS[langCode] : Object.keys(map);
-          for (let i = 0; i < keys.length; i++) {
-            const arKey = keys[i];
-            if (arKey.length >= 2 && replaced.includes(arKey)) {
-              replaced = replaced.split(arKey).join(map[arKey]);
-              didReplace = true;
-            }
+          const after = __i18nSubst(original, map, keys);
+          if (after !== original) {
+            const leadingWs = original.match(/^\s*/)[0];
+            const trailingWs = original.match(/\s*$/)[0];
+            node.nodeValue = leadingWs + after.trim() + trailingWs;
           }
-        }
-        if (didReplace) {
-          node.nodeValue = replaced;
         }
       } else if (node.nodeType === Node.ELEMENT_NODE) {
         const tag = node.tagName.toLowerCase();
@@ -23153,15 +24114,8 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
           } else if (map && map[origPh]) {
             node.setAttribute('placeholder', map[origPh]);
           } else if (map) {
-            let replacedPh = origPh;
             const keys = (typeof SORTED_TRANS_KEYS !== 'undefined' && SORTED_TRANS_KEYS[langCode]) ? SORTED_TRANS_KEYS[langCode] : Object.keys(map);
-            for (let i = 0; i < keys.length; i++) {
-              const arKey = keys[i];
-              if (arKey.length >= 2 && replacedPh.includes(arKey)) {
-                replacedPh = replacedPh.split(arKey).join(map[arKey]);
-              }
-            }
-            node.setAttribute('placeholder', replacedPh);
+            node.setAttribute('placeholder', __i18nSubst(origPh, map, keys));
           }
         }
 
@@ -23176,15 +24130,8 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
           } else if (map && map[origTitle]) {
             node.setAttribute('title', map[origTitle]);
           } else if (map) {
-            let replacedTitle = origTitle;
             const keys = (typeof SORTED_TRANS_KEYS !== 'undefined' && SORTED_TRANS_KEYS[langCode]) ? SORTED_TRANS_KEYS[langCode] : Object.keys(map);
-            for (let i = 0; i < keys.length; i++) {
-              const arKey = keys[i];
-              if (arKey.length >= 2 && replacedTitle.includes(arKey)) {
-                replacedTitle = replacedTitle.split(arKey).join(map[arKey]);
-              }
-            }
-            node.setAttribute('title', replacedTitle);
+            node.setAttribute('title', __i18nSubst(origTitle, map, keys));
           }
         }
 
@@ -23251,7 +24198,15 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       if (document.body) {
         document.body.setAttribute('dir', langConfig.dir);
       }
+      /* مصدر الحقيقة الواحد — fmt() وDate shim يقرأان من هنا فوراً */
+      try { localStorage.setItem('app_language', langCode); } catch (e) {}
 
+      /* العناصر الديناميكية (قيم إحصائية، تواريخ، شريط كود الورشة) تُرسم أولاً */
+      try { window.__luxRefreshStats && window.__luxRefreshStats(); } catch (e) {}
+      try { renderBackupStatusBadges && renderBackupStatusBadges(); } catch (e) {}
+      try { updateWorkshopUIElements && updateWorkshopUIElements(); } catch (e) {}
+
+      /* ثم تمريرة الترجمة الشاملة تغطي كل النصوص بما فيها المنشأ حديثاً */
       translateAppDOM(langCode);
 
       if (showToastMsg && typeof showToast === 'function') {
@@ -23270,13 +24225,8 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       const alertBox = document.getElementById('langSaveSuccessAlert');
       const msgEl = document.getElementById('langSaveSuccessMsg');
       if (alertBox && msgEl) {
-        if (selectedLangCandidate === 'en') {
-          msgEl.textContent = '✓ Language successfully saved and activated in English!';
-        } else if (selectedLangCandidate === 'zh') {
-          msgEl.textContent = '✓ 系统语言已成功保存并激活为简体中文！';
-        } else {
-          msgEl.textContent = '✓ تم حفظ وتفعيل اللغة وتطبيقها بنجاح في كافة أقسام وفواتير النظام!';
-        }
+        const cfg = I18N_DATA[selectedLangCandidate];
+        msgEl.textContent = '✓ ' + (cfg && cfg.toast_lang_changed ? cfg.toast_lang_changed : 'تم الحفظ بنجاح!');
         alertBox.style.display = 'flex';
         setTimeout(() => {
           if (alertBox) alertBox.style.display = 'none';
@@ -23285,11 +24235,66 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
     }
 
     function initLanguagePage() {
+      buildExtraLangCards();
       const current = getAppLanguage();
       selectedLangCandidate = current;
       selectLanguageOption(current);
       updateQuickLangUI(current);
     }
+
+    /* بناء بطاقات اللغات الإضافية + خيارات القائمة السريعة ديناميكياً من I18N_DATA */
+    function buildExtraLangCards() {
+      const EXTRA = ALL_LANGS.filter(l => !['ar', 'en', 'zh'].includes(l));
+      const container = document.getElementById('langCard-zh');
+      if (container && container.parentElement) {
+        const grid = container.parentElement;
+        EXTRA.forEach(code => {
+          if (document.getElementById('langCard-' + code)) return;
+          const cfg = I18N_DATA[code];
+          const card = document.createElement('div');
+          card.id = 'langCard-' + code;
+          card.onclick = () => selectLanguageOption(code);
+          card.style.cssText = 'border:2px solid var(--border); border-radius:12px; padding:12px 14px; background:var(--card-bg); cursor:pointer; transition:all 0.2s ease; display:flex; justify-content:space-between; align-items:center; gap:12px;';
+          card.innerHTML = `
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div id="langRadio-${code}" style="width:20px; height:20px; border-radius:50%; border:2px solid var(--border); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <div style="width:10px; height:10px; border-radius:50%; background:var(--primary); display:none;"></div>
+              </div>
+              <div>
+                <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                  <strong style="font-size:14px; color:var(--text);">${cfg.name}</strong>
+                  <span style="font-size:10px; padding:1px 6px; border-radius:4px; font-weight:700; background:var(--card-bg-alt); color:var(--text-muted); border:1px solid var(--border);">${cfg.dir.toUpperCase()}</span>
+                  <span id="activeBadge-${code}" style="display:none; font-size:10px; padding:1px 6px; border-radius:4px; font-weight:800; background:#15803d; color:#fff;">✓</span>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px; flex-shrink:0;">
+              <div style="font-size:12.5px; font-weight:900; color:var(--text-muted);">${code.toUpperCase()}</div>
+              <button type="button" onclick="event.stopPropagation(); selectLanguageOption('${code}'); applyAndSaveLanguage();" style="padding:5px 12px; font-size:11.5px; border-radius:6px; border:1px solid var(--primary); background:var(--primary); color:var(--on-primary); font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:4px; box-shadow:var(--shadow-sm);">
+                <svg class="icon-svg" style="width:12px; height:12px;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                <span data-i18n="btn_card_save">حفظ وتفعيل</span>
+              </button>
+            </div>`;
+          grid.appendChild(card);
+        });
+      }
+      /* خيارات القائمة السريعة على الداشبورد */
+      const quickMenu = document.getElementById('quickLangMenu');
+      if (quickMenu) {
+        EXTRA.forEach(code => {
+          if (document.getElementById('quickOpt-' + code)) return;
+          const cfg = I18N_DATA[code];
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.id = 'quickOpt-' + code;
+          btn.onclick = (e) => { e.stopPropagation(); selectQuickLang(code); };
+          btn.style.cssText = 'display:flex; align-items:center; gap:8px; width:100%; padding:8px 12px; border:none; background:transparent; border-radius:8px; cursor:pointer; font-family:inherit; font-size:12.5px; font-weight:800; color:var(--text); text-align:start;';
+          btn.innerHTML = `<span id="quickCheck-${code}" style="display:none; color:var(--primary);">✓</span> <span>${cfg.name}</span>`;
+          quickMenu.appendChild(btn);
+        });
+      }
+    }
+    window.buildExtraLangCards = buildExtraLangCards;
 
     // Attach to window scope
     window.getAppLanguage = getAppLanguage;
@@ -23879,10 +24884,53 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       <span>المخزون</span>
     </button>
     <button type="button" class="lux-nav-btn" data-lux-view="settingsView" onclick="switchView('settingsView')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
-      <span>المزيد</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>الإعدادات</span>
     </button>
   </nav>
+
+  <script>
+  /* ===== Hardware Back Button Bridge (زر الرجوع في الموبايل) =====
+     MainActivity.onBackPressed يسأل window.__handleAndroidBack أولاً:
+     1) مودال مفتوح؟ → نقله (نفس فعل الضغط على الخلفية)
+     2) في هيستوري داخلية؟ → history.back() (الـpopstate الموجود بيبدّل الشاشة)
+     3) غير كده → false → الأصل: خروج/تصغير */
+  (function () {
+    'use strict';
+    /* عدّاد عمق التنقل الداخلي: pushState زائد / popstate ناقص */
+    var _ps = history.pushState.bind(history);
+    history.pushState = function () { window.__navDepth = (window.__navDepth || 0) + 1; return _ps.apply(history, arguments); };
+    window.addEventListener('popstate', function () { window.__navDepth = Math.max(0, (window.__navDepth || 0) - 1); });
+
+    function visibleModals() {
+      return Array.prototype.slice.call(document.querySelectorAll('[id$="Modal"]')).filter(function (m) {
+        if (m.id === 'splashScreen' || m.id === 'welcomeAuthModal') return false;
+        if (m.style.display === 'none' || m.style.display === '') return false;
+        var cs = getComputedStyle(m);
+        return cs.display !== 'none' && cs.visibility !== 'hidden';
+      });
+    }
+    window.__handleAndroidBack = function () {
+      try {
+        /* 1) أقرب مودال للشاشة (أعلى z-index) → نقله كأن المستخدم ضغط الخلفية */
+        var modals = visibleModals();
+        if (modals.length) {
+          modals.sort(function (a, b) { return (parseInt(getComputedStyle(b).zIndex) || 0) - (parseInt(getComputedStyle(a).zIndex) || 0); });
+          var m = modals[0];
+          m.click(); /* معظم المودالات بتقفل بنقرة على الخلفية (event.target===this) */
+          if (getComputedStyle(m).display !== 'none') m.style.display = 'none';
+          return true;
+        }
+        /* 2) أي قائمة سريعة مفتوحة (لغة/غيرها) */
+        var quick = document.getElementById('quickLangMenu');
+        if (quick && quick.style.display === 'flex') { quick.style.display = 'none'; return true; }
+        /* 3) هيستوري داخلية → رجوع طبيعي */
+        if ((window.__navDepth || 0) > 0) { history.back(); return true; }
+      } catch (e) {}
+      return false;
+    };
+  })();
+  </script>
 
   <script>
   /* ===== Luxury enhancements — additive only (RULES.md: no table logic touched) ===== */
@@ -23904,7 +24952,13 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
 
     /* --- helpers --- */
     function parseNum(v) { return parseFloat(String(v == null ? '' : v).replace(/[^\d.-]/g, '')) || 0; }
-    function fmt(n) { try { return n.toLocaleString('ar-EG', { maximumFractionDigits: 2 }); } catch (e) { return String(Math.round(n * 100) / 100); } }
+    function fmt(n) {
+      try {
+        const lang = (typeof localStorage !== 'undefined' && localStorage.getItem('app_language')) || 'ar';
+        const LOCS = { ar: 'ar-EG', en: 'en-US', zh: 'zh-CN', fr: 'fr-FR', es: 'es-ES', tr: 'tr-TR', ur: 'ur-PK' };
+        return n.toLocaleString(LOCS[lang] || 'ar-EG', { maximumFractionDigits: 2 });
+      } catch (e) { return String(Math.round(n * 100) / 100); }
+    }
 
     /* --- ② dashboard stats — READ-ONLY from marbleArchiveV2 --- */
     window.__luxRefreshStats = function () {
