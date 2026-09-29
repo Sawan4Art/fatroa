@@ -21,16 +21,33 @@
   "devDependencies": {
     "@babel/core": "^7.24.0",
     "@babel/preset-react": "^7.24.0",
+    "@capacitor/android": "^6.2.2",
+    "@capacitor/cli": "^6.2.2",
+    "@capacitor/core": "^6.2.2",
+    "@capacitor/ios": "^6.2.2",
     "electron": "^33.0.0",
     "electron-builder": "^25.0.0"
   },
   "build": {
     "appId": "com.sawan4art.fatorastone",
     "productName": "FatoraStone",
-    "directories": { "output": "release" },
-    "files": [ "electron/**", "www/**", "package.json" ],
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "electron/**",
+      "www/**",
+      "package.json"
+    ],
     "win": {
-      "target": [ { "target": "nsis", "arch": [ "x64" ] } ],
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
       "icon": "assets/icons/icon-256.png"
     },
     "nsis": {
