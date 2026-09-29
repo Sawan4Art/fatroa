@@ -125,7 +125,8 @@
         border-top: 1px solid var(--gold-line);
         box-shadow: 0 -8px 21px rgba(0,0,0,0.14);
       }
-      body { padding-bottom: calc(86px + env(safe-area-inset-bottom)); }
+      /* v1.5: مساحة الشريط السفلي = ارتفاعه الفعلي (~66px) + هامش ضئيل — كل الصفحات تخلص قبل الشريط بمسافة قصيرة جداً بدل المساحة الميتة القديمة (86px) */
+      body { padding-bottom: calc(76px + env(safe-area-inset-bottom)); }
     }
     /* شاشة الآلة الحاسبة ملء الشاشة مركزة — الشريط السفلي مخفي عشان مغطيش أزرار الآلة */
     body:has(#calculatorView.active-view) .lux-bottom-nav { display: none !important; }
@@ -1948,11 +1949,12 @@
         flex-direction: column;
         gap: 10px;
         justify-content: flex-start;
-        height: 100dvh;
-        max-height: 100dvh;
+        /* v1.5: ينتهي فوق الشريط السفلي مباشرة بدل ما يتغطى آخر عنصرين */
+        height: calc(100dvh - 76px - env(safe-area-inset-bottom));
+        max-height: calc(100dvh - 76px - env(safe-area-inset-bottom));
         background-color: var(--bg);
         box-sizing: border-box;
-        overflow: hidden;
+        overflow-y: auto;
     }
     #settingsView.active-view.in-subpage {
         height: auto !important;
@@ -1961,7 +1963,7 @@
         overflow-y: auto !important;
         display: flex !important;
         flex-direction: column !important;
-        padding: 76px 16px 24px !important;
+        padding: 76px 16px 20px !important;
         margin: 0 auto !important;
         box-sizing: border-box !important;
     }
@@ -1987,14 +1989,14 @@
         #settingsView.active-view.in-subpage.wide-subpage {
         max-width: 1260px !important;
         width: 100% !important;
-        padding: 76px 16px 32px !important;
+        padding: 76px 16px 20px !important;
         margin: 0 auto !important;
         box-sizing: border-box !important;
         overflow-x: hidden !important;
     }
     @media (max-width: 768px) {
         #settingsView.active-view.in-subpage.wide-subpage {
-            padding: 76px 10px 24px !important;
+            padding: 76px 10px 20px !important;
         }
     }
     .back-btn {
@@ -2039,7 +2041,8 @@
         box-sizing: border-box;
     }
     #settingsView.in-subpage.compact-subpage .settings-page .settings-section {
-        max-height: calc(100dvh - 165px);
+        /* v1.5: ينتهي فوق الشريط السفلي بمسافة ضئيلة (كان 100dvh - 165px فيتغطى آخر ~25px تحت الشريط) */
+        max-height: calc(100dvh - 192px - env(safe-area-inset-bottom));
         overflow-y: auto;
     }
     #settingsView:not(.in-subpage) #settingsMainMenu {
@@ -2125,7 +2128,7 @@
         overflow-y: visible !important;
         display: flex !important;
         flex-direction: column !important;
-        padding: 76px 16px 40px !important;
+        padding: 76px 16px 20px !important;
         margin: 0 auto !important;
         box-sizing: border-box !important;
     }
@@ -2474,11 +2477,12 @@
         flex-direction: column;
         gap: 10px;
         justify-content: flex-start;
-        height: 100dvh;
-        max-height: 100dvh;
+        /* v1.5: ارتفاع الشاشة ناقص الشريط السفلي — آخر عنصر (توقيع المطور) يقف فوق الشريط مباشرة بمسافة ضئيلة بدل ما يتغطى */
+        height: calc(100dvh - 76px - env(safe-area-inset-bottom));
+        max-height: calc(100dvh - 76px - env(safe-area-inset-bottom));
         background-color: var(--bg);
         box-sizing: border-box;
-        overflow: hidden;
+        overflow-y: auto;
     }
     .dash-header-card {
         background-color: transparent;
@@ -5000,15 +5004,10 @@ td { padding: 8px 6px; font-size: 12px; }
         <span data-i18n="sales_reports">تقارير المبيعات</span>
       </button>
 
-      <!-- Row 3 (خاص بالمدير + حاسبة متاحة للصنايعي والمدير) -->
+      <!-- Row 3 (خاص بالمدير فقط) — الحاسبة اتشالت من الرئيسية بطلب المالك (v1.5): بقت في شريط التنقل السفلي كبوب أب في أي مكان -->
       <button type="button" class="dash-grid-item client-data admin-only-feature" onclick="switchView('customersView'); loadCustomerData();">
         <svg class="icon-svg" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
         <span data-i18n="client_data">بيانات العملاء</span>
-      </button>
-
-      <button type="button" class="dash-grid-item calculator" onclick="switchView('calculatorView');">
-        <svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" ry="4"></rect><line x1="7" y1="9" x2="11" y2="9"></line><line x1="14" y1="7" x2="18" y2="11"></line><line x1="18" y1="7" x2="14" y2="11"></line><line x1="9" y1="14" x2="9" y2="18"></line><line x1="7" y1="16" x2="11" y2="16"></line><line x1="14" y1="15" x2="18" y2="15"></line><line x1="14" y1="17" x2="18" y2="17"></line></svg>
-        <span data-i18n="calculator">حاسبة</span>
       </button>
 
     </div>
@@ -6866,7 +6865,7 @@ td { padding: 8px 6px; font-size: 12px; }
           <button type="button" class="action-btn" style="background:var(--primary);" onclick="saveToArchive()"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> حفظ</button>
           <button type="button" id="newInvoiceCuttingBtn" class="action-btn" style="background:#0f766e;" onclick="openWorkshopCuttingSheet()"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M6 2v20M18 2v20M2 6h20M2 18h20"></path></svg> جدول التقطيع</button>
           <button type="button" class="action-btn" style="background:var(--whatsapp);" onclick="shareWhatsAppText()"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg> واتساب</button>
-          <button type="button" class="action-btn" style="background:var(--secondary);" onclick="toggleCalcModal(true)"><svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" ry="4"></rect><line x1="7" y1="9" x2="11" y2="9"></line><line x1="14" y1="7" x2="18" y2="11"></line><line x1="18" y1="7" x2="14" y2="11"></line><line x1="9" y1="14" x2="9" y2="18"></line><line x1="7" y1="16" x2="11" y2="16"></line><line x1="14" y1="15" x2="18" y2="15"></line><line x1="14" y1="17" x2="18" y2="17"></line></svg> حاسبة</button>
+          <!-- حاسبة اتشالت من صفحة الفاتورة بطلب المالك (v1.5) — بقت في شريط التنقل السفلي كبوب أب -->
           <button type="button" class="action-btn" style="background:#64748b;" onclick="openPrintInvoice()"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M12 18v-6"></path><path d="M9 15l3 3 3-3"></path></svg> طباعة (PDF)</button>
           <button type="button" class="action-btn" style="background:#3b82f6;" onclick="sharePDFInvoice()"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M10 14v-2a3 3 0 0 1 3-3h3"></path><polyline points="13 6 16 9 13 12"></polyline></svg> مشاركة PDF</button>
         </div>
@@ -7587,6 +7586,11 @@ td { padding: 8px 6px; font-size: 12px; }
         if (typeof isCraftsmanRole === 'function' && isCraftsmanRole() && !['theme', 'language'].includes(pageId)) {
             showSettingsMainMenu();
             return;
+        }
+        /* v1.5 إصلاح جذري: الصفحات الفرعية كانت بتفتح بحقول فاضية — فأي كتابة كانت بتمسح البيانات المحفوظة (اسم/وصف/هاتف/عنوان المصنع).
+           تحميل القيم المحفوظة في كل الفورمات قبل العرض عشان البيانات تتحفظ وتتلاقي دايماً */
+        if (typeof loadSettingsForm === 'function') {
+            try { loadSettingsForm(); } catch (e) {}
         }
         document.getElementById('settingsMainMenu').style.display = 'none';
         document.querySelectorAll('.settings-page').forEach(el => el.style.display = 'none');
@@ -14460,7 +14464,8 @@ td { padding: 8px 6px; font-size: 12px; }
         i18n: 'calculator',
         className: 'calculator',
         icon: '<svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" ry="4"></rect><line x1="7" y1="9" x2="11" y2="9"></line><line x1="14" y1="7" x2="18" y2="11"></line><line x1="18" y1="7" x2="14" y2="11"></line><line x1="9" y1="14" x2="9" y2="18"></line><line x1="7" y1="16" x2="11" y2="16"></line><line x1="14" y1="15" x2="18" y2="15"></line><line x1="14" y1="17" x2="18" y2="17"></line></svg>',
-        action: "switchView('calculatorView');",
+        /* v1.5: الحاسبة بقت بوب أب من أي مكان بدل الشاشة الكاملة */
+        action: "toggleCalcModal(true);",
         adminOnly: false,
         defaultCategory: 'dashboard'
       },
@@ -14581,8 +14586,8 @@ td { padding: 8px 6px; font-size: 12px; }
       'invoice_history',
       'inventory_mgmt',
       'sales_reports',
-      'client_data',
-      'calculator'
+      'client_data'
+      /* الحاسبة اتشالت من الرئيسية بطلب المالك (v1.5) — بقت زر في شريط التنقل السفلي كبوب أب */
     ];
 
     const DEFAULT_SETTINGS_KEYS = [
@@ -14614,6 +14619,12 @@ td { padding: 8px 6px; font-size: 12px; }
       }
       if (!Array.isArray(settings) || settings.length === 0) {
         settings = [...DEFAULT_SETTINGS_KEYS];
+      }
+
+      // v1.5 migration: الحاسبة بقت في شريط التنقل السفلي — شيلها مرة واحدة من أي تخطيط محفوظ قديم للرئيسية
+      if (dash.includes('calculator')) {
+        dash = dash.filter(function (k) { return k !== 'calculator'; });
+        try { localStorage.setItem('app_dashboard_buttons_layout', JSON.stringify(dash)); } catch (e) {}
       }
 
       // Filter out any nonexistent keys
@@ -25069,6 +25080,11 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
       <span>المخزون</span>
     </button>
+    <!-- الحاسبة: بوب أب يشتغل من أي شاشة في التطبيق (v1.5) -->
+    <button type="button" class="lux-nav-btn" id="luxNavCalcBtn" aria-label="الحاسبة" title="الحاسبة" onclick="toggleCalcModal(true)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><rect x="3" y="3" width="18" height="18" rx="4" ry="4"/><line x1="7" y1="9" x2="11" y2="9"/><line x1="14" y1="7" x2="18" y2="11"/><line x1="18" y1="7" x2="14" y2="11"/><line x1="9" y1="14" x2="9" y2="18"/><line x1="7" y1="16" x2="11" y2="16"/><line x1="14" y1="15" x2="18" y2="15"/><line x1="14" y1="17" x2="18" y2="17"/></svg>
+      <span>الحاسبة</span>
+    </button>
     <button type="button" class="lux-nav-btn" data-lux-view="settingsView" onclick="switchView('settingsView')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       <span>الإعدادات</span>
@@ -25091,7 +25107,8 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
     function visibleModals() {
       return Array.prototype.slice.call(document.querySelectorAll('[id$="Modal"]')).filter(function (m) {
         if (m.id === 'splashScreen' || m.id === 'welcomeAuthModal') return false;
-        if (m.style.display === 'none' || m.style.display === '') return false;
+        /* v1.5: الاعتماد على الستايل المحسوب بدل الستايل المضمن — عشان مودالات زي calcModal
+           اللي بتظهر بكلاس (.open) تتقفل برضه بزر الرجوع في أندرويد */
         var cs = getComputedStyle(m);
         return cs.display !== 'none' && cs.visibility !== 'hidden';
       });
@@ -25104,7 +25121,15 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
           modals.sort(function (a, b) { return (parseInt(getComputedStyle(b).zIndex) || 0) - (parseInt(getComputedStyle(a).zIndex) || 0); });
           var m = modals[0];
           m.click(); /* معظم المودالات بتقفل بنقرة على الخلفية (event.target===this) */
-          if (getComputedStyle(m).display !== 'none') m.style.display = 'none';
+          /* v1.5: الـ fallback ده بس للمودالات اللي ماقفلتش بنفسها.
+             المودالات اللي بتعتمد على كلاس (.open) زي calcModal و calcHistoryModal
+             بيقفل نفسها من جوه — والـ overlay اللي ليه transition (calcHistoryModal)
+             computed visibility بيفضل visible لحظة الضغط، فعاين pointer-events
+             اللي بيتغير فوراً + كلاس open عشان منفرضش عليها display:none ونكسرها */
+          var mcs = getComputedStyle(m);
+          var classDrivenOpen = m.classList.contains('open');
+          var stillShown = mcs.display !== 'none' && mcs.visibility !== 'hidden' && mcs.pointerEvents !== 'none';
+          if (stillShown && !classDrivenOpen) m.style.display = 'none';
           return true;
         }
         /* 2) أي قائمة سريعة مفتوحة (لغة/غيرها) */
