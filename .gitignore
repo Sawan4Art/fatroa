@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+www/
+release/
+
+# Packaging artifacts
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties
+android/.idea/
+ios/App/Pods/
+ios/App/Podfile.lock
+ios/App/output/
+ios/App/App/public/
+ios/DerivedData/
+*.xcworkspace/xcuserdata/
+
+# Electron builder output
+electron/dist/
+
+# Environment & secrets
+.env
+*.local
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Large binaries / archives (keep repo light)
+*.zip

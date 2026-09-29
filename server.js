@@ -118,6 +118,16 @@ const server = http.createServer(async (req, res) => {
 
   // --- API Routes for Live Multi-Tenant Synchronization ---
   if (pathname.startsWith('/api/')) {
+    if (pathname === '/api/health' && req.method === 'GET') {
+      return sendJson(res, 200, {
+        success: true,
+        status: 'ok',
+        workshops: Object.keys(workshopsStore).length,
+        uptimeSec: Math.floor(process.uptime()),
+        time: new Date().toISOString()
+      });
+    }
+
     if (pathname === '/api/workshop/sync' && req.method === 'POST') {
       const data = await parseBody(req);
       if (!data || !data.id) {
@@ -307,5 +317,14 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
+});
+
+// --- Resilience: never crash the server on a bad request or async error ---
+process.on('uncaughtException', (err) => {
+  console.error('[clientError] uncaughtException:', err && err.message);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('[clientError] unhandledRejection:', reason);
 });
 

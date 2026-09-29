@@ -1,14 +1,42 @@
 {
-  "name": "fatoura",
+  "name": "fatora-stone",
   "version": "1.0.0",
+  "description": "فاتورة ستون — إدارة مصانع وورش الرخام والجرانيت (Marble & Granite workshop management)",
+  "main": "server.js",
   "scripts": {
     "dev": "node server.js",
-    "build": "mkdir -p dist && cp index.html dist/ && (cp -r assets dist/ 2>/dev/null || true)",
-    "lint": "htmlhint index.html || true",
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "node build-www.js",
+    "electron:start": "electron electron/main.js",
+    "electron:dev": "FATORA_DEV=1 electron electron/main.js",
+    "electron:build": "electron-builder --win nsis",
+    "cap:sync": "npx cap sync",
+    "cap:add:android": "npx cap add android",
+    "cap:add:ios": "npx cap add ios",
+    "cap:open:android": "npx cap open android",
+    "cap:open:ios": "npx cap open ios"
   },
+  "author": "Sawan4Art",
+  "license": "MIT",
   "devDependencies": {
-    "htmlhint": "^1.9.2",
-    "puppeteer": "^25.9.0"
+    "@babel/core": "^7.24.0",
+    "@babel/preset-react": "^7.24.0",
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0"
+  },
+  "build": {
+    "appId": "com.sawan4art.fatorastone",
+    "productName": "FatoraStone",
+    "directories": { "output": "release" },
+    "files": [ "electron/**", "www/**", "package.json" ],
+    "win": {
+      "target": [ { "target": "nsis", "arch": [ "x64" ] } ],
+      "icon": "assets/icons/icon-256.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "artifactName": "FatoraStone-Setup-${version}.${ext}"
+    }
   }
 }
