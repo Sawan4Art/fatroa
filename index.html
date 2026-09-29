@@ -4330,6 +4330,271 @@
       border: 1px solid rgba(139, 92, 246, 0.25);
     }
 
+    /* ============================================================
+       themeSkinsLayer — 5 ثيمات × وضع فاتح/داكن
+       (RULES.md قاعدة 1: شكل فقط — لا يلمس منطق الجداول التسعة إطلاقاً)
+       الزوايا على خط فيبوناتشي 8·13·21·34 (φ=1.618) — قاعدة 2
+       marble = الهوية الأصلية المرجعية (بدون تجاوز)
+       ============================================================ */
+    /* ---------- ② عصري Modern — نيلي/بنفسجي حيوي ---------- */
+    :root[data-skin="modern"] {
+      --primary:#4f46e5; --secondary:#7c3aed; --on-primary:#ffffff;
+      --gold:#4f46e5; --gold-bright:#6366f1; --gold-soft:rgba(99,102,241,.12);
+      --gold-line:rgba(99,102,241,.35);
+      --bg:#f4f6fb; --card-bg:#ffffff; --card-bg-alt:#f8fafc;
+      --text:#0f172a; --text-muted:#64748b; --text-light:#94a3b8;
+      --border:#e2e8f0; --border-dark:#cbd5e1;
+      --input-bg:#ffffff; --input-border:#cbd5e1; --input-text:#0f172a;
+      --header-grad:linear-gradient(135deg,#4f46e5,#7c3aed);
+      --th-bg:#eef2ff; --th-text:#3730a3; --th-border:#c7d2fe;
+      --subtotal-bg:#eef2ff;
+      --grand-row-bg:#f8fafc; --grand-row-text:#0f172a; --grand-row-border:#e2e8f0;
+      --grand-final-bg:#4f46e5; --grand-final-text:#ffffff;
+      --radius:34px; --radius-sm:21px; --radius-phi:21px; --radius-phi-lg:34px; --radius-phi-xl:55px;
+      --shadow-sm:0 1px 3px rgba(79,70,229,.08),0 1px 2px rgba(15,23,42,.05);
+      --shadow-md:0 6px 12px -2px rgba(79,70,229,.12),0 3px 6px -2px rgba(15,23,42,.06);
+      --shadow-lg:0 14px 24px -4px rgba(79,70,229,.16),0 6px 10px -4px rgba(15,23,42,.07);
+      --shadow-xl:0 24px 36px -6px rgba(79,70,229,.20),0 10px 16px -6px rgba(15,23,42,.08);
+    }
+    :root[data-skin="modern"][data-theme="dark"],
+    :root[data-skin="modern"][data-theme="amoled"] {
+      --primary:#818cf8; --secondary:#a78bfa; --on-primary:#0b1020;
+      --gold:#818cf8; --gold-bright:#a5b4fc; --gold-soft:rgba(129,140,248,.16);
+      --gold-line:rgba(129,140,248,.38);
+      --bg:#0b1020; --card-bg:#151b2e; --card-bg-alt:#1a2138;
+      --text:#eef2ff; --text-muted:#94a3b8; --text-light:#64748b;
+      --border:#232b45; --border-dark:#303a5c;
+      --input-bg:#1a2138; --input-border:#303a5c; --input-text:#eef2ff;
+      --header-grad:linear-gradient(135deg,#4f46e5,#7c3aed);
+      --th-bg:#1e2745; --th-text:#c7d2fe; --th-border:#303a5c;
+      --subtotal-bg:#1a2138;
+      --grand-row-bg:#1a2138; --grand-row-text:#eef2ff; --grand-row-border:#232b45;
+      --grand-final-bg:#818cf8; --grand-final-text:#0b1020;
+      --shadow-sm:0 1px 3px rgba(0,0,0,.4); --shadow-md:0 6px 10px rgba(0,0,0,.5);
+      --shadow-lg:0 14px 20px rgba(0,0,0,.6); --shadow-xl:0 24px 30px rgba(0,0,0,.7);
+    }
+
+    /* ---------- ③ بسيط Minimal — أحادي مسطح ---------- */
+    :root[data-skin="minimal"] {
+      --primary:#171717; --secondary:#404040; --on-primary:#ffffff;
+      --gold:#171717; --gold-bright:#404040; --gold-soft:rgba(0,0,0,.06);
+      --gold-line:#e5e5e5;
+      --bg:#fafafa; --card-bg:#ffffff; --card-bg-alt:#f5f5f5;
+      --text:#171717; --text-muted:#737373; --text-light:#a3a3a3;
+      --border:#e5e5e5; --border-dark:#d4d4d4;
+      --input-bg:#ffffff; --input-border:#d4d4d4; --input-text:#171717;
+      --header-grad:linear-gradient(135deg,#171717,#171717);
+      --th-bg:#f5f5f5; --th-text:#171717; --th-border:#e5e5e5;
+      --subtotal-bg:#f5f5f5;
+      --grand-row-bg:#fafafa; --grand-row-text:#171717; --grand-row-border:#e5e5e5;
+      --grand-final-bg:#171717; --grand-final-text:#ffffff;
+      --radius:13px; --radius-sm:8px; --radius-phi:8px; --radius-phi-lg:13px; --radius-phi-xl:21px;
+      --shadow-sm:0 1px 2px rgba(0,0,0,.05);
+      --shadow-md:0 2px 4px rgba(0,0,0,.06);
+      --shadow-lg:0 4px 8px rgba(0,0,0,.07);
+      --shadow-xl:0 6px 12px rgba(0,0,0,.08);
+    }
+    :root[data-skin="minimal"][data-theme="dark"],
+    :root[data-skin="minimal"][data-theme="amoled"] {
+      --primary:#fafafa; --secondary:#d4d4d4; --on-primary:#0a0a0a;
+      --gold:#fafafa; --gold-bright:#d4d4d4; --gold-soft:rgba(255,255,255,.07);
+      --gold-line:#262626;
+      --bg:#0a0a0a; --card-bg:#141414; --card-bg-alt:#1a1a1a;
+      --text:#fafafa; --text-muted:#a3a3a3; --text-light:#737373;
+      --border:#262626; --border-dark:#333333;
+      --input-bg:#1a1a1a; --input-border:#333333; --input-text:#fafafa;
+      --header-grad:linear-gradient(135deg,#141414,#141414);
+      --th-bg:#1f1f1f; --th-text:#fafafa; --th-border:#262626;
+      --subtotal-bg:#1a1a1a;
+      --grand-row-bg:#1a1a1a; --grand-row-text:#fafafa; --grand-row-border:#262626;
+      --grand-final-bg:#fafafa; --grand-final-text:#0a0a0a;
+      --shadow-sm:0 1px 2px rgba(0,0,0,.5); --shadow-md:0 2px 4px rgba(0,0,0,.55);
+      --shadow-lg:0 4px 8px rgba(0,0,0,.6); --shadow-xl:0 6px 12px rgba(0,0,0,.65);
+    }
+
+    /* ---------- ④ احترافي Professional — كحلي مؤسسي ---------- */
+    :root[data-skin="pro"] {
+      --primary:#0f4c81; --secondary:#1d6fb8; --on-primary:#ffffff;
+      --gold:#0f4c81; --gold-bright:#1d6fb8; --gold-soft:rgba(15,76,129,.10);
+      --gold-line:rgba(15,76,129,.30);
+      --bg:#eef2f7; --card-bg:#ffffff; --card-bg-alt:#f5f8fb;
+      --text:#1e293b; --text-muted:#5a6b7f; --text-light:#8ea0b5;
+      --border:#d8e0ea; --border-dark:#c2cedd;
+      --input-bg:#ffffff; --input-border:#c2cedd; --input-text:#1e293b;
+      --header-grad:linear-gradient(135deg,#0f4c81,#1d6fb8);
+      --th-bg:#e3ebf4; --th-text:#0f3a61; --th-border:#c2cedd;
+      --subtotal-bg:#e3ebf4;
+      --grand-row-bg:#f5f8fb; --grand-row-text:#1e293b; --grand-row-border:#d8e0ea;
+      --grand-final-bg:#0f4c81; --grand-final-text:#ffffff;
+      --radius:21px; --radius-sm:13px; --radius-phi:13px; --radius-phi-lg:21px; --radius-phi-xl:34px;
+      --shadow-sm:0 1px 3px rgba(15,40,80,.08),0 1px 2px rgba(15,40,80,.05);
+      --shadow-md:0 5px 10px -2px rgba(15,40,80,.13),0 3px 5px -2px rgba(15,40,80,.07);
+      --shadow-lg:0 12px 20px -4px rgba(15,40,80,.16),0 5px 9px -4px rgba(15,40,80,.08);
+      --shadow-xl:0 20px 30px -6px rgba(15,40,80,.19),0 9px 14px -6px rgba(15,40,80,.09);
+    }
+    :root[data-skin="pro"][data-theme="dark"],
+    :root[data-skin="pro"][data-theme="amoled"] {
+      --primary:#4d9fdc; --secondary:#6cb1e8; --on-primary:#0d1420;
+      --gold:#4d9fdc; --gold-bright:#6cb1e8; --gold-soft:rgba(77,159,220,.14);
+      --gold-line:rgba(77,159,220,.35);
+      --bg:#0d1420; --card-bg:#14202f; --card-bg-alt:#18283c;
+      --text:#e6edf5; --text-muted:#93a7bd; --text-light:#64809c;
+      --border:#24354a; --border-dark:#31465f;
+      --input-bg:#18283c; --input-border:#31465f; --input-text:#e6edf5;
+      --header-grad:linear-gradient(135deg,#0f4c81,#1d6fb8);
+      --th-bg:#1a2c42; --th-text:#bcd9f0; --th-border:#31465f;
+      --subtotal-bg:#18283c;
+      --grand-row-bg:#18283c; --grand-row-text:#e6edf5; --grand-row-border:#24354a;
+      --grand-final-bg:#14508c; --grand-final-text:#e6f0fa;
+      --shadow-sm:0 1px 3px rgba(0,0,0,.4); --shadow-md:0 5px 9px rgba(0,0,0,.5);
+      --shadow-lg:0 12px 18px rgba(0,0,0,.6); --shadow-xl:0 20px 28px rgba(0,0,0,.7);
+    }
+
+    /* ---------- ⑤ زجاجي Glass — زجاج مصنفر شفاف ---------- */
+    :root[data-skin="glass"] {
+      --primary:#7c3aed; --secondary:#a855f7; --on-primary:#ffffff;
+      --gold:#7c3aed; --gold-bright:#a855f7; --gold-soft:rgba(168,85,247,.13);
+      --gold-line:rgba(168,85,247,.32);
+      --bg:linear-gradient(160deg,#e0e7ff 0%,#fce7f3 48%,#dbeafe 100%);
+      --card-bg:rgba(255,255,255,.62); --card-bg-alt:rgba(255,255,255,.45);
+      --text:#1e1b4b; --text-muted:#6b6390; --text-light:#9c94c4;
+      --border:rgba(255,255,255,.75); --border-dark:rgba(255,255,255,.9);
+      --input-bg:rgba(255,255,255,.70); --input-border:rgba(255,255,255,.9); --input-text:#1e1b4b;
+      --header-grad:linear-gradient(135deg,rgba(124,58,237,.94),rgba(168,85,247,.94));
+      --th-bg:rgba(255,255,255,.60); --th-text:#4c1d95; --th-border:rgba(255,255,255,.8);
+      --subtotal-bg:rgba(255,255,255,.55);
+      --grand-row-bg:rgba(255,255,255,.45); --grand-row-text:#1e1b4b; --grand-row-border:rgba(255,255,255,.7);
+      --grand-final-bg:#7c3aed; --grand-final-text:#ffffff;
+      --radius:34px; --radius-sm:21px; --radius-phi:21px; --radius-phi-lg:34px; --radius-phi-xl:55px;
+      --shadow-sm:0 2px 8px rgba(124,58,237,.08);
+      --shadow-md:0 8px 20px -4px rgba(124,58,237,.14);
+      --shadow-lg:0 16px 32px -6px rgba(124,58,237,.18);
+      --shadow-xl:0 24px 44px -8px rgba(124,58,237,.22);
+    }
+    :root[data-skin="glass"][data-theme="dark"],
+    :root[data-skin="glass"][data-theme="amoled"] {
+      --primary:#c4b5fd; --secondary:#a78bfa; --on-primary:#1e1b4b;
+      --gold:#c4b5fd; --gold-bright:#ddd6fe; --gold-soft:rgba(196,181,253,.14);
+      --gold-line:rgba(196,181,253,.30);
+      --bg:linear-gradient(160deg,#1e1b4b 0%,#312e81 42%,#4c1d95 78%,#312e81 100%);
+      --card-bg:rgba(255,255,255,.08); --card-bg-alt:rgba(255,255,255,.055);
+      --text:#f5f3ff; --text-muted:#a99fd1; --text-light:#7f75a8;
+      --border:rgba(255,255,255,.14); --border-dark:rgba(255,255,255,.22);
+      --input-bg:rgba(255,255,255,.09); --input-border:rgba(255,255,255,.20); --input-text:#f5f3ff;
+      --header-grad:linear-gradient(135deg,rgba(124,58,237,.55),rgba(168,85,247,.45));
+      --th-bg:rgba(255,255,255,.09); --th-text:#ddd6fe; --th-border:rgba(255,255,255,.16);
+      --subtotal-bg:rgba(255,255,255,.07);
+      --grand-row-bg:rgba(255,255,255,.06); --grand-row-text:#f5f3ff; --grand-row-border:rgba(255,255,255,.13);
+      --grand-final-bg:#c4b5fd; --grand-final-text:#1e1b4b;
+      --shadow-sm:0 2px 8px rgba(0,0,0,.30); --shadow-md:0 8px 18px rgba(0,0,0,.38);
+      --shadow-lg:0 16px 28px rgba(0,0,0,.46); --shadow-xl:0 24px 40px rgba(0,0,0,.55);
+    }
+    :root[data-skin="glass"] body { background-attachment:fixed; }
+    :root[data-skin="glass"] .lux-stat-card,
+    :root[data-skin="glass"] .dash-grid-item,
+    :root[data-skin="glass"] .lux-search {
+      backdrop-filter:blur(18px) saturate(160%); -webkit-backdrop-filter:blur(18px) saturate(160%);
+    }
+    :root[data-skin="glass"] .lux-bottom-nav {
+      background:rgba(255,255,255,.55);
+      backdrop-filter:blur(22px) saturate(170%); -webkit-backdrop-filter:blur(22px) saturate(170%);
+    }
+    :root[data-skin="glass"][data-theme="dark"] .lux-bottom-nav,
+    :root[data-skin="glass"][data-theme="amoled"] .lux-bottom-nav { background:rgba(30,27,75,.58); }
+    :root[data-skin="glass"] .overdue-banner {
+      background:linear-gradient(135deg,rgba(220,38,38,.92),rgba(190,18,60,.92)) !important;
+      color:#ffffff !important;
+    }
+    :root[data-skin="glass"] .overdue-banner * { color:#ffffff !important; }
+
+    /* ---------- توحيد العناصر التي كانت بألوان ثابتة (غير الرخامي) ---------- */
+    :root[data-skin="modern"] .dash-grid-item,
+    :root[data-skin="minimal"] .dash-grid-item,
+    :root[data-skin="pro"] .dash-grid-item,
+    :root[data-skin="glass"] .dash-grid-item {
+      background: var(--card-bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+    :root[data-skin="modern"] .dash-grid-item .icon-svg,
+    :root[data-skin="minimal"] .dash-grid-item .icon-svg,
+    :root[data-skin="pro"] .dash-grid-item .icon-svg,
+    :root[data-skin="glass"] .dash-grid-item .icon-svg { color: var(--primary); }
+    :root[data-skin="modern"] .dash-grid-item.create-invoice,
+    :root[data-skin="minimal"] .dash-grid-item.create-invoice,
+    :root[data-skin="pro"] .dash-grid-item.create-invoice,
+    :root[data-skin="glass"] .dash-grid-item.create-invoice {
+      background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 88%, #000), var(--primary));
+      color: var(--on-primary) !important;
+      border-color: color-mix(in srgb, var(--primary) 55%, transparent);
+      box-shadow: var(--shadow-md);
+    }
+    :root[data-skin="modern"] .dash-grid-item.create-invoice .icon-svg,
+    :root[data-skin="minimal"] .dash-grid-item.create-invoice .icon-svg,
+    :root[data-skin="pro"] .dash-grid-item.create-invoice .icon-svg,
+    :root[data-skin="glass"] .dash-grid-item.create-invoice .icon-svg { color: var(--on-primary); }
+    :root[data-skin="modern"] .lux-stat-main,
+    :root[data-skin="minimal"] .lux-stat-main,
+    :root[data-skin="pro"] .lux-stat-main,
+    :root[data-skin="glass"] .lux-stat-main {
+      background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 82%, #000), var(--primary));
+      border-color: color-mix(in srgb, var(--primary) 55%, transparent);
+      color: var(--on-primary);
+    }
+    :root[data-skin="modern"] .lux-stat-main .lux-stat-lbl,
+    :root[data-skin="modern"] .lux-stat-main .lux-stat-num,
+    :root[data-skin="modern"] .lux-stat-main .lux-stat-sub,
+    :root[data-skin="minimal"] .lux-stat-main .lux-stat-lbl,
+    :root[data-skin="minimal"] .lux-stat-main .lux-stat-num,
+    :root[data-skin="minimal"] .lux-stat-main .lux-stat-sub,
+    :root[data-skin="pro"] .lux-stat-main .lux-stat-lbl,
+    :root[data-skin="pro"] .lux-stat-main .lux-stat-num,
+    :root[data-skin="pro"] .lux-stat-main .lux-stat-sub,
+    :root[data-skin="glass"] .lux-stat-main .lux-stat-lbl,
+    :root[data-skin="glass"] .lux-stat-main .lux-stat-num,
+    :root[data-skin="glass"] .lux-stat-main .lux-stat-sub { color: var(--on-primary); }
+    :root[data-skin="minimal"] .lux-stat-card,
+    :root[data-skin="minimal"] .dash-grid-item { box-shadow:none; }
+    /* قائمة الإعدادات: بطاقات بألوان inline → تُوحَّد بالقوة خارج ثيم رخامي */
+    :root[data-skin="modern"] .settings-grid-item,
+    :root[data-skin="minimal"] .settings-grid-item,
+    :root[data-skin="pro"] .settings-grid-item,
+    :root[data-skin="glass"] .settings-grid-item {
+      background: var(--card-bg) !important;
+      color: var(--text) !important;
+      border: 1px solid var(--border) !important;
+    }
+    :root[data-skin="modern"] .settings-grid-item .icon-svg,
+    :root[data-skin="minimal"] .settings-grid-item .icon-svg,
+    :root[data-skin="pro"] .settings-grid-item .icon-svg,
+    :root[data-skin="glass"] .settings-grid-item .icon-svg { color: var(--primary) !important; }
+    /* زر إضافة مقاس داخل الجداول: شكل فقط — يتبع لون الثيم (المنطق لم يُلمس) */
+    :root[data-skin="modern"] .btn-add-size-prominent,
+    :root[data-skin="minimal"] .btn-add-size-prominent,
+    :root[data-skin="pro"] .btn-add-size-prominent,
+    :root[data-skin="glass"] .btn-add-size-prominent {
+      background: var(--primary) !important;
+      color: var(--on-primary) !important;
+      border-radius: var(--radius-sm) !important;
+    }
+
+    /* ---------- بطاقات اختيار الثيم في الإعدادات (φ) ---------- */
+    .skin-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:var(--sp-1); margin-bottom:var(--sp-2); }
+    @media (max-width:360px) { .skin-grid { grid-template-columns:repeat(3,1fr); } }
+    .skin-card {
+      background:var(--card-bg); border:1.5px solid var(--border); border-radius:var(--radius-phi);
+      padding:var(--sp-1) 4px 8px; cursor:pointer; text-align:center;
+      transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+      display:flex; flex-direction:column; align-items:center; gap:6px; font-family:inherit;
+    }
+    .skin-card:hover { transform:translateY(-2px); box-shadow:var(--shadow-md); }
+    .skin-card.active { border-color:var(--primary); box-shadow:0 0 0 3px var(--gold-soft); }
+    .skin-dots { display:flex; gap:4px; }
+    .skin-dot { width:13px; height:13px; border-radius:50%; box-shadow:inset 0 0 0 1px rgba(0,0,0,.08); }
+    .skin-name { font-size:11px; font-weight:800; color:var(--text); }
+    .skin-en { font-size:9px; color:var(--text-light); font-weight:600; }
+
 </style>
   <meta property="og:image" content="https://bolt.new/static/og_default.png">
     <meta name="twitter:card" content="summary_large_image">
@@ -4594,8 +4859,12 @@
               <button type="button" class="mode-btn" id="btnModeDark" onclick="setAppMode('dark')"><svg class="icon-svg" style="width:1.2em; height:1.2em; margin:0 4px 0 0; vertical-align:-3px; display:inline-block; color:inherit;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg> Dark</button>
               <button type="button" class="mode-btn" id="btnModeAmoled" onclick="setAppMode('amoled')"><svg class="icon-svg" style="width:1.2em; height:1.2em; margin:0 4px 0 0; vertical-align:-3px; display:inline-block; color:inherit;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><path d="M12 18h.01"/></svg> AMOLED</button>
             </div>
-            <h4 style="margin:4px 0 6px; font-size:12px;">لون التطبيق</h4>
-            <div class="theme-grid" id="colorSwatchesContainer"></div>
+            <h4 style="margin:2px 0 6px; font-size:12px;">ثيم التطبيق</h4>
+            <div class="skin-grid" id="skinCardsContainer"></div>
+            <div id="accentColorSection">
+              <h4 style="margin:4px 0 6px; font-size:12px;">لون التطبيق</h4>
+              <div class="theme-grid" id="colorSwatchesContainer"></div>
+            </div>
 
             <!-- Interface & Buttons Customizer Section Inside Theme Page -->
             <div style="margin-top:20px; padding:16px; border-radius:14px; background:var(--card-bg-alt); border:1.5px solid var(--border); box-shadow:var(--shadow-sm);">
@@ -7015,51 +7284,114 @@
     function convertArabicNumerals(str) { if (!str) return ''; const ar = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩']; return String(str).replace(/[٠-٩]/g, d => ar.indexOf(d)); }
 
     /* ===== Theme ===== */
+    /* 5 ثيمات (skins) × وضع فاتح/داكن — marble يحافظ على نظام الألوان الأصلي */
+    const APP_SKINS = [
+      { id: 'marble',  name: 'رخامي',   en: 'Marble',       dots: ['#f6f2ea', '#b8860b', '#171412'] },
+      { id: 'modern',  name: 'عصري',    en: 'Modern',       dots: ['#f4f6fb', '#4f46e5', '#7c3aed'] },
+      { id: 'minimal', name: 'بسيط',    en: 'Minimal',      dots: ['#ffffff', '#171717', '#a3a3a3'] },
+      { id: 'pro',     name: 'احترافي', en: 'Professional', dots: ['#f5f8fb', '#0f4c81', '#1d6fb8'] },
+      { id: 'glass',   name: 'زجاجي',   en: 'Glass',        dots: ['#e0e7ff', '#7c3aed', '#a855f7'] }
+    ];
+    const SKIN_META_COLOR = { marble: '#b8860b', modern: '#4f46e5', minimal: '#171717', pro: '#0f4c81', glass: '#7c3aed' };
+
     function applyTheme() {
       const mode = localStorage.getItem('appMode') || 'light';
+      const skin = localStorage.getItem('appSkin') || 'marble';
       document.documentElement.setAttribute('data-theme', mode);
-      const cid = localStorage.getItem('appAccent') || 'gold';
-      const c = THEME_COLORS_FIND(cid);
-      let pColor = c.primary;
-      let sColor = c.secondary;
-      let onPColor = (c.id === 'white') ? '#000000' : '#ffffff';
+      document.documentElement.setAttribute('data-skin', skin);
 
-      if (c.id === 'gold' && (mode === 'dark' || mode === 'amoled')) {
-         /* brighter gold on dark for WCAG-safe contrast */
-         pColor = '#d4af37';
-         sColor = '#e2c258';
-         onPColor = '#171412';
-      } else if (c.id === 'white' && mode === 'light') {
-         pColor = '#0f172a';
-         sColor = '#334155';
-         onPColor = '#ffffff';
-      } else if (c.id === 'black' && (mode === 'dark' || mode === 'amoled')) {
-         pColor = '#f8fafc';
-         sColor = '#e2e8f0';
-         onPColor = '#000000';
-      } else if (c.id === 'white') {
-         pColor = '#f1f5f9';
-         sColor = '#e2e8f0';
-         onPColor = '#000000';
-      } else if (c.id === 'black') {
-         pColor = '#000000';
-         sColor = '#333333';
-         onPColor = '#ffffff';
+      if (skin === 'marble') {
+        /* الهوية الأصلية: نظام ألوان التطبيق (accent) كما هو */
+        const cid = localStorage.getItem('appAccent') || 'gold';
+        const c = THEME_COLORS_FIND(cid);
+        let pColor = c.primary;
+        let sColor = c.secondary;
+        let onPColor = (c.id === 'white') ? '#000000' : '#ffffff';
+
+        if (c.id === 'gold' && (mode === 'dark' || mode === 'amoled')) {
+           /* brighter gold on dark for WCAG-safe contrast */
+           pColor = '#d4af37';
+           sColor = '#e2c258';
+           onPColor = '#171412';
+        } else if (c.id === 'white' && mode === 'light') {
+           pColor = '#0f172a';
+           sColor = '#334155';
+           onPColor = '#ffffff';
+        } else if (c.id === 'black' && (mode === 'dark' || mode === 'amoled')) {
+           pColor = '#f8fafc';
+           sColor = '#e2e8f0';
+           onPColor = '#000000';
+        } else if (c.id === 'white') {
+           pColor = '#f1f5f9';
+           sColor = '#e2e8f0';
+           onPColor = '#000000';
+        } else if (c.id === 'black') {
+           pColor = '#000000';
+           sColor = '#333333';
+           onPColor = '#ffffff';
+        }
+
+        document.documentElement.style.setProperty('--primary', pColor);
+        document.documentElement.style.setProperty('--secondary', sColor);
+        document.documentElement.style.setProperty('--on-primary', onPColor);
+        document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.toggle('active', sw.dataset.id === cid));
+      } else {
+        /* باقي الثيمات: لوحة الألوان تأتي من themeSkinsLayer في الـCSS */
+        ['--primary', '--secondary', '--on-primary'].forEach(v => document.documentElement.style.removeProperty(v));
+        document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.remove('active'));
       }
 
-      document.documentElement.style.setProperty('--primary', pColor);
-      document.documentElement.style.setProperty('--secondary', sColor);
-      document.documentElement.style.setProperty('--on-primary', onPColor);
       ['btnModeLight','btnModeDark','btnModeAmoled'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.remove('active'); });
       const activeBtn = document.getElementById('btnMode' + mode.charAt(0).toUpperCase() + mode.slice(1));
       if (activeBtn) activeBtn.classList.add('active');
-      document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.toggle('active', sw.dataset.id === cid));
+
+      document.querySelectorAll('.skin-card').forEach(card => card.classList.toggle('active', card.dataset.skin === skin));
+      const accentSection = document.getElementById('accentColorSection');
+      if (accentSection) accentSection.style.display = (skin === 'marble') ? '' : 'none';
+
       const meta = document.querySelector('meta[name="theme-color"]');
-      if (meta) meta.setAttribute('content', mode === 'light' ? c.primary : '#000000');
+      if (meta) meta.setAttribute('content', mode === 'light' ? (SKIN_META_COLOR[skin] || SKIN_META_COLOR.marble) : '#000000');
     }
     function setAppMode(mode) { localStorage.setItem('appMode', mode); applyTheme(); }
+    function setAppSkin(id) { if (!APP_SKINS.some(s => s.id === id)) return; localStorage.setItem('appSkin', id); applyTheme(); try { showToast && showToast('تم تطبيق الثيم: ' + (APP_SKINS.find(s => s.id === id) || {}).name); } catch (e) {} }
     function setAccentColor(id) { localStorage.setItem('appAccent', id); applyTheme(); }
-    function initThemeUI() { const container = document.getElementById('colorSwatchesContainer'); if (!container) return; container.innerHTML = ''; THEME_COLORS.forEach(c => { const d = document.createElement('div'); d.className = 'color-swatch'; d.dataset.id = c.id; d.style.background = `linear-gradient(135deg, ${c.primary}, ${c.secondary})`; d.onclick = () => setAccentColor(c.id); container.appendChild(d); }); applyTheme(); }
+    function initThemeUI() {
+      /* بطاقات الثيمات الخمسة (skins) */
+      const skinRow = document.getElementById('skinCardsContainer');
+      if (skinRow && !skinRow.dataset.built) {
+        skinRow.innerHTML = '';
+        APP_SKINS.forEach(s => {
+          const card = document.createElement('button');
+          card.type = 'button';
+          card.className = 'skin-card';
+          card.dataset.skin = s.id;
+          card.setAttribute('title', s.name + ' — ' + s.en);
+          card.onclick = () => setAppSkin(s.id);
+          const dots = document.createElement('span');
+          dots.className = 'skin-dots';
+          s.dots.forEach(c => { const d = document.createElement('span'); d.className = 'skin-dot'; d.style.background = c; dots.appendChild(d); });
+          const nm = document.createElement('span'); nm.className = 'skin-name'; nm.textContent = s.name;
+          const en = document.createElement('span'); en.className = 'skin-en'; en.textContent = s.en;
+          card.appendChild(dots); card.appendChild(nm); card.appendChild(en);
+          skinRow.appendChild(card);
+        });
+        skinRow.dataset.built = '1';
+      }
+      /* ألوان التطبيق (لثيم رخامي فقط) */
+      const container = document.getElementById('colorSwatchesContainer');
+      if (container && !container.dataset.built) {
+        container.innerHTML = '';
+        THEME_COLORS.forEach(c => {
+          const d = document.createElement('div');
+          d.className = 'color-swatch'; d.dataset.id = c.id;
+          d.style.background = `linear-gradient(135deg, ${c.primary}, ${c.secondary})`;
+          d.onclick = () => setAccentColor(c.id);
+          container.appendChild(d);
+        });
+        container.dataset.built = '1';
+      }
+      applyTheme();
+    }
 
     /* ===== Navigation ===== */
     
