@@ -1601,13 +1601,14 @@
     .calc-expression { font-size: 36px; line-height: 1.15; font-weight: 800; color: var(--calc-display-text); min-height: 41px; width: 100%; text-align: right; overflow-x: auto; white-space: nowrap; }
     .calc-live { font-size: 20px; font-weight: 700; color: var(--text-muted); min-height: 24px; width: 100%; text-align: right; overflow-x: auto; white-space: nowrap; }
     .calc-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; direction: ltr; width: 100%; box-sizing: border-box; }
-    .calc-btn { width: 100%; height: 52px; aspect-ratio: auto; min-width: 0; min-height: 0; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; border: 0; border-radius: 10px; background: var(--calc-key); color: var(--calc-key-text); cursor: pointer; transition: transform .1s, filter .15s, background .2s, box-shadow .1s; box-shadow: 0 4px 0 var(--calc-key-shadow); box-sizing: border-box; }
-    .calc-btn.calc-btn-zero { grid-column: span 2; border-radius: 10px; }
-    .calc-btn:hover { filter: brightness(1.12); transform: translateY(-2px); }
-    .calc-btn:active { transform: translateY(2px) scale(0.96); box-shadow: 0 1px 0 var(--calc-key-shadow); }
-    .calc-btn.calc-op { background: var(--calc-key); color: var(--calc-key-text); box-shadow: 0 4px 0 var(--calc-key-shadow); }
-    .calc-btn.calc-eq { background: var(--calc-key); color: var(--calc-key-text); box-shadow: 0 4px 0 var(--calc-key-shadow); }
-    .calc-btn.calc-clear { background: #ef4444; color: #fff; box-shadow: 0 4px 0 #b91c1c; }
+    /* v1.9: أزرار الحاسبة دائرية — نفس ألوان أيقونات الرئيسية (خلفية الكارت + لون هوية الثيم) وبتتبع الثيم المستخدم */
+    .calc-btn { width: min(100%, 54px); height: auto; aspect-ratio: 1 / 1; place-self: center; min-width: 0; min-height: 0; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; border: 1.5px solid var(--border); border-radius: 50%; background: var(--card-bg); color: var(--primary); cursor: pointer; transition: transform .1s, filter .15s, background .2s, box-shadow .1s; box-shadow: var(--shadow-sm); box-sizing: border-box; }
+    .calc-btn.calc-btn-zero { grid-column: span 2; }
+    .calc-btn:hover { filter: brightness(1.06); transform: scale(1.06); }
+    .calc-btn:active { transform: scale(0.93); }
+    .calc-btn.calc-op { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: var(--on-primary); border-color: transparent; box-shadow: 0 4px 0 color-mix(in srgb, var(--primary) 55%, #000); font-weight: 900; }
+    .calc-btn.calc-eq { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: var(--on-primary); border-color: transparent; box-shadow: 0 4px 0 color-mix(in srgb, var(--primary) 55%, #000); font-weight: 900; }
+    .calc-btn.calc-clear { background: var(--danger); color: #fff; border-color: transparent; box-shadow: 0 4px 0 color-mix(in srgb, var(--danger) 62%, #000); }
 
     /* Modal Calculator - Matches External Calculator Style */
     .calc-modal { display: none; position: fixed; inset: 0; z-index: 9000; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 16px; box-sizing: border-box; }
@@ -1627,9 +1628,9 @@
     .calc-modal .calc-display { flex: 1; min-height: 0; width: 100%; display: flex; flex-direction: column; align-items: flex-end; justify-content: center; gap: 2px; padding: 0; margin: 0; background: transparent; box-shadow: none; overflow-x: auto; }
     .calc-modal .calc-expression { font-size: clamp(16px, 2.4vh, 22px); min-height: 22px; line-height: 1.2; font-weight: 700; color: var(--text-muted); text-align: right; width: 100%; white-space: nowrap; overflow-x: auto; }
     .calc-modal .calc-live { font-size: clamp(28px, 4.2vh, 40px); min-height: 36px; line-height: 1.15; font-weight: 900; color: var(--calc-display-text); text-align: right; width: 100%; white-space: nowrap; overflow-x: auto; }
-    .calc-modal .calc-buttons { grid-template-rows: repeat(5, 52px); }
-    .calc-modal .calc-btn { height: 52px; font-size: 22px; border-radius: 10px; background: var(--calc-key); color: var(--calc-key-text); box-shadow: 0 4px 0 var(--calc-key-shadow); }
-    .calc-modal .calc-btn.calc-btn-zero { border-radius: 10px; }
+    .calc-modal .calc-buttons { grid-template-rows: repeat(5, 54px); }
+    .calc-modal .calc-btn { height: auto; width: min(100%, 54px); aspect-ratio: 1 / 1; font-size: 22px; border-radius: 50%; background: var(--card-bg); color: var(--primary); border: 1.5px solid var(--border); box-shadow: var(--shadow-sm); }
+    .calc-modal .calc-btn.calc-btn-zero { border-radius: 50%; }
     :root { --calc-shell:var(--card-bg); --calc-display:var(--card-bg-alt); --calc-display-text:var(--text); --calc-key:color-mix(in srgb,var(--primary) 12%,var(--card-bg-alt)); --calc-key-text:var(--text); --calc-key-shadow:color-mix(in srgb,var(--primary) 18%,transparent); --calc-op:var(--calc-key); --calc-op-text:var(--calc-key-text); --calc-eq:var(--calc-key); --calc-eq-text:var(--calc-key-text); --calc-clear:var(--danger); }
     :root[data-theme="dark"], :root[data-theme="amoled"] { --calc-shell:var(--card-bg); --calc-display:var(--card-bg); --calc-display-text:var(--text); --calc-key:color-mix(in srgb,var(--primary) 18%,var(--card-bg-alt)); --calc-key-text:var(--text); --calc-key-shadow:rgba(0,0,0,.35); }
 
@@ -2379,38 +2380,38 @@
         width: 100%;
         box-sizing: border-box;
     }
+    /* v1.9: أزرار الحاسبة الكاملة — دائرية وبنفس ألوان أيقونات الرئيسية (بطاقات الكارت + أيقونة بلون الثيم) */
     #calculatorView .calc-btn {
-        width: 100%;
-        height: 100%;
-        aspect-ratio: auto;
+        width: min(100%, 10vh);
+        height: auto;
+        aspect-ratio: 1 / 1;
+        place-self: center;
         min-width: 0;
         min-height: 0;
         padding: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: clamp(20px, 3.2vh, 32px);
+        font-size: clamp(20px, 3.4vh, 30px);
         font-weight: 800;
-        border: 0;
-        border-radius: 14px;
-        background: var(--calc-key);
-        color: var(--calc-key-text);
+        border: 1.5px solid var(--border);
+        border-radius: 50%;
+        background: var(--card-bg);
+        color: var(--primary);
         cursor: pointer;
         transition: transform .1s, filter .15s, background .2s, box-shadow .1s;
-        box-shadow: 0 4px 0 var(--calc-key-shadow);
+        box-shadow: var(--shadow-sm);
         box-sizing: border-box;
     }
     #calculatorView .calc-btn:hover {
-        filter: brightness(1.12);
-        transform: translateY(-2px);
+        filter: brightness(1.06);
+        transform: scale(1.06);
     }
     #calculatorView .calc-btn:active {
-        transform: translateY(2px) scale(0.96);
-        box-shadow: 0 1px 0 var(--calc-key-shadow);
+        transform: scale(0.93);
     }
     #calculatorView .calc-btn.calc-btn-zero {
         grid-column: span 2;
-        border-radius: 10px;
     }
     /* Clear All Button — بلون الخطر من الثيم الحالي (بدل الأحمر الثابت) */
     #calculatorView .calc-btn.calc-clear,
@@ -2460,13 +2461,14 @@
         stroke: var(--on-primary) !important;
         color: var(--on-primary) !important;
     }
-    /* Operators — لمسة ثيم أقوى، Equals — هوية الثيم الكاملة */
+    /* Operators — بتدرج هوية الثيم زي بطاقة «إنشاء فاتورة» في الرئيسية (v1.9) */
     #calculatorView .calc-btn.calc-op,
     .calc-modal .calc-btn.calc-op,
     .calc-btn.calc-op {
-        background: color-mix(in srgb, var(--primary) 24%, var(--card-bg-alt)) !important;
-        color: var(--primary) !important;
-        box-shadow: 0 4px 0 color-mix(in srgb, var(--primary) 30%, transparent) !important;
+        background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+        color: var(--on-primary) !important;
+        border-color: transparent !important;
+        box-shadow: 0 4px 0 color-mix(in srgb, var(--primary) 55%, #000) !important;
         font-weight: 900;
     }
     #calculatorView .calc-btn.calc-eq,
@@ -2484,7 +2486,7 @@
     .calc-btn.calc-op:hover,
     .calc-btn.calc-eq:hover {
         filter: brightness(1.1);
-        transform: translateY(-2px);
+        transform: scale(1.06);
     }
     #calculatorView .calc-btn.calc-op:active,
     .calc-modal .calc-btn.calc-op:active,
@@ -2492,96 +2494,12 @@
     .calc-modal .calc-btn.calc-eq:active,
     .calc-btn.calc-op:active,
     .calc-btn.calc-eq:active {
-        transform: translateY(2px) scale(0.96);
+        transform: scale(0.93);
         box-shadow: 0 1px 0 color-mix(in srgb, var(--primary) 40%, transparent) !important;
     }
-    /* ===== v1.7: أزرار الحاسبة — تحسين شامل + هوية لكل ثيم ===== */
-    /* توحيد الاستدارة والخط بين الحاسبة الكاملة والبوب أب */
-    .calc-modal .calc-btn { border-radius: 14px; font-size: 21px; }
-    .calc-modal .calc-btn.calc-btn-zero { border-radius: 14px; }
+    /* ===== v1.9: الأزرار الدائرية موحدة في كل الثيمات — الألوان جاية من متغيرات الثيم المُستخدم
+       (نفس ألوان أيقونات الرئيسية) — اتشالت الهويات الثابتة القديمة لكل ثيم ===== */
     .calc-btn.calc-eq, .calc-modal .calc-btn.calc-eq, #calculatorView .calc-btn.calc-eq { font-size: 1.15em; letter-spacing: 1px; }
-    /* ذهبي (الافتراضي): أرقام عاجية دافئة + عمليات كهرمانية + نتيجة بتدرج ذهبي */
-    :root[data-skin="marble"] #calculatorView .calc-btn,
-    :root[data-skin="marble"] .calc-modal .calc-btn { border-radius: 12px; }
-    :root[data-skin="marble"] #calculatorView .calc-btn.calc-op,
-    :root[data-skin="marble"] .calc-modal .calc-btn.calc-op,
-    :root[data-skin="marble"] .calc-btn.calc-op {
-        background: color-mix(in srgb, #b8860b 16%, var(--card-bg-alt)) !important;
-        color: #8a6508 !important;
-    }
-    :root[data-skin="marble"] #calculatorView .calc-btn.calc-eq,
-    :root[data-skin="marble"] .calc-modal .calc-btn.calc-eq,
-    :root[data-skin="marble"] .calc-btn.calc-eq {
-        background: linear-gradient(135deg, #b8860b, #f0b429) !important;
-        color: #ffffff !important;
-    }
-    /* عصري: استدارة أكبر + أرقام بتدرج ناعم */
-    :root[data-skin="modern"] #calculatorView .calc-btn,
-    :root[data-skin="modern"] .calc-modal .calc-btn { border-radius: 16px; }
-    /* بسيط: مسطح تماماً — بدون ظل ثلاثي الأبعاد، عمليات ونتيجة سوداء صريحة */
-    :root[data-skin="minimal"] #calculatorView .calc-btn,
-    :root[data-skin="minimal"] .calc-modal .calc-btn {
-        border-radius: 8px;
-        box-shadow: none !important;
-        border: 1px solid var(--border);
-    }
-    :root[data-skin="minimal"] #calculatorView .calc-btn:active,
-    :root[data-skin="minimal"] .calc-modal .calc-btn:active { box-shadow: none !important; transform: scale(0.95); }
-    :root[data-skin="minimal"] #calculatorView .calc-btn.calc-op,
-    :root[data-skin="minimal"] .calc-modal .calc-btn.calc-op,
-    :root[data-skin="minimal"] .calc-btn.calc-op {
-        background: var(--primary) !important; color: #ffffff !important; border-color: var(--primary) !important;
-    }
-    :root[data-skin="minimal"] #calculatorView .calc-btn.calc-eq,
-    :root[data-skin="minimal"] .calc-modal .calc-btn.calc-eq,
-    :root[data-skin="minimal"] .calc-btn.calc-eq {
-        background: var(--primary) !important; color: #ffffff !important; border-color: var(--primary) !important;
-    }
-    /* احترافي: حواف أوضح + عمليات بكحلي أغمق ونتيجة بتدرج الكحلي */
-    :root[data-skin="pro"] #calculatorView .calc-btn,
-    :root[data-skin="pro"] .calc-modal .calc-btn { border-radius: 10px; }
-    :root[data-skin="pro"] #calculatorView .calc-btn.calc-op,
-    :root[data-skin="pro"] .calc-modal .calc-btn.calc-op,
-    :root[data-skin="pro"] .calc-btn.calc-op {
-        background: color-mix(in srgb, #0f4c81 16%, var(--card-bg-alt)) !important;
-        color: #0f4c81 !important;
-    }
-    :root[data-skin="pro"] #calculatorView .calc-btn.calc-eq,
-    :root[data-skin="pro"] .calc-modal .calc-btn.calc-eq,
-    :root[data-skin="pro"] .calc-btn.calc-eq {
-        background: linear-gradient(135deg, #0f4c81, #1d6fb8) !important;
-        color: #ffffff !important;
-    }
-    /* زجاجي: أرقام زجاجية شفافة + عمليات ونتيجة بتدرج بنفسجي-وردي (هوية الزجاجي) */
-    :root[data-skin="glass"] #calculatorView .calc-btn,
-    :root[data-skin="glass"] .calc-modal .calc-btn {
-        border-radius: 16px;
-        backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-        box-shadow: 0 3px 0 rgba(76, 29, 149, 0.25) !important;
-    }
-    :root[data-skin="glass"] #calculatorView .calc-btn.calc-op,
-    :root[data-skin="glass"] .calc-modal .calc-btn.calc-op,
-    :root[data-skin="glass"] .calc-btn.calc-op {
-        background: linear-gradient(135deg, #7c3aed, #a855f7) !important;
-        color: #ffffff !important;
-        box-shadow: 0 3px 0 rgba(76, 29, 149, 0.4) !important;
-    }
-    :root[data-skin="glass"] #calculatorView .calc-btn.calc-eq,
-    :root[data-skin="glass"] .calc-modal .calc-btn.calc-eq,
-    :root[data-skin="glass"] .calc-btn.calc-eq {
-        background: linear-gradient(135deg, #7c3aed, #ec4899) !important;
-        color: #ffffff !important;
-        box-shadow: 0 3px 0 rgba(76, 29, 149, 0.45) !important;
-    }
-    /* المظلم: عمليات أوضح على الأسود + ظلال أغمق */
-    :root[data-theme="amoled"] #calculatorView .calc-btn.calc-op,
-    :root[data-theme="amoled"] .calc-modal .calc-btn.calc-op,
-    :root[data-theme="amoled"] .calc-btn.calc-op {
-        background: color-mix(in srgb, var(--primary) 26%, #0a0a0a) !important;
-    }
-    :root[data-theme="amoled"] .calc-btn.calc-clear, :root[data-theme="amoled"] .calc-btn.calc-clear {
-        box-shadow: 0 4px 0 #450a0a !important;
-    }
     /* Compact Backspace Icon Button - Positioned at Bottom Right of Calculator Screen */
     .calc-display-footer {
         display: flex;
@@ -2691,7 +2609,7 @@
     }
     .dash-subtitle {
         color: var(--text-muted) !important;
-        font-size: 11.5px !important;
+        font-size: 15.5px !important; /* v1.9: عنوان فرعي أكبر بالنسبة للكارت */
         font-weight: 700 !important;
         margin: 0 !important;
     }
@@ -5181,36 +5099,35 @@ td { padding: 7px 5px; font-size: 11.5px; }
 .recent-inv-empty svg { width: 34px; height: 34px; opacity: .5; display: block; margin: 0 auto 8px; }
 .recent-inv-hint { flex-shrink: 0; padding-top: 8px; border-top: 1px dashed var(--border); font-size: 10px; color: var(--text-light); text-align: center; margin-top: 8px; }
 
-/* ---------- ⑮ زر شمس/قمر في هيدر الرئيسية (مقابل مجموعة الأيقونات) ---------- */
+/* ---------- ⑮ زر شمس/قمر في هيدر الرئيسية (داخل صف الأيقونات الموحد — v1.9) ---------- */
 #dashThemeToggleBtn {
-  position: absolute; top: 14px; left: 14px; z-index: 10;
-  width: 34px; height: 34px; padding: 6px; border-radius: 50%;
+  position: static; width: 44px; height: 44px; padding: 8px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   background: var(--card-bg); border: 1.5px solid color-mix(in srgb, var(--primary) 35%, var(--border));
   color: var(--primary); cursor: pointer; transition: 0.2s ease;
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 #dashThemeToggleBtn:active { transform: scale(0.92); }
-#dashThemeToggleBtn .icon-svg { width: 19px; height: 19px; margin: 0; }
+#dashThemeToggleBtn .icon-svg { width: 24px; height: 24px; margin: 0; }
 @keyframes themeIconSwap { from { opacity: 0; transform: rotate(-40deg) scale(.6); } to { opacity: 1; transform: rotate(0) scale(1); } }
 #dashThemeToggleBtn .icon-svg.swap { animation: themeIconSwap .28s ease both; }
 
 /* ---------- ⑯ هيدر الرئيسية: حماية العنوان من الأيقونات العائمة + ألوان واضحة في كل الثيمات ---------- */
-/* v1.7: هيدر أكبر بياخد المساحة المتبقية من الشاشة (٦ أيقونات فقط في الرئيسية) */
-.dash-header-card { padding-inline: 54px; gap: 6px; min-height: 216px; flex: 1 0 auto; justify-content: center; padding-block: 24px; }
-.dash-header-card .dash-title { font-size: 23px !important; line-height: 1.4; }
-.dash-header-card .dash-subtitle { font-size: 13.5px; }
-.dash-header-card .logo-placeholder { width: 78px !important; height: 78px !important; font-size: 34px !important; margin-bottom: 6px !important; }
-.dash-header-card #logoContainer img { max-width: 92px !important; max-height: 92px !important; }
-/* أيقونات الهيدر: قرص صلب بخلفية الثيم — واضحة فوق أي خلفية حتى المتدرجة */
+/* v1.9: هيدر أكبر — عناوين وأيقونات أكبر بالنسبة للكارت (طلب المالك) */
+.dash-header-card { padding-inline: 54px; gap: 8px; min-height: 236px; flex: 1 0 auto; justify-content: center; padding-block: 26px; }
+.dash-header-card .dash-title { font-size: 30px !important; line-height: 1.35; }
+.dash-header-card .dash-subtitle { font-size: 15.5px; }
+.dash-header-card .logo-placeholder { width: 96px !important; height: 96px !important; font-size: 42px !important; margin-bottom: 6px !important; }
+.dash-header-card #logoContainer img { max-width: 112px !important; max-height: 112px !important; }
+/* أيقونات الهيدر: قرص صلب بخلفية الثيم — صف واحد على اليمين بمسافات مضبوطة (v1.9) */
 #dashTopRightActions button {
-  width: 32px !important; height: 32px !important; padding: 5px !important;
+  width: 44px !important; height: 44px !important; padding: 8px !important;
   background: var(--card-bg) !important;
   border: 1.5px solid color-mix(in srgb, var(--primary) 35%, var(--border)) !important;
   color: var(--primary) !important;
   box-shadow: 0 2px 6px rgba(0,0,0,0.10) !important;
 }
-#dashTopRightActions button .icon-svg { width: 18px; height: 18px; }
+#dashTopRightActions button .icon-svg { width: 24px; height: 24px; }
 #dashTopRightActions button:hover { transform: scale(1.07); }
 #dashTopRoleBtn { color: var(--warning) !important; border-color: color-mix(in srgb, var(--warning) 45%, var(--border)) !important; }
 /* عصري/احترافي: هيدر متدرج — العناوين وحبوب البيانات كلها بيضاء واضحة */
@@ -5355,16 +5272,16 @@ input *, textarea *,
     <div class="dash-header-card">
       <!-- زر الترس العلوي اتشال بطلب المالك — الإعدادات بقى ليها زر الترس في شريط التنقل السفلي مكان "المزيد" -->
 
-      <!-- زر شمس/قمر: تبديل سريع بين الفاتح والمظلم من الرئيسية (والتلقائي من الإعدادات) -->
-      <button type="button" id="dashThemeToggleBtn" onclick="toggleThemeFromHome()" title="تبديل المظهر: فاتح / مظلم" aria-label="تبديل المظهر">
-        <svg id="dashThemeToggleIcon" class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-      </button>
+      <!-- v1.9: كل أيقونات الهيدر في صف واحد على اليمين بمسافات مضبوطة — شمس/قمر + الملف + الوضع + كود الورشة -->
+      <div id="dashTopRightActions" style="position: absolute; top: 16px; right: 16px; display: flex; flex-direction: row; align-items: center; gap: 13px; z-index: 10;">
+        <!-- 0. زر شمس/قمر: تبديل سريع بين الفاتح والمظلم من الرئيسية (والتلقائي من الإعدادات) -->
+        <button type="button" id="dashThemeToggleBtn" onclick="toggleThemeFromHome()" title="تبديل المظهر: فاتح / مظلم" aria-label="تبديل المظهر">
+          <svg id="dashThemeToggleIcon" class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
 
-      <!-- مجموعة الأزرار العلوية باليمين: 1. الملف والحساب | 2. مؤشر الوضع الحالي (مدير/صنايعي) | 3. توليد كود الورشة — كلها بوب أب ناعم بنفس الهيئة -->
-      <div id="dashTopRightActions" style="position: absolute; top: 14px; right: 14px; display: flex; flex-direction: column; align-items: center; gap: 6px; z-index: 10;">
         <!-- 1. أيقونة الملف والحساب (يمين فوق بحجم متناسق ومصغر) -->
-        <button type="button" id="dashTopAccountBtn" onclick="openAccountBurst()" style="width: 35px; height: 35px; padding: 6px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--primary) 10%, transparent); border: none; color: var(--primary); cursor: pointer; transition: 0.2s ease; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05);" title="الملف الشخصي والحساب" data-i18n-title="account_profile">
-          <svg id="dashTopAccountSvg" class="icon-svg" style="width: 20px; height: 20px; stroke-width: 2.1; margin: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <button type="button" id="dashTopAccountBtn" onclick="openAccountBurst()" style="width: 44px; height: 44px; padding: 8px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--primary) 10%, transparent); border: none; color: var(--primary); cursor: pointer; transition: 0.2s ease; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05);" title="الملف الشخصي والحساب" data-i18n-title="account_profile">
+          <svg id="dashTopAccountSvg" class="icon-svg" style="width: 26px; height: 26px; stroke-width: 2.1; margin: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
             <circle cx="12" cy="7" r="4"></circle>
           </svg>
@@ -5372,15 +5289,15 @@ input *, textarea *,
         </button>
 
         <!-- 2. أيقونة توضح الوضع الحالي إذا كان مدير أم صنايعي -->
-        <button type="button" id="dashTopRoleBtn" onclick="openRoleBurst()" style="width: 35px; height: 35px; padding: 6px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(245, 158, 11, 0.16); border: 1.5px solid rgba(245, 158, 11, 0.35); color: #d97706; cursor: pointer; transition: 0.2s ease; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05);" title="الوضع الحالي: مدير (كامل الصلاحيات) - انقر للتبديل">
-          <svg id="dashTopRoleSvg" class="icon-svg" style="width: 20px; height: 20px; stroke-width: 2.1; margin: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <button type="button" id="dashTopRoleBtn" onclick="openRoleBurst()" style="width: 44px; height: 44px; padding: 8px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(245, 158, 11, 0.16); border: 1.5px solid rgba(245, 158, 11, 0.35); color: #d97706; cursor: pointer; transition: 0.2s ease; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05);" title="الوضع الحالي: مدير (كامل الصلاحيات) - انقر للتبديل">
+          <svg id="dashTopRoleSvg" class="icon-svg" style="width: 26px; height: 26px; stroke-width: 2.1; margin: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/>
           </svg>
         </button>
 
         <!-- 3. أيقونة توليد كود الورشة -->
-        <button type="button" id="dashTopGenCodeBtn" onclick="handleQuickWorkshopCodeAction()" style="width: 35px; height: 35px; padding: 6px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--primary) 10%, transparent); border: none; color: var(--primary); cursor: pointer; transition: 0.2s ease; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05);" title="توليد كود الورشة ومشاركته مع الصنايعية" onmouseover="this.style.background='color-mix(in srgb, var(--primary) 20%, transparent)'; this.style.transform='scale(1.06)';" onmouseout="this.style.background='color-mix(in srgb, var(--primary) 10%, transparent)'; this.style.transform='scale(1)';">
-          <svg class="icon-svg" style="width: 20px; height: 20px; stroke-width: 2.1; margin: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <button type="button" id="dashTopGenCodeBtn" onclick="handleQuickWorkshopCodeAction()" style="width: 44px; height: 44px; padding: 8px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--primary) 10%, transparent); border: none; color: var(--primary); cursor: pointer; transition: 0.2s ease; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05);" title="توليد كود الورشة ومشاركته مع الصنايعية" onmouseover="this.style.background='color-mix(in srgb, var(--primary) 20%, transparent)'; this.style.transform='scale(1.06)';" onmouseout="this.style.background='color-mix(in srgb, var(--primary) 10%, transparent)'; this.style.transform='scale(1)';">
+          <svg class="icon-svg" style="width: 26px; height: 26px; stroke-width: 2.1; margin: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path d="M3 21h18M3 7v14M21 7v14M6 11h4M6 15h4M14 11h4M14 15h4M9 3l3 4 3-4"/>
           </svg>
           <span id="dashTopGenCodeBadge" style="display:none; position:absolute; top:-2px; right:-2px; background:#d97706; color:#fff; border-radius:50%; min-width:15px; height:15px; font-size:9px; line-height:15px; font-weight:900; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,0.3); border:1.5px solid var(--card-bg);">!</span>
@@ -7982,7 +7899,7 @@ input *, textarea *,
       let mode = localStorage.getItem('appMode') || 'light';
       if (mode === 'dark') { mode = 'amoled'; localStorage.setItem('appMode', 'amoled'); }
       if (!['light', 'amoled', 'auto'].includes(mode)) mode = 'light';
-      const skin = localStorage.getItem('appSkin') || 'marble';
+      const skin = localStorage.getItem('appSkin') || 'glass'; /* v1.9: الثيم الافتراضي = زجاجي (طلب المالك) */
       /* الوضع التلقائي: بيتبع وضع الجهاز (فاتح/مظلم) لحظة بلحظة */
       let resolved = mode;
       if (mode === 'auto') {
@@ -8002,7 +7919,7 @@ input *, textarea *,
       document.querySelectorAll('.skin-card').forEach(card => card.classList.toggle('active', card.dataset.skin === skin));
 
       const meta = document.querySelector('meta[name="theme-color"]');
-      if (meta) meta.setAttribute('content', resolved === 'light' ? (SKIN_META_COLOR[skin] || SKIN_META_COLOR.marble) : '#000000');
+      if (meta) meta.setAttribute('content', resolved === 'light' ? (SKIN_META_COLOR[skin] || SKIN_META_COLOR.glass) : '#000000');
 
       /* زر الشمس/القمر في هيدر الرئيسية: قمر في الفاتح (اضغط → مظلم) وشمس في المظلم (اضغط → فاتح) */
       const tIcon = document.getElementById('dashThemeToggleIcon');
@@ -16623,16 +16540,42 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
        كل ما المستخدم يكتب اسم عميل في صفحة إنشاء الفاتورة، بيتسجل سناپ شوت للفاتورة
        باسم العميل — والضغطة المطولة على + تعرض القائمة وتسترجع أي فاتورة فوراً
        عشان تعمل فواتير كتير في نفس الوقت. الميزة دي لصفحة إنشاء الفاتورة فقط. */
+    /* v1.9: مفتاح موحّد للاسم — بيشيل الحروف الخفية وعلامات التشكيل ويوحد أشكال الألف،
+       فنفس الصفحة مش هتتحفظ أكتر من مرة في قائمة + مهما اتكتب الاسم بشكل مختلف شوية */
+    function __sbSessionKey(raw) {
+      let n = String(raw || '');
+      n = n.replace(/[\u200B-\u200F\u202A-\u202E\uFEFF]/g, '');
+      n = n.replace(/\u00A0/g, ' ').trim().replace(/\s+/g, ' ');
+      n = n.replace(/[\u064B-\u0652\u0670\u0640]/g, '');
+      n = n.replace(/[أإآٱ]/g, 'ا').replace(/ى/g, 'ي').replace(/ئ/g, 'ي').replace(/ؤ/g, 'و');
+      return n.toLowerCase();
+    }
+    /* v1.9: تسجيل مؤجّل (debounce 900ms) — الكتابة حرف بحرف كانت بتسجل نسخ كتير لنفس الصفحة،
+       دلوقتي بنسجل آخر نسخة بعد ما الكتابة تهده فقط */
+    var __sbSessionTimer = null, __sbSessionDraft = null;
     function recordInvoiceSession(draft) {
       try {
         if (typeof isViewingArchive !== 'undefined' && isViewingArchive) return;
+        __sbSessionDraft = draft;
+        if (__sbSessionTimer) clearTimeout(__sbSessionTimer);
+        __sbSessionTimer = setTimeout(function () {
+          __sbSessionTimer = null;
+          const d = __sbSessionDraft; __sbSessionDraft = null;
+          commitInvoiceSession(d);
+        }, 900);
+      } catch (e) {}
+    }
+    function commitInvoiceSession(draft) {
+      try {
+        if (!draft) return;
+        if (typeof isViewingArchive !== 'undefined' && isViewingArchive) return;
         const name = (draft.clientName || '').trim();
-        if (!name) return;
+        if (name.length < 2) return; /* أسماء مقطوعة أثناء الكتابة مش فاتورة */
         let list = [];
         try { list = JSON.parse(localStorage.getItem('sbInvoiceSessions') || '[]'); } catch (e) { list = []; }
         if (!Array.isArray(list)) list = [];
         const entry = {
-          id: 'sbsn-' + name,
+          id: 'sbsn-' + __sbSessionKey(name),
           name: name,
           phone: draft.clientPhone || '',
           invNum: draft.invNum || '',
@@ -16655,7 +16598,18 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
       let list = [];
       try { list = JSON.parse(localStorage.getItem('sbInvoiceSessions') || '[]'); } catch (e) { list = []; }
       if (!Array.isArray(list)) list = [];
-      return list.filter(s => s && s.name);
+      /* v1.9: تنظيف عند القراءة — مفتاح موحّد يضمن إن نفس الصفحة تظهر مرة واحدة فقط،
+         وبيصلّح أي نسخ مكرّمة متخزنة من نسخ أقدم فوراً */
+      const seen = new Map();
+      list.filter(s => s && s.name && String(s.name).trim().length >= 2) /* v1.9: أسماء مقطوعة أثناء الكتابة بتتشال نهائياً */
+        .sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0)).forEach(s => {
+        const k = __sbSessionKey(s.id && String(s.id).indexOf('sbsn-') === 0 ? String(s.id).slice(5) : s.name);
+        if (!k || seen.has(k)) return;
+        seen.set(k, s);
+      });
+      const out = Array.from(seen.values()).sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0)).slice(0, 6);
+      try { localStorage.setItem('sbInvoiceSessions', JSON.stringify(out)); } catch (e) {}
+      return out;
     }
 
     function restoreInvoiceSession(id) {
@@ -16829,7 +16783,14 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
       try {
         let list = [];
         try { list = JSON.parse(localStorage.getItem('sbInvoiceSessions') || '[]'); } catch (e) { list = []; }
-        list = (Array.isArray(list) ? list : []).filter(s => s && s.id !== id);
+        /* v1.9: الحذف بالمفتاح الموحّد — لو نفس الصفحة متخزنة بأي شكل كله بيتمسح مرة واحدة */
+        const target = (Array.isArray(list) ? list : []).find(s => s && s.id === id);
+        const targetKey = target ? __sbSessionKey(target.id && String(target.id).indexOf('sbsn-') === 0 ? String(target.id).slice(5) : target.name) : '';
+        list = (Array.isArray(list) ? list : []).filter(s => {
+          if (!s || !s.name) return false;
+          if (targetKey) return __sbSessionKey(s.id && String(s.id).indexOf('sbsn-') === 0 ? String(s.id).slice(5) : s.name) !== targetKey;
+          return s.id !== id;
+        });
         localStorage.setItem('sbInvoiceSessions', JSON.stringify(list));
         if (wrapEl) {
           wrapEl.classList.add('removing');

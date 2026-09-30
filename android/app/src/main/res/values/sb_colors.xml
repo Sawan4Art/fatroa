@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- v1.9: لون شاشة الإطلاق — نفس درجة خلفية الثيم الزجاجي الفاتح (بدون صورة اسبلاش أولي) -->
+    <color name="sb_launch_bg">#E0E7FF</color>
+</resources>

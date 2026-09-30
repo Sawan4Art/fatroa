@@ -60,7 +60,7 @@ else
     curl -fsSL -o /tmp/cmdline-tools.zip "https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip" \
       || fail "فشل تحميل cmdline-tools"
     unzip -q /tmp/cmdline-tools.zip -d /tmp/clt && rm -f /tmp/cmdline-tools.zip
-    rm -rf "$CMDLINE/latest" && mv /tmp/cmdline-tools "$CMDLINE/latest"
+    rm -rf "$CMDLINE/latest" && mv /tmp/clt/cmdline-tools "$CMDLINE/latest"
     rm -rf /tmp/clt
   else
     skip "cmdline-tools"

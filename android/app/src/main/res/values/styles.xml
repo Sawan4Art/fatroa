@@ -16,7 +16,9 @@
     </style>
 
 
+    <!-- v1.9: شيل الاسبلاش الأولي (صورة اللوجو) بطلب المالك — بقا لون سادة بنفس خلفية الثيم الزجاجي
+         والتطبيق بيفتح مباشرة على اسبلاش «جاري التحميل» الداخلي -->
     <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
-        <item name="android:background">@drawable/splash</item>
+        <item name="android:background">@color/sb_launch_bg</item>
     </style>
 </resources>
