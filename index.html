@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>فاتورة ستون - إدارة الرخام والجرانيت</title>
+  <title>StoneBill — فواتير وإدارة الرخام والجرانيت</title>
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="theme-color" content="#b8860b">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="فاتورة ستون">
+  <meta name="apple-mobile-web-app-title" content="StoneBill">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
   <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
   <link href="assets/fonts/cairo.css" rel="stylesheet">
@@ -211,6 +211,11 @@
       display: flex; align-items: center; justify-content: center;
       box-shadow: var(--shadow-lg); animation: luxSplashPop 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
+    /* v1.7: شعار StoneBill في السبلاش الداخلي */
+    .splash-logo-img {
+      width: 96px; height: 96px; border-radius: 24px;
+      box-shadow: var(--shadow-lg); animation: luxSplashPop 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
     .splash-hairline {
       width: 0; height: 2px; margin: 21px 0 13px; border-radius: 2px;
       background: var(--gold-bright); animation: luxHairline 0.8s 0.3s ease forwards;
@@ -284,6 +289,46 @@
     @keyframes splashPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
     .splash-text { margin-top: 20px; color: var(--text); font-size: 18px; font-weight: 800; }
     .splash-sub { margin-top: 6px; color: var(--text-muted); font-size: 13px; }
+
+    /* ===== v1.7: شاشة تعريف بالتطبيق — أول تشغيل فقط ===== */
+    #onboardingModal {
+      position: fixed; inset: 0; z-index: 99998; background: var(--bg);
+      display: none; flex-direction: column; align-items: center; justify-content: center; padding: 18px;
+    }
+    #onboardingModal.open { display: flex; animation: viewFadeIn .3s ease; }
+    .onb-card {
+      width: 100%; max-width: 362px; max-height: calc(100dvh - 56px); overflow-y: auto;
+      background: var(--card-bg); border: 2px solid color-mix(in srgb, var(--primary) 55%, transparent);
+      border-radius: 26px; box-shadow: 0 0 30px color-mix(in srgb, var(--primary) 28%, transparent), 0 24px 60px rgba(0,0,0,.4);
+      padding: 24px 18px 18px; text-align: center; box-sizing: border-box;
+    }
+    .onb-logo { width: 86px; height: 86px; border-radius: 22px; box-shadow: var(--shadow-lg); margin-bottom: 8px; }
+    .onb-title { font-size: 24px; font-weight: 900; color: var(--text); letter-spacing: .4px; }
+    .onb-tag { font-size: 12.5px; color: var(--text-muted); font-weight: 700; margin: 4px 0 16px; line-height: 1.7; }
+    .onb-row {
+      display: flex; align-items: flex-start; gap: 10px; text-align: right;
+      background: var(--card-bg-alt); border: 1px solid var(--border); border-radius: 14px;
+      padding: 10px 12px; margin-bottom: 8px;
+    }
+    .onb-ico {
+      width: 34px; height: 34px; flex-shrink: 0; border-radius: 10px;
+      background: color-mix(in srgb, var(--primary) 12%, var(--card-bg)); color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .onb-ico svg { width: 18px; height: 18px; margin: 0; }
+    .onb-row-t { font-size: 12.5px; font-weight: 900; color: var(--text); }
+    .onb-row-d { font-size: 11px; color: var(--text-muted); font-weight: 700; margin-top: 2px; line-height: 1.65; }
+    .onb-actions { display: grid; grid-template-columns: 1fr 1.6fr; gap: 10px; margin-top: 14px; }
+    .onb-skip {
+      padding: 11px; border-radius: 12px; border: 1.5px solid var(--border);
+      background: var(--card-bg-alt); color: var(--text); font-size: 13px; font-weight: 800;
+      font-family: inherit; cursor: pointer;
+    }
+    .onb-start {
+      padding: 11px; border-radius: 12px; border: none;
+      background: var(--primary); color: var(--on-primary); font-size: 13.5px; font-weight: 900;
+      font-family: inherit; cursor: pointer; box-shadow: var(--shadow-md);
+    }
 
     #settingsView.active-view { display: flex; flex-direction: column; align-items: center; }
     .settings-panel { 
@@ -2430,6 +2475,93 @@
     .calc-btn.calc-eq:active {
         transform: translateY(2px) scale(0.96);
         box-shadow: 0 1px 0 color-mix(in srgb, var(--primary) 40%, transparent) !important;
+    }
+    /* ===== v1.7: أزرار الحاسبة — تحسين شامل + هوية لكل ثيم ===== */
+    /* توحيد الاستدارة والخط بين الحاسبة الكاملة والبوب أب */
+    .calc-modal .calc-btn { border-radius: 14px; font-size: 21px; }
+    .calc-modal .calc-btn.calc-btn-zero { border-radius: 14px; }
+    .calc-btn.calc-eq, .calc-modal .calc-btn.calc-eq, #calculatorView .calc-btn.calc-eq { font-size: 1.15em; letter-spacing: 1px; }
+    /* ذهبي (الافتراضي): أرقام عاجية دافئة + عمليات كهرمانية + نتيجة بتدرج ذهبي */
+    :root[data-skin="marble"] #calculatorView .calc-btn,
+    :root[data-skin="marble"] .calc-modal .calc-btn { border-radius: 12px; }
+    :root[data-skin="marble"] #calculatorView .calc-btn.calc-op,
+    :root[data-skin="marble"] .calc-modal .calc-btn.calc-op,
+    :root[data-skin="marble"] .calc-btn.calc-op {
+        background: color-mix(in srgb, #b8860b 16%, var(--card-bg-alt)) !important;
+        color: #8a6508 !important;
+    }
+    :root[data-skin="marble"] #calculatorView .calc-btn.calc-eq,
+    :root[data-skin="marble"] .calc-modal .calc-btn.calc-eq,
+    :root[data-skin="marble"] .calc-btn.calc-eq {
+        background: linear-gradient(135deg, #b8860b, #f0b429) !important;
+        color: #ffffff !important;
+    }
+    /* عصري: استدارة أكبر + أرقام بتدرج ناعم */
+    :root[data-skin="modern"] #calculatorView .calc-btn,
+    :root[data-skin="modern"] .calc-modal .calc-btn { border-radius: 16px; }
+    /* بسيط: مسطح تماماً — بدون ظل ثلاثي الأبعاد، عمليات ونتيجة سوداء صريحة */
+    :root[data-skin="minimal"] #calculatorView .calc-btn,
+    :root[data-skin="minimal"] .calc-modal .calc-btn {
+        border-radius: 8px;
+        box-shadow: none !important;
+        border: 1px solid var(--border);
+    }
+    :root[data-skin="minimal"] #calculatorView .calc-btn:active,
+    :root[data-skin="minimal"] .calc-modal .calc-btn:active { box-shadow: none !important; transform: scale(0.95); }
+    :root[data-skin="minimal"] #calculatorView .calc-btn.calc-op,
+    :root[data-skin="minimal"] .calc-modal .calc-btn.calc-op,
+    :root[data-skin="minimal"] .calc-btn.calc-op {
+        background: var(--primary) !important; color: #ffffff !important; border-color: var(--primary) !important;
+    }
+    :root[data-skin="minimal"] #calculatorView .calc-btn.calc-eq,
+    :root[data-skin="minimal"] .calc-modal .calc-btn.calc-eq,
+    :root[data-skin="minimal"] .calc-btn.calc-eq {
+        background: var(--primary) !important; color: #ffffff !important; border-color: var(--primary) !important;
+    }
+    /* احترافي: حواف أوضح + عمليات بكحلي أغمق ونتيجة بتدرج الكحلي */
+    :root[data-skin="pro"] #calculatorView .calc-btn,
+    :root[data-skin="pro"] .calc-modal .calc-btn { border-radius: 10px; }
+    :root[data-skin="pro"] #calculatorView .calc-btn.calc-op,
+    :root[data-skin="pro"] .calc-modal .calc-btn.calc-op,
+    :root[data-skin="pro"] .calc-btn.calc-op {
+        background: color-mix(in srgb, #0f4c81 16%, var(--card-bg-alt)) !important;
+        color: #0f4c81 !important;
+    }
+    :root[data-skin="pro"] #calculatorView .calc-btn.calc-eq,
+    :root[data-skin="pro"] .calc-modal .calc-btn.calc-eq,
+    :root[data-skin="pro"] .calc-btn.calc-eq {
+        background: linear-gradient(135deg, #0f4c81, #1d6fb8) !important;
+        color: #ffffff !important;
+    }
+    /* زجاجي: أرقام زجاجية شفافة + عمليات ونتيجة بتدرج بنفسجي-وردي (هوية الزجاجي) */
+    :root[data-skin="glass"] #calculatorView .calc-btn,
+    :root[data-skin="glass"] .calc-modal .calc-btn {
+        border-radius: 16px;
+        backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+        box-shadow: 0 3px 0 rgba(76, 29, 149, 0.25) !important;
+    }
+    :root[data-skin="glass"] #calculatorView .calc-btn.calc-op,
+    :root[data-skin="glass"] .calc-modal .calc-btn.calc-op,
+    :root[data-skin="glass"] .calc-btn.calc-op {
+        background: linear-gradient(135deg, #7c3aed, #a855f7) !important;
+        color: #ffffff !important;
+        box-shadow: 0 3px 0 rgba(76, 29, 149, 0.4) !important;
+    }
+    :root[data-skin="glass"] #calculatorView .calc-btn.calc-eq,
+    :root[data-skin="glass"] .calc-modal .calc-btn.calc-eq,
+    :root[data-skin="glass"] .calc-btn.calc-eq {
+        background: linear-gradient(135deg, #7c3aed, #ec4899) !important;
+        color: #ffffff !important;
+        box-shadow: 0 3px 0 rgba(76, 29, 149, 0.45) !important;
+    }
+    /* المظلم: عمليات أوضح على الأسود + ظلال أغمق */
+    :root[data-theme="amoled"] #calculatorView .calc-btn.calc-op,
+    :root[data-theme="amoled"] .calc-modal .calc-btn.calc-op,
+    :root[data-theme="amoled"] .calc-btn.calc-op {
+        background: color-mix(in srgb, var(--primary) 26%, #0a0a0a) !important;
+    }
+    :root[data-theme="amoled"] .calc-btn.calc-clear, :root[data-theme="amoled"] .calc-btn.calc-clear {
+        box-shadow: 0 4px 0 #450a0a !important;
     }
     /* Compact Backspace Icon Button - Positioned at Bottom Right of Calculator Screen */
     .calc-display-footer {
@@ -4965,6 +5097,53 @@ td { padding: 7px 5px; font-size: 11.5px; }
   letter-spacing: 2px; outline: none; font-family: inherit; margin-bottom: 6px;
 }
 
+/* ---------- ⑭-ب بوب-أب آخر الفواتير المفتوحة (ضغطة مطولة على زر +) ---------- v1.7 */
+.recent-inv-catch {
+  position: fixed; inset: 0; z-index: 99997;
+  background: rgba(15, 12, 30, 0.30);
+  backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+  animation: wsFadeIn .18s ease both;
+}
+.recent-inv-catch .ws-pop-card {
+  top: auto; bottom: 96px; right: 14px; left: 14px; width: auto;
+  transform-origin: bottom center; text-align: right;
+  max-height: min(58vh, 430px); display: flex; flex-direction: column;
+}
+.recent-inv-catch .ws-pop-card::before { right: 50%; margin-right: -7px; top: auto; bottom: -7px; transform: rotate(180deg); }
+.recent-inv-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 2px 4px 10px; border-bottom: 1px solid var(--border); margin-bottom: 8px; flex-shrink: 0;
+}
+.recent-inv-title { font-size: 13.5px; font-weight: 900; color: var(--text); display: flex; align-items: center; gap: 7px; }
+.recent-inv-title svg { width: 16px; height: 16px; color: var(--primary); }
+.recent-inv-close {
+  width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--border);
+  background: var(--card-bg-alt); color: var(--text); font-size: 15px; line-height: 1;
+  display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
+}
+.recent-inv-list { overflow-y: auto; min-height: 0; display: flex; flex-direction: column; gap: 6px; padding-bottom: 2px; }
+.recent-inv-row {
+  display: flex; align-items: center; gap: 10px; width: 100%; text-align: right;
+  background: color-mix(in srgb, var(--primary) 6%, var(--card-bg));
+  border: 1.5px solid var(--border); border-radius: var(--radius-phi);
+  padding: 10px 12px; cursor: pointer; font-family: inherit; color: var(--text);
+  transition: border-color .15s ease, transform .12s ease, background .15s ease;
+}
+.recent-inv-row:active { transform: scale(.97); }
+.recent-inv-avatar {
+  width: 38px; height: 38px; border-radius: 12px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: var(--on-primary); display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 16px;
+}
+.recent-inv-meta { min-width: 0; flex: 1; }
+.recent-inv-name { font-size: 13px; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.recent-inv-sub { font-size: 10.5px; font-weight: 700; color: var(--text-muted); margin-top: 2px; display: flex; gap: 8px; flex-wrap: wrap; }
+.recent-inv-go { width: 26px; height: 26px; flex-shrink: 0; color: var(--primary); opacity: .8; }
+.recent-inv-empty { text-align: center; padding: 18px 10px 14px; color: var(--text-muted); font-size: 12px; font-weight: 700; line-height: 1.8; }
+.recent-inv-empty svg { width: 34px; height: 34px; opacity: .5; display: block; margin: 0 auto 8px; }
+.recent-inv-hint { flex-shrink: 0; padding-top: 8px; border-top: 1px dashed var(--border); font-size: 10px; color: var(--text-light); text-align: center; margin-top: 8px; }
+
 /* ---------- ⑮ زر شمس/قمر في هيدر الرئيسية (مقابل مجموعة الأيقونات) ---------- */
 #dashThemeToggleBtn {
   position: absolute; top: 14px; left: 14px; z-index: 10;
@@ -4980,10 +5159,12 @@ td { padding: 7px 5px; font-size: 11.5px; }
 #dashThemeToggleBtn .icon-svg.swap { animation: themeIconSwap .28s ease both; }
 
 /* ---------- ⑯ هيدر الرئيسية: حماية العنوان من الأيقونات العائمة + ألوان واضحة في كل الثيمات ---------- */
-.dash-header-card { padding-inline: 54px; gap: 2px; min-height: 138px; }
-.dash-header-card .dash-title { font-size: 18px !important; line-height: 1.45; }
-.dash-header-card .dash-subtitle { font-size: 12px; }
-.dash-header-card .logo-placeholder { width: 56px !important; height: 56px !important; font-size: 28px !important; }
+/* v1.7: هيدر أكبر بياخد المساحة المتبقية من الشاشة (٦ أيقونات فقط في الرئيسية) */
+.dash-header-card { padding-inline: 54px; gap: 6px; min-height: 216px; flex: 1 0 auto; justify-content: center; padding-block: 24px; }
+.dash-header-card .dash-title { font-size: 23px !important; line-height: 1.4; }
+.dash-header-card .dash-subtitle { font-size: 13.5px; }
+.dash-header-card .logo-placeholder { width: 78px !important; height: 78px !important; font-size: 34px !important; margin-bottom: 6px !important; }
+.dash-header-card #logoContainer img { max-width: 92px !important; max-height: 92px !important; }
 /* أيقونات الهيدر: قرص صلب بخلفية الثيم — واضحة فوق أي خلفية حتى المتدرجة */
 #dashTopRightActions button {
   width: 32px !important; height: 32px !important; padding: 5px !important;
@@ -5023,7 +5204,16 @@ td { padding: 7px 5px; font-size: 11.5px; }
 /* ---------- ⑰ الإعدادات: الإطار الخارجي فقط — إزالة الإطارات الداخلية الباهتة ---------- */
 .settings-neon-box .wa-card { border-color: transparent !important; box-shadow: none !important; background: var(--card-bg-alt); }
 .settings-neon-box .wa-card:hover { border-color: transparent !important; }
-.settings-neon-box .settings-inline-frame { border-color: transparent !important; box-shadow: none !important; }
+.settings-neon-box .settings-inline-frame { border-color: transparent !important; box-shadow: none !important; background: transparent !important; }
+/* v1.7: صفحات (بيانات المصنع/المظهر/الجداول/الخامات) — إلغاء أي إطار داخلي في كل الثيمات
+   (قاعدة زجاجي كانت تضيف border + blur للـ .settings-section بـ !important — دي بتلغيها بقوة أعلى) */
+#settingsView .settings-neon-box .settings-section {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
 </style>
   <meta property="og:image" content="https://bolt.new/static/og_default.png">
     <meta name="twitter:card" content="summary_large_image">
@@ -5035,9 +5225,9 @@ td { padding: 7px 5px; font-size: 11.5px; }
 </head>
 <body>
   <div id="splashScreen">
-    <div class="splash-logo">ف</div>
-    <div class="splash-text">فاتورة ستون</div>
-    <div class="splash-sub">جاري التحميل...</div>
+    <img src="assets/icons/icon-512.png" alt="StoneBill" class="splash-logo-img">
+    <div class="splash-text">StoneBill</div>
+    <div class="splash-sub">فواتير وإدارة الرخام والجرانيت — جاري التحميل...</div>
 
       <div style="width:100%; margin-top:auto; padding-top:10px; padding-bottom:12px; display:flex; justify-content:center;">
         <div class="footer-credit">
@@ -5048,6 +5238,60 @@ td { padding: 7px 5px; font-size: 11.5px; }
       </div>
 
     
+  </div>
+
+  <!-- v1.7: شاشة تعريف بالتطبيق — بتظهر مرة واحدة فقط أول تشغيل (زر تخطي متاح) -->
+  <div id="onboardingModal" role="dialog" aria-label="تعريف بتطبيق StoneBill" onclick="if(event.target===this) finishOnboarding()">
+    <div class="onb-card">
+      <img src="assets/icons/icon-512.png" alt="StoneBill" class="onb-logo">
+      <div class="onb-title">StoneBill</div>
+      <div class="onb-tag">رفيقك في إدارة الرخام والجرانيت — فواتير وحسابات ومخزون في تطبيق واحد</div>
+
+      <div class="onb-row">
+        <div class="onb-ico"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+        <div>
+          <div class="onb-row-t">إنشاء فواتير ذكية</div>
+          <div class="onb-row-d">جداول مقاسات جاهزة للرخام والجرانيت — طاولات، شرايح، درج، أطوال وقصاير — بحساب تلقائي فوري</div>
+        </div>
+      </div>
+
+      <div class="onb-row">
+        <div class="onb-ico"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l2 2"/></svg></div>
+        <div>
+          <div class="onb-row-t">خصم وأقساط ومتابعة سداد</div>
+          <div class="onb-row-d">المتبقي في لحظتها، جدولة أقساط، وتنبيهات تلقائية للأقساط المتأخرة والمستحقة</div>
+        </div>
+      </div>
+
+      <div class="onb-row">
+        <div class="onb-ico"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
+        <div>
+          <div class="onb-row-t">خامات ومخزون</div>
+          <div class="onb-row-d">أسعار الخامات بتتخزن وتتنقل للفاتورة تلقائياً، وجرد مخزون كامل برأس مال ونواقص</div>
+        </div>
+      </div>
+
+      <div class="onb-row">
+        <div class="onb-ico"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+        <div>
+          <div class="onb-row-t">عملاء وتقارير مبيعات</div>
+          <div class="onb-row-d">تحليل سلوك العملاء (مين بيسدد في الوقت)، وتقارير مبيعات شهرية ويومية بالرسوم البيانية</div>
+        </div>
+      </div>
+
+      <div class="onb-row" style="margin-bottom:0;">
+        <div class="onb-ico"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <div>
+          <div class="onb-row-t">حساب العمال واليوميات</div>
+          <div class="onb-row-d">يوميات وأجور العمال ومصروفات الورشة وتسوية يوم الخميس بحساب دقيق</div>
+        </div>
+      </div>
+
+      <div class="onb-actions">
+        <button type="button" class="onb-skip" onclick="finishOnboarding()">تخطي</button>
+        <button type="button" class="onb-start" onclick="finishOnboarding()">يلا نبدأ 💪</button>
+      </div>
+    </div>
   </div>
 
   
@@ -5092,7 +5336,7 @@ td { padding: 7px 5px; font-size: 11.5px; }
         </button>
       </div>
       <div id="logoContainer"></div>
-      <h2 id="uiName" class="dash-title">فاتورة ستون</h2>
+      <h2 id="uiName" class="dash-title">StoneBill</h2>
       <p class="dash-subtitle"></p>
       
       <!-- Current Role & User Identity Banner in Dashboard Header (Hidden - replaced by top-right icons) -->
@@ -6873,7 +7117,7 @@ td { padding: 7px 5px; font-size: 11.5px; }
         <div class="inv-header-brand">
           <div id="invLogoContainer"></div>
           <div>
-             <h1 id="invName">فاتورة ستون</h1>
+             <h1 id="invName">StoneBill</h1>
              <div class="inv-header-info" id="invHeaderInfo"></div>
              <span id="printDateTime" style="font-size:12px; color:#64748b; display:none;"></span>
           </div>
@@ -7920,7 +8164,7 @@ td { padding: 7px 5px; font-size: 11.5px; }
     function renderLogo(containerId, size) {
       const c = document.getElementById(containerId); if (!c) return;
       const logo = localStorage.getItem('factoryLogoBase64') || '';
-      const name = localStorage.getItem('factoryName') || 'فاتورة ستون';
+      const name = localStorage.getItem('factoryName') || 'StoneBill';
       const firstLetter = name ? name.trim().charAt(0).toUpperCase() : 'F';
       
       const shadow = size > 60 ? 'box-shadow: 0 8px 24px rgba(0,0,0,0.12);' : 'box-shadow: 0 4px 12px rgba(0,0,0,0.08);';
@@ -7945,7 +8189,7 @@ td { padding: 7px 5px; font-size: 11.5px; }
     function loadSettings() {
       const savedName = localStorage.getItem('factoryName');
       const langCode = (typeof getAppLanguage === 'function') ? getAppLanguage() : 'ar';
-      const defaultName = (typeof I18N_DATA !== 'undefined' && I18N_DATA[langCode]?.app_title) ? I18N_DATA[langCode].app_title : 'فاتورة ستون';
+      const defaultName = (typeof I18N_DATA !== 'undefined' && I18N_DATA[langCode]?.app_title) ? I18N_DATA[langCode].app_title : 'StoneBill';
       const name = (savedName && savedName.trim()) ? savedName.trim() : defaultName;
 
       const phone = localStorage.getItem('factoryPhone') || '';
@@ -8275,7 +8519,7 @@ td { padding: 7px 5px; font-size: 11.5px; }
         sheet.style.fontSize = config.fontSize || '11px';
         sheet.className = 'pdf-a4-sheet tpl-' + config.template + ' tbl-style-' + config.tableStyle;
 
-        const factoryName = localStorage.getItem('factoryName') || 'فاتورة ستون للرخام والجرانيت';
+        const factoryName = localStorage.getItem('factoryName') || 'StoneBill للرخام والجرانيت';
         const factorySubtitle = localStorage.getItem('factorySubtitle') || 'لتوريد وتصنيع وتشطيب كافة أعمال الرخام والجرانيت';
         const factoryPhone = localStorage.getItem('factoryPhone') || '01012345678';
         const factoryAddress = localStorage.getItem('factoryAddress') || 'المنطقة الصناعية - شق التعبان';
@@ -8402,7 +8646,7 @@ td { padding: 7px 5px; font-size: 11.5px; }
             html += `
             <div class="sh-corp-banner" style="background:var(--pdf-color); color:#fff !important; border-radius:6px; margin-bottom:12px; padding:12px 14px; display:flex; justify-content:space-between; align-items:center;">
                 <div style="display:flex; align-items:center; gap:10px;">
-                    ${config.showLogo && customLogoBase64 ? `<img src="${customLogoBase64}" style="max-height:42px; max-width:60px; object-fit:contain; background:#fff; padding:2px; border-radius:4px;">` : (config.showLogo ? `<div style="width:38px; height:38px; background:#fff; color:var(--pdf-color); font-weight:900; font-size:20px; display:flex; align-items:center; justify-content:center; border-radius:4px;">ف</div>` : '')}
+                    ${config.showLogo && customLogoBase64 ? `<img src="${customLogoBase64}" style="max-height:42px; max-width:60px; object-fit:contain; background:#fff; padding:2px; border-radius:4px;">` : (config.showLogo ? `<div style="width:38px; height:38px; background:#fff; color:var(--pdf-color); font-weight:900; font-size:20px; display:flex; align-items:center; justify-content:center; border-radius:4px;">S</div>` : '')}
                     <div>
                         <div style="font-size:16px; font-weight:900; color:#fff;">${escapeHtml(factoryName)}</div>
                         <div style="font-size:10.5px; opacity:0.9; color:#fff;">${escapeHtml(factorySubtitle)}</div>
@@ -8418,7 +8662,7 @@ td { padding: 7px 5px; font-size: 11.5px; }
             html += `
             <div class="sh-header" style="display:flex; justify-content:space-between; align-items:flex-start;">
                 <div style="display:flex; align-items:center; gap:12px;">
-                    ${config.showLogo && customLogoBase64 ? `<img src="${customLogoBase64}" style="max-height:48px; max-width:65px; object-fit:contain; border-radius:4px;">` : (config.showLogo ? `<div style="width:44px; height:44px; background:var(--pdf-color); color:#fff; font-weight:900; font-size:22px; display:flex; align-items:center; justify-content:center; border-radius:6px;">ف</div>` : '')}
+                    ${config.showLogo && customLogoBase64 ? `<img src="${customLogoBase64}" style="max-height:48px; max-width:65px; object-fit:contain; border-radius:4px;">` : (config.showLogo ? `<div style="width:44px; height:44px; background:var(--pdf-color); color:#fff; font-weight:900; font-size:22px; display:flex; align-items:center; justify-content:center; border-radius:6px;">S</div>` : '')}
                     <div>
                         <h2 style="margin:0; font-size:16px; font-weight:900; color:#0f172a;">${escapeHtml(factoryName)}</h2>
                         <div style="font-size:11px; font-weight:800; color:var(--pdf-color); margin-top:2px;">${escapeHtml(factorySubtitle)}</div>
@@ -10939,7 +11183,7 @@ td { padding: 7px 5px; font-size: 11.5px; }
               var k = 'fatoraWebNotifDay', today = new Date().toDateString();
               if (localStorage.getItem(k) !== today) {
                 localStorage.setItem(k, today);
-                new Notification('فاتورة ستون — تنبيه أقساط', { body: 'لديك ' + items.length + ' قسط/أقساط متأخرة أو مستحقة اليوم — افتح التطبيق للتفاصيل' });
+                new Notification('StoneBill — تنبيه أقساط', { body: 'لديك ' + items.length + ' قسط/أقساط متأخرة أو مستحقة اليوم — افتح التطبيق للتفاصيل' });
               }
             }
           } catch (e) {}
@@ -10963,7 +11207,7 @@ td { padding: 7px 5px; font-size: 11.5px; }
             if (!items.length) return;
             var notifs = items.slice(0, 40).map(function (it) {
               var nid = 900000 + (((String(it.rid).split('').reduce(function (a, c) { return (a * 31 + c.charCodeAt(0)) % 99991; }, 7)) % 9999) * 10 + (it.today ? 1 : 0));
-              var title = it.today ? 'قسط مستحق اليوم — فاتورة ستون' : 'قسط متأخر — فاتورة ستون';
+              var title = it.today ? 'قسط مستحق اليوم — StoneBill' : 'قسط متأخر — StoneBill';
               var body = 'فاتورة #' + it.num + (it.client ? ' — ' + it.client : '') + ' — المتبقي ' + (Math.round(it.remaining * 100) / 100) + ' ج.م';
               return {
                 id: nid, title: title, body: body,
@@ -11413,7 +11657,7 @@ td { padding: 7px 5px; font-size: 11.5px; }
     function shareWhatsAppText() {
       const client = document.getElementById('clientName').value.trim();
       let phone = document.getElementById('clientPhone').value.trim();
-      const factory = localStorage.getItem('factoryName') || 'فاتورة ستون';
+      const factory = localStorage.getItem('factoryName') || 'StoneBill';
       
       let beforeMsg = localStorage.getItem('waMessageBefore') || 'مرحباً';
       let afterMsg = localStorage.getItem('waMessageAfter') || '[المصنع]\nفاتورة رقم: [رقم_الفاتورة]\nالتاريخ: [التاريخ]\nالإجمالي: [الإجمالي]\nالمتبقي: [المتبقي]\nشكراً لثقتكم الغالية!';
@@ -12115,7 +12359,7 @@ td { padding: 7px 5px; font-size: 11.5px; }
         data.factoryName !== undefined;
 
       if (!isRecognizedBackup) {
-        throw new Error('ملف النسخة الاحتياطية لا يحتوي على بيانات تطبيق فاتورة ستون');
+        throw new Error('ملف النسخة الاحتياطية لا يحتوي على بيانات تطبيق StoneBill');
       }
 
       // Archive / Invoices
@@ -12385,7 +12629,7 @@ td { padding: 7px 5px; font-size: 11.5px; }
         const metadata = {
           name: fileName,
           mimeType: 'application/json',
-          description: 'نسخة احتياطية سحابية لتطبيق فاتورة ستون - إدارة الرخام والجرانيت'
+          description: 'نسخة احتياطية سحابية لتطبيق StoneBill - إدارة الرخام والجرانيت'
         };
 
         const boundary = '-------314159265358979323846';
@@ -13185,7 +13429,7 @@ td { padding: 7px 5px; font-size: 11.5px; }
       const ws = getActiveWorkshopInfo();
       const code = ws.code;
       const name = ws.name || 'ورشة الرخام';
-      const msg = encodeURIComponent(`السلام عليكم ورحمة الله،\nتفضل كود الانضمام لورشة (${name}) على تطبيق فاتورة ستون:\n\nكود الورشة: ${code}\n\nيرجى فتح التطبيق والنقر على (طلب ربط بالورشة) ثم إدخال الكود واسمك، وسيقوم المدير باعتماد طلبك لتتم مزامنة فواتيرك تلقائياً.`);
+      const msg = encodeURIComponent(`السلام عليكم ورحمة الله،\nتفضل كود الانضمام لورشة (${name}) على تطبيق StoneBill:\n\nكود الورشة: ${code}\n\nيرجى فتح التطبيق والنقر على (طلب ربط بالورشة) ثم إدخال الكود واسمك، وسيقوم المدير باعتماد طلبك لتتم مزامنة فواتيرك تلقائياً.`);
       window.open(`https://api.whatsapp.com/send?text=${msg}`, '_blank');
     }
 
@@ -14508,7 +14752,7 @@ td { padding: 7px 5px; font-size: 11.5px; }
       }
 
       const savedAns = (localStorage.getItem('app_admin_recovery_a') || '').trim().toLowerCase();
-      const factName = (localStorage.getItem('factoryName') || 'فاتورة ستون').trim().toLowerCase();
+      const factName = (localStorage.getItem('factoryName') || 'StoneBill').trim().toLowerCase();
       const factPhone = (localStorage.getItem('factoryPhone') || '').trim().toLowerCase();
 
       // Check if match
@@ -14869,13 +15113,14 @@ td { padding: 7px 5px; font-size: 11.5px; }
       },
       'expenses': {
         id: 'expenses',
-        title: 'يوميات وحسابات العمال',
+        title: 'حساب العمال',
         i18n: 'menu_expenses',
+        className: 'expenses-calc',
         style: 'background: linear-gradient(135deg, #e11d48, #f43f5e);',
         icon: '<svg class="icon-svg" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>',
         action: "openSettingsPage('expenses')",
         adminOnly: true,
-        defaultCategory: 'settings'
+        defaultCategory: 'dashboard'
       },
       'system': {
         id: 'system',
@@ -14919,12 +15164,14 @@ td { padding: 7px 5px; font-size: 11.5px; }
       }
     };
 
+    /* v1.7: ٦ أيقونات فقط في الرئيسية بالترتيب اللي طلبه المالك — وحساب العمال بقى أيقونة رئيسية بدل الإعدادات */
     const DEFAULT_DASHBOARD_KEYS = [
       'create_invoice',
       'invoice_history',
-      'inventory_mgmt',
       'sales_reports',
-      'client_data'
+      'client_data',
+      'inventory_mgmt',
+      'expenses'
       /* الحاسبة اتشالت من الرئيسية بطلب المالك (v1.5) — بقت زر في شريط التنقل السفلي كبوب أب */
     ];
 
@@ -14935,10 +15182,19 @@ td { padding: 7px 5px; font-size: 11.5px; }
       'whatsapp',
       'materials',
       'pdf',
-      'expenses',
       'system',
       'language'
     ];
+    /* v1.7: ترحيل لمرة واحدة لتخطيط الأزرار — عشان الـ ٦ أيقونات الجديدة تظهر فوراً عند كل المستخدمين */
+    function migrateGridLayoutsV17() {
+      try {
+        if (localStorage.getItem('sb_layout_v17') === '1') return;
+        localStorage.setItem('app_dashboard_buttons_layout', JSON.stringify(DEFAULT_DASHBOARD_KEYS));
+        localStorage.setItem('app_settings_buttons_layout', JSON.stringify(DEFAULT_SETTINGS_KEYS));
+        localStorage.setItem('sb_layout_v17', '1');
+      } catch (e) {}
+    }
+    migrateGridLayoutsV17();
 
     function getAppGridLayouts() {
       let dash = null;
@@ -15860,7 +16116,7 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
         const metadata = {
           name: fileName,
           mimeType: 'application/json',
-          description: 'نسخة احتياطية سحابية تلقائية لتطبيق فاتورة ستون'
+          description: 'نسخة احتياطية سحابية تلقائية لتطبيق StoneBill'
         };
 
         const boundary = '-------314159265358979323846';
@@ -15924,7 +16180,7 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
           try {
             await navigator.share({
               files: [file],
-              title: 'النسخة الاحتياطية لفاتورة ستون',
+              title: 'النسخة الاحتياطية لـ StoneBill',
               text: 'احتفظ بهذا الملف لاستعادة بياناتك لاحقاً'
             });
             showToast('<svg class="icon-svg" style="width:1.2em; height:1.2em; margin:0 4px 0 0; vertical-align:-3px; display:inline-block; color:inherit;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> تمت عملية المشاركة / الحفظ');
@@ -16210,7 +16466,7 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
       }
       switchView('loginView', false);
       history.replaceState({ viewId: 'loginView' }, '', '#loginView');
-      setTimeout(() => { const splash = document.getElementById('splashScreen'); if (splash) { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 400); } }, 800);
+      setTimeout(() => { const splash = document.getElementById('splashScreen'); if (splash) { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 400); } if (typeof window.showOnboardingOnce === 'function') setTimeout(window.showOnboardingOnce, 500); }, 800);
     });
   
     function openNewInvoice() {
@@ -16295,6 +16551,8 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
       // and writing only one made the two keys diverge.
       localStorage.setItem('marbleInvoiceDraft', JSON.stringify(draft));
       localStorage.setItem('invoiceDraft', JSON.stringify(draft));
+      // v1.7: تسجيل سناپ شوت باسم العميل لميزة «آخر الفواتير المفتوحة» (ضغطة مطولة على +)
+      recordInvoiceSession(draft);
     }
 
     function clearInvoiceDraft() {
@@ -16303,6 +16561,195 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
       localStorage.removeItem('marbleInvoiceDraft');
       localStorage.removeItem('invoiceDraft');
     }
+
+    /* ===== v1.7: آخر الفواتير المفتوحة (ضغطة مطولة على زر +) =====
+       كل ما المستخدم يكتب اسم عميل في صفحة إنشاء الفاتورة، بيتسجل سناپ شوت للفاتورة
+       باسم العميل — والضغطة المطولة على + تعرض القائمة وتسترجع أي فاتورة فوراً
+       عشان تعمل فواتير كتير في نفس الوقت. الميزة دي لصفحة إنشاء الفاتورة فقط. */
+    function recordInvoiceSession(draft) {
+      try {
+        if (typeof isViewingArchive !== 'undefined' && isViewingArchive) return;
+        const name = (draft.clientName || '').trim();
+        if (!name) return;
+        let list = [];
+        try { list = JSON.parse(localStorage.getItem('sbInvoiceSessions') || '[]'); } catch (e) { list = []; }
+        if (!Array.isArray(list)) list = [];
+        const entry = {
+          id: 'sbsn-' + name,
+          name: name,
+          phone: draft.clientPhone || '',
+          invNum: draft.invNum || '',
+          savedAt: Date.now(),
+          htmlContent: draft.htmlContent || '',
+          discount: draft.discountVal || '',
+          paid: draft.paidVal || '',
+          tip: draft.tipVal || '',
+          dueDays: draft.dueDays || '',
+          notes: draft.notes || ''
+        };
+        list = list.filter(s => s && s.id !== entry.id);
+        list.unshift(entry);
+        if (list.length > 6) list = list.slice(0, 6);
+        localStorage.setItem('sbInvoiceSessions', JSON.stringify(list));
+      } catch (e) {}
+    }
+
+    function getInvoiceSessions() {
+      let list = [];
+      try { list = JSON.parse(localStorage.getItem('sbInvoiceSessions') || '[]'); } catch (e) { list = []; }
+      if (!Array.isArray(list)) list = [];
+      return list.filter(s => s && s.name);
+    }
+
+    function restoreInvoiceSession(id) {
+      try {
+        const s = getInvoiceSessions().find(x => x.id === id);
+        if (!s) return;
+        closeRecentInvoicesBurst();
+        isViewingArchive = false;
+        currentViewedArchiveId = null;
+        clearSignature();
+        const cName = document.getElementById('clientName');
+        if (cName) cName.value = s.name || '';
+        const cPhone = document.getElementById('clientPhone');
+        if (cPhone) cPhone.value = s.phone || '';
+        const invNum = document.getElementById('invNum');
+        if (invNum) invNum.value = s.invNum || '';
+        const disc = document.getElementById('discountVal');
+        if (disc) disc.value = s.discount || '';
+        const paid = document.getElementById('paidVal');
+        if (paid) paid.value = s.paid || '';
+        const tip = document.getElementById('tipVal');
+        if (tip) tip.value = s.tip || '';
+        const dueDays = document.getElementById('dueDaysInput');
+        if (dueDays) dueDays.value = s.dueDays || '';
+        const notesEl = document.getElementById('invoiceNotes');
+        if (notesEl) { notesEl.value = s.notes || ''; setTimeout(() => { notesEl.style.height = ''; notesEl.style.height = notesEl.scrollHeight + 'px'; }, 10); }
+        const tCont = document.getElementById('tablesContainer');
+        if (tCont) tCont.innerHTML = s.htmlContent || '';
+        // وضع التحرير (فاتورة جديدة جارية) — مش عرض أرشيف
+        const invAct = document.getElementById('invoiceActions');
+        if (invAct) invAct.style.display = 'block';
+        const newAct = document.getElementById('newInvoiceActionsGroup');
+        if (newAct) newAct.style.display = 'grid';
+        const arcAct = document.getElementById('archivedInvoiceActionsGroup');
+        if (arcAct) arcAct.style.display = 'none';
+        const inv = document.getElementById('invoiceCardContent');
+        if (inv) {
+          inv.querySelectorAll('input, select, textarea').forEach(el => el.disabled = false);
+          inv.querySelectorAll('.btn-del-row').forEach(el => el.style.display = '');
+          inv.querySelectorAll('.block-header button.no-print').forEach(el => el.style.display = '');
+          inv.querySelectorAll('button[onclick*="addRow"]').forEach(el => el.style.display = '');
+        }
+        const instConf = document.getElementById('installmentConfigSection');
+        if (instConf) instConf.style.display = 'none';
+        const instCont = document.getElementById('installmentsTableContainer');
+        if (instCont) instCont.style.display = 'none';
+        const payActions = document.getElementById('paymentActionButtons');
+        if (payActions) payActions.style.display = 'none';
+        renderLogo('invLogoContainer', 56);
+        calculateAll();
+        checkEmptyState();
+        switchView('appView');
+        saveInvoiceDraft();
+        if (typeof showToast === 'function') showToast('تم استرجاع فاتورة: ' + (s.name || ''), 'success');
+      } catch (err) {
+        console.error('restoreInvoiceSession error:', err);
+      }
+    }
+
+    function fmtSessionTime(ts) {
+      try {
+        const d = new Date(ts);
+        const now = new Date();
+        const sameDay = d.toDateString() === now.toDateString();
+        const t = d.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+        if (sameDay) return 'اليوم ' + t;
+        return d.toLocaleDateString('ar-EG', { day: 'numeric', month: 'short' }) + ' - ' + t;
+      } catch (e) { return ''; }
+    }
+
+    function openRecentInvoicesBurst() {
+      if (document.getElementById('recentInvoicesModal')) return;
+      const sessions = getInvoiceSessions();
+      const overlay = document.createElement('div');
+      overlay.id = 'recentInvoicesModal';
+      overlay.className = 'recent-inv-catch';
+      const rowsHtml = sessions.length ? sessions.map(s => {
+        const initial = (s.name || '؟').trim().charAt(0);
+        const subParts = [];
+        if (s.invNum) subParts.push('رقم: ' + s.invNum);
+        if (s.phone) subParts.push(s.phone);
+        subParts.push(fmtSessionTime(s.savedAt));
+        return '<button type="button" class="recent-inv-row" data-sid="' + escapeHtml(s.id) + '">' +
+          '<span class="recent-inv-avatar">' + initial + '</span>' +
+          '<span class="recent-inv-meta">' +
+            '<span class="recent-inv-name">فاتورة ' + escapeHtml(s.name) + '</span>' +
+            '<span class="recent-inv-sub">' + subParts.map(p => '<span>' + escapeHtml(p) + '</span>').join('') + '</span>' +
+          '</span>' +
+          '<svg class="recent-inv-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>' +
+        '</button>';
+      }).join('') :
+      ('<div class="recent-inv-empty">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' +
+        'مفيش فواتير مفتوحة لسه<br>افتح «إنشاء فاتورة» واكتب اسم العميل —<br>وهتلاقيها هنا عشان ترجعلها في أي وقت' +
+      '</div>');
+      overlay.innerHTML = '<div class="ws-pop-card" role="dialog" aria-label="آخر الفواتير المفتوحة">' +
+        '<div class="recent-inv-head">' +
+          '<span class="recent-inv-title">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>' +
+            'آخر الفواتير المفتوحة' +
+          '</span>' +
+          '<button type="button" class="recent-inv-close" onclick="event.stopPropagation(); closeRecentInvoicesBurst()" aria-label="إغلاق">✕</button>' +
+        '</div>' +
+        '<div class="recent-inv-list">' + rowsHtml + '</div>' +
+        '<div class="recent-inv-hint">اضغطة مطولة على زر + في أي وقت تعرض لك القائمة دي</div>' +
+      '</div>';
+      overlay.addEventListener('click', function (e) { if (e.target === overlay) closeRecentInvoicesBurst(); });
+      overlay.querySelectorAll('.recent-inv-row').forEach(row => {
+        row.addEventListener('click', function (e) {
+          e.stopPropagation();
+          restoreInvoiceSession(row.getAttribute('data-sid') || '');
+        });
+      });
+      document.body.appendChild(overlay);
+    }
+
+    function closeRecentInvoicesBurst() {
+      const el = document.getElementById('recentInvoicesModal');
+      if (el) el.remove();
+    }
+
+    /* الضغطة المطولة على زر + : 480ms → بوب أب آخر الفواتير، والضغطة العادية تفضل فاتورة جديدة */
+    (function () {
+      function setupFabLongPress() {
+        const fab = document.getElementById('navAddFabBtn');
+        if (!fab) return;
+        let holdTimer = null, longFired = false, startX = 0, startY = 0;
+        const LONG_MS = 480, MOVE_TOL = 14;
+        function cancel() { if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; } }
+        fab.addEventListener('pointerdown', function (e) {
+          longFired = false; startX = e.clientX; startY = e.clientY;
+          cancel();
+          holdTimer = setTimeout(function () {
+            longFired = true;
+            holdTimer = null;
+            try { if (navigator.vibrate) navigator.vibrate(18); } catch (err) {}
+            openRecentInvoicesBurst();
+          }, LONG_MS);
+        }, { passive: true });
+        fab.addEventListener('pointermove', function (e) {
+          if (holdTimer && (Math.abs(e.clientX - startX) > MOVE_TOL || Math.abs(e.clientY - startY) > MOVE_TOL)) cancel();
+        }, { passive: true });
+        ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => fab.addEventListener(ev, cancel, { passive: true }));
+        fab.addEventListener('click', function (e) {
+          if (longFired) { e.stopImmediatePropagation(); e.preventDefault(); longFired = false; }
+        }, true);
+      }
+      /* زر + موجود آخر الـ body — نستنى الـ DOM يكتمل عشان نلاقيه */
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setupFabLongPress);
+      else setupFabLongPress();
+    })();
 
     function setPaidInFull() {
       const netText = document.getElementById('netCost').innerText.replace(/[^\d.-]/g, '');
@@ -16950,7 +17397,7 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
         <div class="cutting-print-header" style="display:none; border-bottom:2px solid #000; padding-bottom:10px; margin-bottom:14px;">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <div>
-              <h2 id="printFactName" style="margin:0 0 4px; font-size:18px; font-weight:900; color:#000;">فاتورة ستون للرخام والجرانيت</h2>
+              <h2 id="printFactName" style="margin:0 0 4px; font-size:18px; font-weight:900; color:#000;">StoneBill للرخام والجرانيت</h2>
               <div style="font-size:13px; font-weight:bold; color:#333;">أمر تشغيل وتقطيع الورشة (مرتب من الأكبر للأصغر)</div>
             </div>
             <div style="text-align:left; font-size:12px; line-height:1.5;">
@@ -17006,7 +17453,7 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
           <!-- Header -->
           <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:2px solid #0f172a; padding-bottom:14px; margin-bottom:16px;">
             <div>
-              <div id="receiptFactoryName" style="font-size:19px; font-weight:900; color:#0f172a; margin-bottom:4px;">فاتورة ستون للرخام والجرانيت</div>
+              <div id="receiptFactoryName" style="font-size:19px; font-weight:900; color:#0f172a; margin-bottom:4px;">StoneBill للرخام والجرانيت</div>
               <div id="receiptFactorySub" style="font-size:11.5px; color:#475569;">لتوريد وتركيب جميع أنواع الرخام والجرانيت الطبيعي والمستورد</div>
               <div id="receiptFactoryContact" style="font-size:11px; color:#64748b; margin-top:3px;">هاتف: ... | العنوان: ...</div>
             </div>
@@ -17627,7 +18074,7 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
 
       currentReceiptData = { record, payment };
 
-      const factName = localStorage.getItem('factoryName') || 'فاتورة ستون للرخام والجرانيت';
+      const factName = localStorage.getItem('factoryName') || 'StoneBill للرخام والجرانيت';
       const factPhone = localStorage.getItem('factoryPhone') || '';
 
       const factNameEl = document.getElementById('receiptFactoryName');
@@ -17694,7 +18141,7 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
     function shareReceiptWhatsApp() {
       if (!currentReceiptData) return;
       const { record, payment } = currentReceiptData;
-      const factName = localStorage.getItem('factoryName') || 'فاتورة ستون للرخام والجرانيت';
+      const factName = localStorage.getItem('factoryName') || 'StoneBill للرخام والجرانيت';
       const phone = (record.phone || '').replace(/[^0-9]/g, '');
 
       const netNum = parseFloat(String(record.net || '0').replace(/[^\d.-]/g, '')) || 0;
@@ -18359,7 +18806,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
 
     function printInventoryReport() {
       const db = getInventoryDB();
-      const factName = localStorage.getItem('factoryName') || 'فاتورة ستون للرخام والجرانيت';
+      const factName = localStorage.getItem('factoryName') || 'StoneBill للرخام والجرانيت';
       const factPhone = localStorage.getItem('factoryPhone') || '';
       const now = new Date();
       const dateStr = now.toLocaleDateString('ar-EG') + ' - ' + now.toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'});
@@ -19030,7 +19477,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       document.getElementById('cuttingFormahCount').innerText = `${data.formahCount} فرمة`;
 
       const pFact = document.getElementById('printFactName');
-      if (pFact) pFact.innerText = localStorage.getItem('factoryName') || 'فاتورة ستون للرخام والجرانيت';
+      if (pFact) pFact.innerText = localStorage.getItem('factoryName') || 'StoneBill للرخام والجرانيت';
       const pClient = document.getElementById('printClientName');
       if (pClient) pClient.innerText = client || '-';
       const pInv = document.getElementById('printInvNum');
@@ -19498,7 +19945,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
 
     function shareCuttingSheetWhatsApp() {
       if (!currentCuttingData) return;
-      const factName = localStorage.getItem('factoryName') || 'فاتورة ستون للرخام والجرانيت';
+      const factName = localStorage.getItem('factoryName') || 'StoneBill للرخام والجرانيت';
       const { client, invNum, date, data } = currentCuttingData;
       let msg = `*أمر تشغيل وتقطيع الورشة*\n`;
       msg += `*${factName}*\n`;
@@ -19556,7 +20003,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
 
     function copyCuttingSheetText() {
       if (!currentCuttingData) return;
-      const factName = localStorage.getItem('factoryName') || 'فاتورة ستون للرخام والجرانيت';
+      const factName = localStorage.getItem('factoryName') || 'StoneBill للرخام والجرانيت';
       const { client, invNum, date, data } = currentCuttingData;
       let txt = `أمر تشغيل وتقطيع الورشة\n${factName}\nالعميل: ${client} | فاتورة: #${invNum} | التاريخ: ${date}\n`;
       txt += `إجمالي القطع: ${data.grandTotalQty} قطعة | إجمالي المسطح: ${data.grandTotalArea.toFixed(2)} م² | عدد الفرمات: ${data.formahCount}\n`;
@@ -20859,7 +21306,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
         dir: 'rtl',
         name: 'العربية (المصرية)',
         summary: 'اتجاه الواجهة: من اليمين إلى اليسار (RTL). تم ضبط كافة القوائم والفواتير والتقارير وفق المصطلحات والأسلوب المصري الدارج بمصانع وشق التعبان والورش.',
-        app_title: 'فاتورة ستون',
+        app_title: 'StoneBill',
         app_subtitle: 'إدارة الرخام والجرانيت',
         create_invoice: 'إنشاء فاتورة جديدة',
         invoice_history: 'سجل الفواتير',
@@ -20875,7 +21322,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
         menu_whatsapp: 'رسالة واتساب',
         menu_materials: 'الخامات (الأسعار)',
         menu_pdf: 'الطباعة و PDF',
-        menu_expenses: 'يوميات وحسابات العمال',
+        menu_expenses: 'حساب العمال',
         menu_system: 'النظام والنسخ',
         menu_language: 'لغة التطبيق',
         lang_settings_title: 'لغة التطبيق',
@@ -20933,7 +21380,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
         dir: 'ltr',
         name: 'English (US)',
         summary: 'Layout Direction: Left-to-Right (LTR). Complete international terminology for marble & granite fabrication, export invoices, stock management, daily wages, and accounting metrics.',
-        app_title: 'Fatora Stone',
+        app_title: 'StoneBill',
         app_subtitle: 'Marble & Granite Management',
         create_invoice: 'Create Invoice',
         invoice_history: 'Invoice Archive',
@@ -21081,8 +21528,8 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
 
     const TEXT_TRANSLATION_MAP = {
       en: {
-      "فاتورة ستون للرخام والجرانيت": "Fatora Stone for Marble & Granite",
-      "فاتورة ستون": "Fatora Stone",
+      "فاتورة ستون للرخام والجرانيت": "StoneBill for Marble & Granite",
+      "فاتورة ستون": "StoneBill",
       "إدارة الرخام والجرانيت": "Marble & Granite Management",
       "إنشاء فاتورة جديدة": "Create New Invoice",
       "سجل الفواتير": "Invoice Archive",
@@ -24896,8 +25343,8 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       <button type="button" onclick="closeAppAuthModal()" style="position:absolute; top:14px; left:14px; background:transparent; border:none; font-size:22px; color:var(--text-muted); cursor:pointer; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center;" title="إغلاق">&times;</button>
       
       <!-- Logo & App Title -->
-      <div style="width:60px; height:60px; border-radius:16px; background:var(--header-grad); color:var(--on-primary); font-size:28px; font-weight:900; display:flex; align-items:center; justify-content:center; margin:0 auto 10px; box-shadow:var(--shadow-md);">ف</div>
-      <h3 style="margin:0 0 4px 0; font-size:19px; font-weight:900; color:var(--text);">فاتورة ستون</h3>
+      <img src="assets/icons/icon-512.png" alt="StoneBill" style="width:60px; height:60px; border-radius:16px; margin:0 auto 10px; display:block; box-shadow:var(--shadow-md);">
+      <h3 style="margin:0 0 4px 0; font-size:19px; font-weight:900; color:var(--text);">StoneBill</h3>
       <p style="font-size:12.5px; color:var(--text-muted); margin:0 0 16px; line-height:1.4;">
         إدارة مصانع وورش الرخام والجرانيت، إصدار الفواتير، ومتابعة الحسابات والعملاء.
       </p>
@@ -25411,7 +25858,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
       <span>البحث</span>
     </button>
-    <button type="button" class="lux-nav-fab" aria-label="فاتورة جديدة" onclick="openNewInvoice()">
+    <button type="button" class="lux-nav-fab" id="navAddFabBtn" aria-label="فاتورة جديدة" onclick="openNewInvoice()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
     </button>
     <button type="button" class="lux-nav-btn" id="navCalcBtn" onclick="toggleCalcModal(true)" aria-label="الآلة الحاسبة">
@@ -25491,7 +25938,22 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       splashDone = true;
       splash.classList.add('lux-hide');
       setTimeout(function () { if (splash && splash.parentNode) splash.parentNode.removeChild(splash); splash = null; }, 600);
+      /* v1.7: شاشة التعريف بالتطبيق — أول تشغيل فقط بعد اختفاء السبلاش */
+      setTimeout(function () { if (typeof window.showOnboardingOnce === 'function') window.showOnboardingOnce(); }, 300);
     }
+    /* v1.7: onboarding مرة واحدة + زر تخطي */
+    window.showOnboardingOnce = function () {
+      try {
+        if (localStorage.getItem('sb_onboarded') === '1') return;
+        var ob = document.getElementById('onboardingModal');
+        if (ob) ob.classList.add('open');
+      } catch (e) {}
+    };
+    window.finishOnboarding = function () {
+      try { localStorage.setItem('sb_onboarded', '1'); } catch (e) {}
+      var ob = document.getElementById('onboardingModal');
+      if (ob) ob.classList.remove('open');
+    };
     if (reducedMotion) { dismissSplash(); }
     else { setTimeout(dismissSplash, 2000); window.addEventListener('load', function () { setTimeout(dismissSplash, 1200); }); }
 

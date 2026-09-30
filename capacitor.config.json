@@ -1,13 +1,13 @@
 {
   "appId": "com.sawan4art.fatorastone",
-  "appName": "FatoraStone",
+  "appName": "StoneBill",
   "webDir": "www",
   "bundledWebRuntime": false,
   "android": {
     "allowMixedContent": false,
     "captureInput": true,
     "webContentsDebuggingEnabled": false,
-    "backgroundColor": "#1c1917"
+    "backgroundColor": "#1e1b4b"
   },
   "ios": {
     "contentInset": "always",

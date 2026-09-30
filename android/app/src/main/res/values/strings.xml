@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">FatoraStone</string>
-    <string name="title_activity_main">FatoraStone</string>
+    <string name="app_name">StoneBill</string>
+    <string name="title_activity_main">StoneBill</string>
     <string name="package_name">com.sawan4art.fatorastone</string>
     <string name="custom_url_scheme">com.sawan4art.fatorastone</string>
 </resources>
