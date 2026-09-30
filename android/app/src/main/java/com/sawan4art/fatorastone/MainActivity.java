@@ -24,6 +24,10 @@ public class MainActivity extends BridgeActivity {
         super.onStart();
         if (bridge != null && bridge.getWebView() != null) {
             bridge.getWebView().addJavascriptInterface(new WebAppInterface(this), "AndroidInterface");
+            /* قفل تكبير النص على 100% — إعداد خط النظام (أكبر/أصغر) كان بيكبّر كل
+               النصوص والأيقونات المقاسة بـ em داخل الويب فيو فتحسس إن التطبيق «مزوم».
+               التطبيق صمم بمقاسات ثابتة فنثبّت textZoom لضمان التناسق مع حجم الشاشة */
+            bridge.getWebView().getSettings().setTextZoom(100);
         }
     }
 
