@@ -1,6 +1,6 @@
 {
   "name": "fatora-stone",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "description": "فاتورة ستون — إدارة مصانع وورش الرخام والجرانيت (Marble & Granite workshop management)",
   "main": "server.js",
   "scripts": {

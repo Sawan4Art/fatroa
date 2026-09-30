@@ -2609,7 +2609,7 @@
     }
     .dash-subtitle {
         color: var(--text-muted) !important;
-        font-size: 15.5px !important; /* v1.9: عنوان فرعي أكبر بالنسبة للكارت */
+        font-size: 18px !important; /* v1.10: وصف الشركة أكبر وأوضح في هيدر الرئيسية */
         font-weight: 700 !important;
         margin: 0 !important;
     }
@@ -5113,12 +5113,14 @@ td { padding: 7px 5px; font-size: 11.5px; }
 #dashThemeToggleBtn .icon-svg.swap { animation: themeIconSwap .28s ease both; }
 
 /* ---------- ⑯ هيدر الرئيسية: حماية العنوان من الأيقونات العائمة + ألوان واضحة في كل الثيمات ---------- */
-/* v1.9: هيدر أكبر — عناوين وأيقونات أكبر بالنسبة للكارت (طلب المالك) */
-.dash-header-card { padding-inline: 54px; gap: 8px; min-height: 236px; flex: 1 0 auto; justify-content: center; padding-block: 26px; }
+/* v1.10: هيدر أضخم — شعار/رقم/وصف الشركة أكبر + الأيقونات الأربعة عمود رأسي على يمين الكارت في منتصفه
+   (padding-inline-start أكبر عشان المحتوى مايتلخبطش مع عمود الأيقونات في RTL و LTR) */
+.dash-header-card { padding-inline: 78px 30px; gap: 10px; min-height: 330px; flex: 1 0 auto; justify-content: center; padding-block: 28px; }
 .dash-header-card .dash-title { font-size: 30px !important; line-height: 1.35; }
-.dash-header-card .dash-subtitle { font-size: 15.5px; }
-.dash-header-card .logo-placeholder { width: 96px !important; height: 96px !important; font-size: 42px !important; margin-bottom: 6px !important; }
-.dash-header-card #logoContainer img { max-width: 112px !important; max-height: 112px !important; }
+.dash-header-card .dash-subtitle { font-size: 18px; line-height: 1.6; }
+.dash-header-card .dash-subtitle > div:first-child { font-weight: 700; }
+.dash-header-card .logo-placeholder { width: 120px !important; height: 120px !important; font-size: 52px !important; margin-bottom: 6px !important; }
+.dash-header-card #logoContainer img { max-width: 128px !important; max-height: 128px !important; }
 /* أيقونات الهيدر: قرص صلب بخلفية الثيم — صف واحد على اليمين بمسافات مضبوطة (v1.9) */
 #dashTopRightActions button {
   width: 44px !important; height: 44px !important; padding: 8px !important;
@@ -5272,8 +5274,8 @@ input *, textarea *,
     <div class="dash-header-card">
       <!-- زر الترس العلوي اتشال بطلب المالك — الإعدادات بقى ليها زر الترس في شريط التنقل السفلي مكان "المزيد" -->
 
-      <!-- v1.9: كل أيقونات الهيدر في صف واحد على اليمين بمسافات مضبوطة — شمس/قمر + الملف + الوضع + كود الورشة -->
-      <div id="dashTopRightActions" style="position: absolute; top: 16px; right: 16px; display: flex; flex-direction: row; align-items: center; gap: 13px; z-index: 10;">
+      <!-- v1.10: الأيقونات الأربعة عمود رأسي على يمين الكارت في منتصفه ارتفاعياً بمسافات مضبوطة -->
+      <div id="dashTopRightActions" style="position: absolute; top: 50%; right: 14px; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 12px; z-index: 10;">
         <!-- 0. زر شمس/قمر: تبديل سريع بين الفاتح والمظلم من الرئيسية (والتلقائي من الإعدادات) -->
         <button type="button" id="dashThemeToggleBtn" onclick="toggleThemeFromHome()" title="تبديل المظهر: فاتح / مظلم" aria-label="تبديل المظهر">
           <svg id="dashThemeToggleIcon" class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
@@ -8073,7 +8075,7 @@ input *, textarea *,
 
         function switchView(viewId, push = true) {
       if (viewId !== 'appView') { 
-          if (!isViewingArchive) saveInvoiceDraft(); 
+          if (!isViewingArchive) saveInvoiceDraft(true); /* v1.10: حفظ فوري عند مغادرة صفحة الفاتورة — مش مؤجل */
           isViewingArchive = false; 
       }
       document.querySelectorAll('.view-container').forEach(el => el.classList.remove('active-view'));
@@ -8156,7 +8158,7 @@ input *, textarea *,
     function handleLogoUpload(event) {
       const file = event.target.files[0]; if (!file) return;
       const reader = new FileReader();
-      reader.onload = e => { const img = new Image(); img.onload = () => { const canvas = document.createElement('canvas'); const sc = 120 / img.width; canvas.width = 120; canvas.height = img.height * sc; canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height); localStorage.setItem('factoryLogoBase64', canvas.toDataURL('image/png')); loadSettings(); renderLogo('logoContainer', 70); renderLogo('invLogoContainer', 56); showToast('<svg class="icon-svg" style="width:1.2em; height:1.2em; margin:0 4px 0 0; vertical-align:-3px; display:inline-block; color:inherit;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> تم تحميل الشعار'); }; img.src = e.target.result; };
+      reader.onload = e => { const img = new Image(); img.onload = () => { const canvas = document.createElement('canvas'); const sc = 120 / img.width; canvas.width = 120; canvas.height = img.height * sc; canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height); localStorage.setItem('factoryLogoBase64', canvas.toDataURL('image/png')); loadSettings(); renderLogo('logoContainer', 96); renderLogo('invLogoContainer', 56); showToast('<svg class="icon-svg" style="width:1.2em; height:1.2em; margin:0 4px 0 0; vertical-align:-3px; display:inline-block; color:inherit;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> تم تحميل الشعار'); }; img.src = e.target.result; };
       reader.readAsDataURL(file);
     }
 
@@ -8177,14 +8179,15 @@ input *, textarea *,
       const subtitleEl = document.querySelector('#loginView .dash-subtitle');
       if (subtitleEl) {
           let html = '';
-          if (subtitle) html += `<div style="margin-bottom:6px;">${typeof escapeHtml === 'function' ? escapeHtml(subtitle) : subtitle}</div>`;
-          if (phone) html += `<div style="display:inline-flex; align-items:center; gap:6px; background:color-mix(in srgb, var(--dash-hero-pill-bg, var(--primary)) 15%, transparent); color:var(--dash-hero-pill-fg, var(--primary)); padding:6px 14px; border-radius:20px; font-weight:800; font-size:13px; box-shadow:0 2px 8px rgba(0,0,0,0.05); margin-top:4px;"><svg class="icon-svg" style="width:15px; height:15px; margin:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> <span dir="ltr">${typeof escapeHtml === 'function' ? escapeHtml(phone) : phone}</span></div>`;
+          if (subtitle) html += `<div style="margin-bottom:8px;">${typeof escapeHtml === 'function' ? escapeHtml(subtitle) : subtitle}</div>`;
+          /* v1.10: حبة رقم الشركة أكبر وأوضح في هيدر الرئيسية */
+          if (phone) html += `<div style="display:inline-flex; align-items:center; gap:8px; background:color-mix(in srgb, var(--dash-hero-pill-bg, var(--primary)) 15%, transparent); color:var(--dash-hero-pill-fg, var(--primary)); padding:9px 20px; border-radius:24px; font-weight:800; font-size:16px; box-shadow:0 2px 8px rgba(0,0,0,0.05); margin-top:6px;"><svg class="icon-svg" style="width:18px; height:18px; margin:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> <span dir="ltr">${typeof escapeHtml === 'function' ? escapeHtml(phone) : phone}</span></div>`;
           subtitleEl.innerHTML = html;
       }
       
       const invNameEl = document.getElementById('invName');
       if (invNameEl) invNameEl.textContent = name;
-      renderLogo('logoContainer', 56);
+      renderLogo('logoContainer', 96); /* v1.10: شعار الشركة أكبر في هيدر الرئيسية */
       renderLogo('invLogoContainer', 64);
       
       let addrInfo = '';
@@ -13879,9 +13882,9 @@ input *, textarea *,
       document.body.appendChild(catcher);
       catcher.style.display = 'block';
 
-      /* التثبيت أسفل مجموعة الأيقونات الثلاث (يمين أعلى) بمحاذاتها */
+      /* التثبيت أسفل أيقونة كود الورشة نفسها (v1.10: الأيقونات بقت عمود رأسي) */
       try {
-        const anchor = document.getElementById('dashTopRightActions');
+        const anchor = document.getElementById('dashTopGenCodeBtn') || document.getElementById('dashTopRightActions');
         if (anchor) {
           const r = anchor.getBoundingClientRect();
           const cw = card.offsetWidth || 318, ch = card.offsetHeight || 300;
@@ -13976,7 +13979,7 @@ input *, textarea *,
       catcher.style.display = 'block';
 
       try {
-        const anchor = document.getElementById('dashTopRightActions');
+        const anchor = document.getElementById('dashTopAccountBtn') || document.getElementById('dashTopRightActions');
         if (anchor) {
           const r = anchor.getBoundingClientRect();
           const cw = card.offsetWidth || 318, ch = card.offsetHeight || 260;
@@ -14043,7 +14046,7 @@ input *, textarea *,
       catcher.style.display = 'block';
 
       try {
-        const anchor = document.getElementById('dashTopRightActions');
+        const anchor = document.getElementById('dashTopRoleBtn') || document.getElementById('dashTopRightActions');
         if (anchor) {
           const r = anchor.getBoundingClientRect();
           const cw = card.offsetWidth || 318, ch = card.offsetHeight || 280;
@@ -16445,6 +16448,9 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
   
     function openNewInvoice() {
       try {
+        /* v1.10: احفظ أي صفحة جارية قبل ما نبدأ صفحة جديدة + معرّف جديد للصفحة الجديدة */
+        flushInvoiceSession();
+        __sbPageUid = __sbNewPageUid();
         isViewingArchive = false;
         currentViewedArchiveId = null;
         clearSignature();
@@ -16508,7 +16514,7 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
       }
     }
 
-    function saveInvoiceDraft() {
+    function saveInvoiceDraft(immediate) {
       const notesEl = document.getElementById('invoiceNotes');
       const draft = {
         clientName: document.getElementById('clientName').value,
@@ -16526,7 +16532,8 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
       localStorage.setItem('marbleInvoiceDraft', JSON.stringify(draft));
       localStorage.setItem('invoiceDraft', JSON.stringify(draft));
       // v1.7: تسجيل سناپ شوت باسم العميل لميزة «آخر الفواتير المفتوحة» (ضغطة مطولة على +)
-      recordInvoiceSession(draft);
+      // v1.10: immediate = حفظ فوري بدون تأجيل (نقاط التحقق: تغيير الشاشة / الاسترجاع / خروج التطبيق)
+      recordInvoiceSession(draft, immediate);
     }
 
     function clearInvoiceDraft() {
@@ -16540,8 +16547,7 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
        كل ما المستخدم يكتب اسم عميل في صفحة إنشاء الفاتورة، بيتسجل سناپ شوت للفاتورة
        باسم العميل — والضغطة المطولة على + تعرض القائمة وتسترجع أي فاتورة فوراً
        عشان تعمل فواتير كتير في نفس الوقت. الميزة دي لصفحة إنشاء الفاتورة فقط. */
-    /* v1.9: مفتاح موحّد للاسم — بيشيل الحروف الخفية وعلامات التشكيل ويوحد أشكال الألف،
-       فنفس الصفحة مش هتتحفظ أكتر من مرة في قائمة + مهما اتكتب الاسم بشكل مختلف شوية */
+    /* v1.9: مفتاح موحّد للاسم — بيشيل الحروف الخفية وعلامات التشكيل ويوحد أشكال الألف */
     function __sbSessionKey(raw) {
       let n = String(raw || '');
       n = n.replace(/[\u200B-\u200F\u202A-\u202E\uFEFF]/g, '');
@@ -16550,32 +16556,68 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
       n = n.replace(/[أإآٱ]/g, 'ا').replace(/ى/g, 'ي').replace(/ئ/g, 'ي').replace(/ؤ/g, 'و');
       return n.toLowerCase();
     }
-    /* v1.9: تسجيل مؤجّل (debounce 900ms) — الكتابة حرف بحرف كانت بتسجل نسخ كتير لنفس الصفحة،
-       دلوقتي بنسجل آخر نسخة بعد ما الكتابة تهده فقط */
+    /* v1.10 — إصلاح جذري لمشكلة «الصفحات المتعددة لا تُحفظ»:
+       - كل صفحة فاتورة مفتوحة ليها معرّف ثابت (__sbPageUid) بيتولد عند فتح صفحة جديدة
+         وبيتنسخ عند استرجاع صفحة — فالكتابة حرف بحرف أو تغيّر الاسم مايعملش نسخ مكررة
+         ولا صفحات ضايعة، لأن كل حفظ بيحدّث نفس المدخل مكان ما كان.
+       - الحفظ بيبقى فوري في نقاط التحقق (تغيير الشاشة / استرجاع فاتورة / إخفاء التطبيق)
+         ومؤجّل 700ms أثناء الكتابة فقط — المؤقت القديم 900ms كان بينعاد تصفيره مع كل
+         ضغطة فماكانش بيحفظ خالص وقت الكتابة المتواصلة، ولو التطبيق اتقفل قبل ما المؤقت
+         يخلص الصفحة كانت تضيع نهائياً.
+       - عند القراءة: دمج محافظ للنسخ القديمة المتخزنة من نسخ سابقة (اسم جزئي أقدم
+         هو بداية اسم أحدث = نفس الصفحة → نحتفظ بالأحدث فقط). */
+    var __sbPageUid = null;
+    function __sbNewPageUid() { return 'pg' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+    function __sbEntryKey(s) {
+      return __sbSessionKey(s && s.id && String(s.id).indexOf('sbsn-') === 0 ? String(s.id).slice(5) : (s && s.name) || '');
+    }
     var __sbSessionTimer = null, __sbSessionDraft = null;
-    function recordInvoiceSession(draft) {
+    function recordInvoiceSession(draft, immediate) {
       try {
         if (typeof isViewingArchive !== 'undefined' && isViewingArchive) return;
         __sbSessionDraft = draft;
+        if (immediate) {
+          if (__sbSessionTimer) { clearTimeout(__sbSessionTimer); __sbSessionTimer = null; }
+          const d = __sbSessionDraft; __sbSessionDraft = null;
+          commitInvoiceSession(d);
+          return;
+        }
         if (__sbSessionTimer) clearTimeout(__sbSessionTimer);
         __sbSessionTimer = setTimeout(function () {
           __sbSessionTimer = null;
           const d = __sbSessionDraft; __sbSessionDraft = null;
           commitInvoiceSession(d);
-        }, 900);
+        }, 700);
       } catch (e) {}
     }
+    /* v1.10: تفريغ أي حفظ معلّق فوراً — بتتنده في نقاط التحقق قبل ما التطبيق يسيب الصفحة */
+    function flushInvoiceSession() {
+      try {
+        if (__sbSessionTimer) { clearTimeout(__sbSessionTimer); __sbSessionTimer = null; }
+        if (__sbSessionDraft) {
+          const d = __sbSessionDraft; __sbSessionDraft = null;
+          commitInvoiceSession(d);
+        }
+      } catch (e) {}
+    }
+    /* v1.10: لو التطبيق راح للخلفية أو اتقفل — احفظ فوراً قبل ضياع المؤقتات */
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') flushInvoiceSession();
+    });
+    window.addEventListener('pagehide', flushInvoiceSession);
+    window.addEventListener('beforeunload', flushInvoiceSession);
     function commitInvoiceSession(draft) {
       try {
         if (!draft) return;
         if (typeof isViewingArchive !== 'undefined' && isViewingArchive) return;
         const name = (draft.clientName || '').trim();
         if (name.length < 2) return; /* أسماء مقطوعة أثناء الكتابة مش فاتورة */
+        if (!__sbPageUid) __sbPageUid = __sbNewPageUid();
         let list = [];
         try { list = JSON.parse(localStorage.getItem('sbInvoiceSessions') || '[]'); } catch (e) { list = []; }
         if (!Array.isArray(list)) list = [];
         const entry = {
-          id: 'sbsn-' + __sbSessionKey(name),
+          id: 'sbsn-' + __sbPageUid,
           name: name,
           phone: draft.clientPhone || '',
           invNum: draft.invNum || '',
@@ -16587,9 +16629,11 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
           dueDays: draft.dueDays || '',
           notes: draft.notes || ''
         };
-        list = list.filter(s => s && s.id !== entry.id);
+        /* v1.10: تحديث نفس المدخل في مكانه — مفيش نسخ مكررة مهما اتغير الاسم أثناء الكتابة */
+        const idx = list.findIndex(s => s && s.id === entry.id);
+        if (idx >= 0) list.splice(idx, 1);
         list.unshift(entry);
-        if (list.length > 6) list = list.slice(0, 6);
+        if (list.length > 8) list = list.slice(0, 8);
         localStorage.setItem('sbInvoiceSessions', JSON.stringify(list));
       } catch (e) {}
     }
@@ -16598,16 +16642,52 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
       let list = [];
       try { list = JSON.parse(localStorage.getItem('sbInvoiceSessions') || '[]'); } catch (e) { list = []; }
       if (!Array.isArray(list)) list = [];
-      /* v1.9: تنظيف عند القراءة — مفتاح موحّد يضمن إن نفس الصفحة تظهر مرة واحدة فقط،
-         وبيصلّح أي نسخ مكرّمة متخزنة من نسخ أقدم فوراً */
+      /* تنظيف: مدخلات صالحة فقط + إزالة التكرار بنفس المعرّف */
       const seen = new Map();
-      list.filter(s => s && s.name && String(s.name).trim().length >= 2) /* v1.9: أسماء مقطوعة أثناء الكتابة بتتشال نهائياً */
+      list.filter(s => s && s.name && String(s.name).trim().length >= 2)
         .sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0)).forEach(s => {
-        const k = __sbSessionKey(s.id && String(s.id).indexOf('sbsn-') === 0 ? String(s.id).slice(5) : s.name);
-        if (!k || seen.has(k)) return;
-        seen.set(k, s);
+          const k = __sbEntryKey(s);
+          const idKey = s.id || ('name:' + k);
+          if (seen.has(idKey)) return;
+          seen.set(idKey, s);
+        });
+      /* v1.10: دمج محافظ لإصلاح نسخ قديمة متخزنة (اسم جزئي أقدم هو بداية اسم أحدث
+         وبفارق وقت كافٍ = نفس الصفحة اتسجلت مرتين أثناء الكتابة → نحتفظ بالأحدث فقط) */
+      const arr = Array.from(seen.values());
+      const merged = [];
+      arr.forEach(s => {
+        const k = __sbEntryKey(s);
+        const hit = merged.find(m => {
+          const mk = __sbEntryKey(m);
+          if (!mk || !k) return false;
+          if (mk === k) return true;
+          const newerIsLonger = k.length > mk.length;
+          const shorter = newerIsLonger ? mk : k;
+          const longer = newerIsLonger ? k : mk;
+          /* الاسم الأقصر لازم يكون هو الأقدم بفارق ثانيتين على الأقل عشان نتجنب دمج عميلين مختلفين */
+          const timeDiff = (s.savedAt || 0) - (m.savedAt || 0);
+          const shorterIsOlder = newerIsLonger ? timeDiff > 2000 : timeDiff < -2000;
+          return longer.indexOf(shorter) === 0 && shorterIsOlder && shorter.length >= 2;
+        });
+        if (hit) {
+          /* m (hit) دايماً الأحدث لأن المصفوفة مرتبة تنازلياً — الأحدث يكسب بالبيانات،
+             والأطول يكسب بالاسم المعروض، وبيانات الأقدم بتكتمل فقط لو ناقصة */
+          const hitKey = __sbEntryKey(hit), sKey = __sbEntryKey(s);
+          if (sKey.length > hitKey.length) { hit.name = s.name; hit.id = s.id; }
+          hit.savedAt = Math.max(hit.savedAt || 0, s.savedAt || 0);
+          hit.phone = hit.phone || s.phone;
+          hit.invNum = hit.invNum || s.invNum;
+          hit.htmlContent = hit.htmlContent || s.htmlContent;
+          hit.discount = hit.discount || s.discount;
+          hit.paid = hit.paid || s.paid;
+          hit.tip = hit.tip || s.tip;
+          hit.dueDays = hit.dueDays || s.dueDays;
+          hit.notes = hit.notes || s.notes;
+        } else {
+          merged.push(s);
+        }
       });
-      const out = Array.from(seen.values()).sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0)).slice(0, 6);
+      const out = merged.sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0)).slice(0, 8);
       try { localStorage.setItem('sbInvoiceSessions', JSON.stringify(out)); } catch (e) {}
       return out;
     }
@@ -16616,6 +16696,8 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
       try {
         const s = getInvoiceSessions().find(x => x.id === id);
         if (!s) return;
+        /* v1.10: الصفحة المسترجعة تتبنى معرّفها الأصلي — تحديث في مكانه مش نسخة جديدة */
+        __sbPageUid = (s.id && String(s.id).indexOf('sbsn-') === 0) ? String(s.id).slice(5) : __sbNewPageUid();
         closeRecentInvoicesBurst();
         isViewingArchive = false;
         currentViewedArchiveId = null;
@@ -16662,7 +16744,7 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
         calculateAll();
         checkEmptyState();
         switchView('appView');
-        saveInvoiceDraft();
+        saveInvoiceDraft(true); /* v1.10: حفظ فوري بعد الاسترجاع */
         if (typeof showToast === 'function') showToast('تم استرجاع فاتورة: ' + (s.name || ''), 'success');
       } catch (err) {
         console.error('restoreInvoiceSession error:', err);
@@ -16682,6 +16764,7 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
 
     function openRecentInvoicesBurst() {
       if (document.getElementById('recentInvoicesModal')) return;
+      flushInvoiceSession(); /* v1.10: خلي القائمة فريشة — احفظ أي تغييرات معلّقة قبل العرض */
       const sessions = getInvoiceSessions();
       const overlay = document.createElement('div');
       overlay.id = 'recentInvoicesModal';
@@ -16783,13 +16866,16 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
       try {
         let list = [];
         try { list = JSON.parse(localStorage.getItem('sbInvoiceSessions') || '[]'); } catch (e) { list = []; }
-        /* v1.9: الحذف بالمفتاح الموحّد — لو نفس الصفحة متخزنة بأي شكل كله بيتمسح مرة واحدة */
+        /* v1.10: الحذف بالمعرّف + تنظيف أي نسخ قديمة متخزنة بنفس الاسم بالظبط (من نسخ سابقة قبل نظام المعرّفات) */
         const target = (Array.isArray(list) ? list : []).find(s => s && s.id === id);
-        const targetKey = target ? __sbSessionKey(target.id && String(target.id).indexOf('sbsn-') === 0 ? String(target.id).slice(5) : target.name) : '';
+        const targetNameKey = target ? __sbSessionKey(target.name) : '';
+        const targetIsUid = target && target.id && String(target.id).indexOf('sbsn-pg') === 0;
         list = (Array.isArray(list) ? list : []).filter(s => {
           if (!s || !s.name) return false;
-          if (targetKey) return __sbSessionKey(s.id && String(s.id).indexOf('sbsn-') === 0 ? String(s.id).slice(5) : s.name) !== targetKey;
-          return s.id !== id;
+          if (s.id === id) return false; /* نفس المدخل */
+          /* النسخ القديمة (معرّفها اسم مش pg) اللي ليها نفس الاسم = نسخ مكررة قديمة */
+          if (targetNameKey && __sbSessionKey(s.name) === targetNameKey && !(s.id && String(s.id).indexOf('sbsn-pg') === 0) && targetIsUid) return false;
+          return true;
         });
         localStorage.setItem('sbInvoiceSessions', JSON.stringify(list));
         if (wrapEl) {
