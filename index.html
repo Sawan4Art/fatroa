@@ -129,6 +129,25 @@
       /* الثيمات العائمة (زجاجي/عصري) شريطها مرفوع 13px عن الحافة — محتاج مساحة أكبر عشان مغطيش أي جزء من الصفحات */
       :root[data-skin="glass"] body,
       :root[data-skin="modern"] body { padding-bottom: calc(104px + env(safe-area-inset-bottom)); }
+      /* v1.8: الشريط الفاتح اللي كان بيظهر فوق البار السفلي (شكوى المالك بصورة) —
+         السبب: الشاشات المفتوحة خلفيتها var(--bg) صلبة بارتفاع محسوب، ومنطقة padding
+         تحتها كانت بتكشف تدرج الـ body الأفتح كشريط. الحل: توحيد خلفية الـ body مع
+         var(--bg) وقت فتح الشاشات دي — مفيش أي حد لوني فوق البار في أي ثيم */
+      body:has(#loginView.active-view),
+      body:has(#settingsView.active-view:not(.in-subpage)) {
+        background: var(--bg) !important;
+      }
+      /* v1.8: صفحات الإعدادات الفرعية (بيانات المصنع/المظهر/الجداول) — التمرير على مستوى الكارت
+         بدل القسم الداخلي: آخر عنصر عمره ما يتقص عند حافة الكارت (شكوى «واكل جزء من الحواف والنص») */
+      #settingsView.in-subpage.compact-subpage .settings-page {
+        max-height: calc(100dvh - 178px - env(safe-area-inset-bottom));
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      #settingsView.in-subpage.compact-subpage .settings-page .settings-section {
+        max-height: none !important;
+        overflow: visible !important;
+      }
     }
     /* شاشة الآلة الحاسبة ملء الشاشة مركزة — الشريط السفلي مخفي عشان مغطيش أزرار الآلة */
     body:has(#calculatorView.active-view) .lux-bottom-nav { display: none !important; }
@@ -5127,9 +5146,27 @@ td { padding: 7px 5px; font-size: 11.5px; }
   background: color-mix(in srgb, var(--primary) 6%, var(--card-bg));
   border: 1.5px solid var(--border); border-radius: var(--radius-phi);
   padding: 10px 12px; cursor: pointer; font-family: inherit; color: var(--text);
-  transition: border-color .15s ease, transform .12s ease, background .15s ease;
+  transition: border-color .15s ease, background .15s ease;
+  touch-action: pan-y;
+  position: relative; z-index: 2;
 }
-.recent-inv-row:active { transform: scale(.97); }
+.recent-inv-row:active { }
+/* v1.8: حذف الفاتورة المحفوظة بالسحب لليسار (طلب المالك) */
+.recent-inv-wrap {
+  position: relative; border-radius: var(--radius-phi); overflow: hidden;
+}
+.recent-inv-row.swiping { transition: none !important; }
+.recent-inv-row.snap-back { transition: transform .22s cubic-bezier(.2,.8,.2,1) !important; }
+.recent-inv-del-bg {
+  position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(90deg, var(--danger), color-mix(in srgb, var(--danger) 65%, #7f1d1d));
+  color: #ffffff; display: flex; align-items: center; justify-content: flex-start;
+  gap: 7px; padding-inline-start: 18px; font-size: 12.5px; font-weight: 900;
+  border-radius: var(--radius-phi);
+}
+.recent-inv-del-bg svg { width: 18px; height: 18px; }
+.recent-inv-wrap.removing { transition: max-height .26s ease, opacity .22s ease, margin .26s ease; max-height: 0 !important; opacity: 0; overflow: hidden; }
+.recent-inv-wrap { max-height: 96px; }
 .recent-inv-avatar {
   width: 38px; height: 38px; border-radius: 12px; flex-shrink: 0;
   background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -5213,6 +5250,20 @@ td { padding: 7px 5px; font-size: 11.5px; }
   box-shadow: none !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
+}
+/* ===== v1.8: منع نسخ النص من التطبيق بالضغط المطول (طلب المالك) =====
+   الاستثناء الوحيد: حقول الإدخال نفسها عشان الكتابة والتصحيح ميتأثروش */
+* {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+input, textarea, select,
+input *, textarea *,
+[contenteditable="true"], [contenteditable=""], [contenteditable="plaintext-only"] {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
 }
 </style>
   <meta property="og:image" content="https://bolt.new/static/og_default.png">
@@ -5474,25 +5525,31 @@ td { padding: 7px 5px; font-size: 11.5px; }
             <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:8px 14px;">
               <div>
                 <label style="font-size:12px; font-weight:700; margin-bottom:3px; display:block;">اسم المصنع:</label>
-                <input type="text" id="inputName" placeholder="مثال: مصنع الرخام" oninput="saveSettings()" style="padding:8px 10px; margin-bottom:4px; font-size:13px;">
+                <input type="text" id="inputName" placeholder="مثال: مصنع الرخام" oninput="saveSettings()" onchange="saveSettings()" style="padding:8px 10px; margin-bottom:4px; font-size:13px;">
               </div>
               <div>
                 <label style="font-size:12px; font-weight:700; margin-bottom:3px; display:block;">وصف المصنع (في الرئيسية):</label>
-                <input type="text" id="inputSubtitle" placeholder="مثال: إدارة الرخام والجرانيت (اختياري)" oninput="saveSettings()" style="padding:8px 10px; margin-bottom:4px; font-size:13px;">
+                <input type="text" id="inputSubtitle" placeholder="مثال: إدارة الرخام والجرانيت (اختياري)" oninput="saveSettings()" onchange="saveSettings()" style="padding:8px 10px; margin-bottom:4px; font-size:13px;">
               </div>
               <div>
                 <label style="font-size:12px; font-weight:700; margin-bottom:3px; display:block;">رقم هاتف المصنع (في الفاتورة):</label>
-                <input type="text" id="inputFactoryPhone" placeholder="مثال: 01012345678" oninput="saveSettings()" style="padding:8px 10px; margin-bottom:4px; font-size:13px;">
+                <input type="text" id="inputFactoryPhone" placeholder="مثال: 01012345678" oninput="saveSettings()" onchange="saveSettings()" style="padding:8px 10px; margin-bottom:4px; font-size:13px;">
               </div>
               <div>
                 <label style="font-size:12px; font-weight:700; margin-bottom:3px; display:block;">عنوان المصنع (نص أو رابط خرائط):</label>
-                <input type="text" id="inputFactoryAddress" placeholder="مثال: القاهرة أو رابط خرائط جوجل" oninput="saveSettings()" style="padding:8px 10px; margin-bottom:4px; font-size:13px;">
+                <input type="text" id="inputFactoryAddress" placeholder="مثال: القاهرة أو رابط خرائط جوجل" oninput="saveSettings()" onchange="saveSettings()" style="padding:8px 10px; margin-bottom:4px; font-size:13px;">
               </div>
             </div>
             <div style="margin-top:6px;">
               <label style="font-size:12px; font-weight:700; margin-bottom:3px; display:block;">شعار المصنع:</label>
               <input type="file" id="logoUpload" accept="image/*" onchange="handleLogoUpload(event)" style="padding:6px 10px; margin-bottom:0; font-size:12px;">
             </div>
+            <!-- v1.8: زر حفظ صريح — الحفظ التلقائي كان صامت والمالك مبيحسش بيه -->
+            <button type="button" id="saveFactoryBtn" onclick="saveFactoryDataBtn(this)" style="width:100%; margin-top:14px; padding:12px; border:none; border-radius:12px; background:linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--primary) 70%, #000)); color:var(--on-primary); font-family:inherit; font-size:14px; font-weight:900; cursor:pointer; box-shadow:var(--shadow-md); display:flex; align-items:center; justify-content:center; gap:8px;">
+              <svg class="icon-svg" style="width:17px; height:17px; margin:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              حفظ بيانات المصنع
+            </button>
+            <div style="font-size:10.5px; color:var(--text-muted); text-align:center; margin-top:6px; font-weight:700;">البيانات بتتحفظ تلقائياً وأنت بتكتب — والزر ده للتأكيد اليدوي</div>
           </div>
       </div>
 
@@ -16681,14 +16738,21 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
         if (s.invNum) subParts.push('رقم: ' + s.invNum);
         if (s.phone) subParts.push(s.phone);
         subParts.push(fmtSessionTime(s.savedAt));
-        return '<button type="button" class="recent-inv-row" data-sid="' + escapeHtml(s.id) + '">' +
-          '<span class="recent-inv-avatar">' + initial + '</span>' +
-          '<span class="recent-inv-meta">' +
-            '<span class="recent-inv-name">فاتورة ' + escapeHtml(s.name) + '</span>' +
-            '<span class="recent-inv-sub">' + subParts.map(p => '<span>' + escapeHtml(p) + '</span>').join('') + '</span>' +
-          '</span>' +
-          '<svg class="recent-inv-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>' +
-        '</button>';
+        /* v1.8: كل صف متلفوف في .recent-inv-wrap مع خلفية حذف حمراء تظهر بالسحب لليسار */
+        return '<div class="recent-inv-wrap" data-wid="' + escapeHtml(s.id) + '">' +
+          '<div class="recent-inv-del-bg">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>' +
+            'حذف' +
+          '</div>' +
+          '<button type="button" class="recent-inv-row" data-sid="' + escapeHtml(s.id) + '">' +
+            '<span class="recent-inv-avatar">' + initial + '</span>' +
+            '<span class="recent-inv-meta">' +
+              '<span class="recent-inv-name">فاتورة ' + escapeHtml(s.name) + '</span>' +
+              '<span class="recent-inv-sub">' + subParts.map(p => '<span>' + escapeHtml(p) + '</span>').join('') + '</span>' +
+            '</span>' +
+            '<svg class="recent-inv-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>' +
+          '</button>' +
+        '</div>';
       }).join('') :
       ('<div class="recent-inv-empty">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' +
@@ -16703,7 +16767,7 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
           '<button type="button" class="recent-inv-close" onclick="event.stopPropagation(); closeRecentInvoicesBurst()" aria-label="إغلاق">✕</button>' +
         '</div>' +
         '<div class="recent-inv-list">' + rowsHtml + '</div>' +
-        '<div class="recent-inv-hint">اضغطة مطولة على زر + في أي وقت تعرض لك القائمة دي</div>' +
+        '<div class="recent-inv-hint">اضغطة مطولة على + تعرض القائمة دي — واسحب أي فاتورة لليسار عشان تحذفها</div>' +
       '</div>';
       overlay.addEventListener('click', function (e) { if (e.target === overlay) closeRecentInvoicesBurst(); });
       overlay.querySelectorAll('.recent-inv-row').forEach(row => {
@@ -16711,8 +16775,69 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
           e.stopPropagation();
           restoreInvoiceSession(row.getAttribute('data-sid') || '');
         });
+        attachRecentInvSwipe(row);
       });
       document.body.appendChild(overlay);
+    }
+
+    /* v1.8: السحب لليسار على صف الفاتورة المحفوظة → يظهر خلفية حذف حمراء → تجاوز العتبة يحذف */
+    function attachRecentInvSwipe(row) {
+      let startX = 0, startY = 0, dx = 0, dragging = false, locked = false, moved = false;
+      const THRESHOLD = -68, MAX_PULL = -110, TAP_TOL = 8;
+      function setX(v) { row.style.transform = 'translateX(' + v + 'px)'; }
+      row.addEventListener('pointerdown', function (e) {
+        if (e.button && e.button !== 0) return;
+        startX = e.clientX; startY = e.clientY; dx = 0; moved = false;
+        dragging = true; locked = false;
+        row.classList.add('swiping'); row.classList.remove('snap-back');
+      }, { passive: true });
+      row.addEventListener('pointermove', function (e) {
+        if (!dragging) return;
+        const mx = e.clientX - startX, my = e.clientY - startY;
+        if (!locked) {
+          if (Math.abs(mx) > TAP_TOL || Math.abs(my) > TAP_TOL) {
+            if (Math.abs(my) > Math.abs(mx)) { dragging = false; row.classList.remove('swiping'); setX(0); return; }
+            locked = true; moved = true;
+          } else return;
+        }
+        dx = Math.max(MAX_PULL, Math.min(0, mx));
+        setX(dx);
+      }, { passive: true });
+      function finish() {
+        if (!dragging) return;
+        dragging = false;
+        row.classList.remove('swiping'); row.classList.add('snap-back');
+        if (dx <= THRESHOLD) {
+          const sid = row.getAttribute('data-sid') || '';
+          const wrap = row.closest('.recent-inv-wrap');
+          setX('-110%');
+          setTimeout(() => { deleteInvoiceSession(sid, wrap); }, 160);
+        } else {
+          setX(0);
+        }
+      }
+      row.addEventListener('pointerup', finish, { passive: true });
+      row.addEventListener('pointercancel', finish, { passive: true });
+      row.addEventListener('pointerleave', finish, { passive: true });
+      /* الضغطة القصيرة تفتح الفاتورة — السحبة الفعلية تتفادى النقر */
+      row.addEventListener('click', function (e) {
+        if (moved) { e.stopImmediatePropagation(); e.preventDefault(); moved = false; }
+      }, true);
+    }
+
+    function deleteInvoiceSession(id, wrapEl) {
+      try {
+        let list = [];
+        try { list = JSON.parse(localStorage.getItem('sbInvoiceSessions') || '[]'); } catch (e) { list = []; }
+        list = (Array.isArray(list) ? list : []).filter(s => s && s.id !== id);
+        localStorage.setItem('sbInvoiceSessions', JSON.stringify(list));
+        if (wrapEl) {
+          wrapEl.classList.add('removing');
+          setTimeout(() => { wrapEl.remove(); }, 300);
+        }
+        if (typeof showToast === 'function') showToast('تم حذف الفاتورة المحفوظة من قائمة +', 'info');
+        if (!getInvoiceSessions().length) closeRecentInvoicesBurst();
+      } catch (e) {}
     }
 
     function closeRecentInvoicesBurst() {
@@ -17110,7 +17235,24 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
       loadSettings();
     }
 
-
+    /* v1.8: حفظ صريح لبيانات المصنع بزر مرئي + إشعار تأكيد — عشان المالك يحس بالحفظ فعلاً */
+    function saveFactoryDataBtn(btn) {
+      try {
+        saveSettings();
+        const n = (localStorage.getItem('factoryName') || '').trim();
+        if (typeof showToast === 'function') {
+          showToast(n ? ('تم حفظ بيانات المصنع ✓ («' + n + '» هتظهر في الرئيسية)') : 'تم الحفظ ✓ — اكتب اسم المصنع عشان يظهر في الرئيسية', 'success');
+        }
+        if (btn) {
+          const old = btn.innerHTML;
+          btn.innerHTML = 'تم الحفظ ✓';
+          btn.style.filter = 'brightness(1.15)';
+          setTimeout(() => { btn.innerHTML = old; btn.style.filter = ''; }, 1500);
+        }
+      } catch (e) {
+        if (typeof showToast === 'function') showToast('حصلت مشكلة في الحفظ — جرب تاني', 'error');
+      }
+    }
 
     window.payPartFromArchive = function(id) {
         if (typeof openPaymentsModal === 'function') {
