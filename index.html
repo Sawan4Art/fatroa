@@ -125,7 +125,10 @@
         border-top: 1px solid var(--gold-line);
         box-shadow: 0 -8px 21px rgba(0,0,0,0.14);
       }
-      body { padding-bottom: calc(86px + env(safe-area-inset-bottom)); }
+      body { padding-bottom: calc(90px + env(safe-area-inset-bottom)); }
+      /* الثيمات العائمة (زجاجي/عصري) شريطها مرفوع 13px عن الحافة — محتاج مساحة أكبر عشان مغطيش أي جزء من الصفحات */
+      :root[data-skin="glass"] body,
+      :root[data-skin="modern"] body { padding-bottom: calc(104px + env(safe-area-inset-bottom)); }
     }
     /* شاشة الآلة الحاسبة ملء الشاشة مركزة — الشريط السفلي مخفي عشان مغطيش أزرار الآلة */
     body:has(#calculatorView.active-view) .lux-bottom-nav { display: none !important; }
@@ -720,12 +723,12 @@
         display: grid !important; 
         grid-template-columns: repeat(3, 1fr) !important; 
         gap: 8px 10px !important; 
-        background: color-mix(in srgb, var(--card-bg) 60%, #000) !important; 
-        border: 1.5px solid color-mix(in srgb, var(--border) 85%, transparent) !important; 
+        background: var(--card-bg-alt) !important; 
+        border: 1.5px solid color-mix(in srgb, var(--primary) 22%, var(--border)) !important; 
         border-radius: 20px !important; 
         padding: 38px 14px 14px !important; 
         position: relative !important; 
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important; 
+        box-shadow: var(--shadow-sm) !important; 
         box-sizing: border-box !important; 
         width: 100% !important; 
     }
@@ -747,7 +750,7 @@
         content: '# ' !important; 
         font-size: 18px !important; 
         font-weight: 900 !important; 
-        color: #f59e0b !important; 
+        color: var(--primary) !important; 
         opacity: 0.9 !important; 
     }
     .table-responsive tbody.rows-body tr td:last-child,
@@ -852,26 +855,27 @@
     .table-responsive tbody.rows-body tr input.riser { 
         width: 100% !important; 
         height: 44px !important; 
-        background: color-mix(in srgb, var(--card-bg) 25%, #000) !important; 
-        border: 1.5px solid color-mix(in srgb, var(--border) 95%, transparent) !important; 
+        background: var(--input-bg) !important; 
+        border: 1.5px solid color-mix(in srgb, var(--primary) 28%, var(--border)) !important; 
         border-radius: 12px !important; 
         text-align: center !important; 
-        font-size: 17px !important; 
+        font-size: 16px !important; 
         font-weight: 900 !important; 
-        color: var(--text) !important; 
+        color: var(--input-text) !important; 
         padding: 4px 6px !important; 
         outline: none !important; 
         box-sizing: border-box !important; 
         transition: all 0.2s ease !important; 
+        box-shadow: var(--shadow-sm) !important;
     }
     .table-responsive tbody.rows-body tr input.neon-input:focus,
     .table-responsive tbody.rows-body tr input.l:focus,
     .table-responsive tbody.rows-body tr input.w:focus,
     .table-responsive tbody.rows-body tr input.q:focus,
     .table-responsive tbody.rows-body tr input.riser:focus { 
-        border-color: #f59e0b !important; 
-        box-shadow: 0 0 12px rgba(245, 158, 11, 0.35) !important; 
-        background: color-mix(in srgb, var(--card-bg) 15%, #000) !important; 
+        border-color: var(--primary) !important; 
+        box-shadow: 0 0 12px color-mix(in srgb, var(--primary) 30%, transparent) !important; 
+        background: color-mix(in srgb, var(--primary) 7%, var(--input-bg)) !important; 
     }
     .table-responsive tbody.rows-body tr td:has(.t),
     .table-responsive tbody.rows-body tr td:has(.riser),
@@ -939,22 +943,22 @@
     .table-responsive tbody.rows-body tr td:has(.r-cost) { 
         grid-column: 3 !important; 
         justify-content: flex-end !important; 
-        color: #f59e0b !important; 
-        font-size: 16.5px !important; 
+        color: var(--primary) !important; 
+        font-size: 16px !important; 
         font-weight: 900 !important; 
     }
     .table-responsive tbody.rows-body tr td:has(.r-cost):not(:has(.m-cost-eq))::before { 
         content: '= ' !important; 
         font-weight: 900 !important; 
-        color: #f59e0b !important; 
+        color: var(--primary) !important; 
     }
     .table-responsive tbody.rows-body tr td:has(.r-cost):not(:has(.m-cost-cur))::after { 
         content: ' ج' !important; 
         font-weight: 900 !important; 
-        color: #f59e0b !important; 
+        color: var(--primary) !important; 
     }
     .table-responsive tbody.rows-body tr td:has(.r-cost) .r-cost { 
-        color: #f59e0b !important; 
+        color: var(--primary) !important; 
         font-weight: 900 !important; 
     }
     .table-responsive tfoot { 
@@ -989,19 +993,19 @@
     .table-responsive tfoot tr.subtotal-row td.subtotal-val-cell { 
         font-size: 19px !important; 
         font-weight: 900 !important; 
-        color: #f59e0b !important; 
+        color: var(--primary) !important; 
         text-align: left !important; 
     }
     .table-responsive tfoot tr.subtotal-row .s-cost { 
-        color: #f59e0b !important; 
+        color: var(--primary) !important; 
         font-weight: 900 !important; 
     }
     .btn-add-size-prominent { 
         width: 100% !important; 
-        height: 50px !important; 
-        background: #f59e0b !important; 
-        color: #000000 !important; 
-        font-size: 16px !important; 
+        height: 48px !important; 
+        background: linear-gradient(135deg, var(--primary), var(--secondary)) !important; 
+        color: var(--on-primary) !important; 
+        font-size: 15px !important; 
         font-weight: 900 !important; 
         border-radius: 14px !important; 
         display: flex !important; 
@@ -1009,24 +1013,24 @@
         justify-content: center !important; 
         gap: 8px !important; 
         border: none !important; 
-        box-shadow: 0 4px 18px rgba(245, 158, 11, 0.4) !important; 
+        box-shadow: 0 4px 16px color-mix(in srgb, var(--primary) 38%, transparent) !important; 
         cursor: pointer !important; 
         margin: 10px 0 4px !important; 
         transition: all 0.2s ease !important; 
     }
     .btn-add-size-prominent:hover { 
-        background: #fbbf24 !important; 
+        filter: brightness(1.07) !important; 
         transform: translateY(-1px) !important; 
-        box-shadow: 0 6px 22px rgba(245, 158, 11, 0.55) !important; 
+        box-shadow: 0 6px 20px color-mix(in srgb, var(--primary) 50%, transparent) !important; 
     }
     .btn-add-size-prominent:active { 
         transform: scale(0.98) !important; 
     }
     .btn-add-size-prominent .icon-svg { 
-        width: 18px !important; 
-        height: 18px !important; 
+        width: 17px !important; 
+        height: 17px !important; 
         stroke-width: 3.5 !important; 
-        color: #000000 !important; 
+        color: var(--on-primary) !important; 
     }
     .table-card-subactions { 
         display: flex !important; 
@@ -1096,13 +1100,16 @@
     .pdf-render-mode .table-responsive tfoot tr.subtotal-row { display: table-row !important; }
     .pdf-render-mode .table-responsive tfoot tr.subtotal-row td { display: table-cell !important; border: 1px solid #ddd !important; padding: 6px 8px !important; }
 
-    .grand-summary { margin-top: 24px; display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
-    .grand-row { display: flex; justify-content: space-between; width: 100%; max-width: 360px; padding: 12px 16px; background: var(--grand-row-bg); border-radius: 12px; align-items: center; border: 1px solid var(--grand-row-border); gap: 10px; }
-    .grand-row span { font-weight: 800; color: var(--grand-row-text); font-size: 13px; }
-    .grand-row input { width: 100px; padding: 8px; text-align: center; border: 1.5px solid var(--border); border-radius: 8px; font-weight: 800; font-size: 14px; outline: none; background: var(--input-bg); color: var(--input-text); }
-    .grand-row.final { background: var(--grand-final-bg); border: none; box-shadow: var(--shadow-md); }
+    .grand-summary { margin-top: 20px; display: flex; flex-direction: column; gap: 8px; align-items: stretch; max-width: 420px; margin-inline: auto; width: 100%; }
+    .grand-row { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 11px 14px; background: var(--grand-row-bg); border-radius: 12px; border: 1px solid var(--grand-row-border); gap: 12px; min-height: 44px; box-sizing: border-box; }
+    .grand-row > span:first-child { font-weight: 700; color: var(--grand-row-text); font-size: 12.5px; }
+    .grand-row > span:last-child { font-weight: 900; font-size: 15px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .grand-row input { width: 104px; padding: 8px; text-align: center; border: 1.5px solid var(--border); border-radius: 8px; font-weight: 800; font-size: 14px; outline: none; background: var(--input-bg); color: var(--input-text); font-variant-numeric: tabular-nums; }
+    .grand-row.final { background: var(--grand-final-bg); border: none; box-shadow: var(--shadow-md); min-height: 52px; }
     .grand-row.final span { color: var(--grand-final-text); }
-    .grand-row.final span:last-child { font-size: 20px; }
+    .grand-row.final > span:first-child { font-size: 13.5px; font-weight: 900; }
+    .grand-row.final > span:last-child { font-size: 20px; }
+    .grand-row.final > div { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-width: 0; }
 
     .empty-state { text-align: center; padding: 32px 16px; color: var(--text-muted); font-weight: 700; background: var(--card-bg-alt); border-radius: 16px; border: 2px dashed var(--border-dark); margin-bottom: 20px; font-size: 14px; }
 
@@ -4681,6 +4688,13 @@
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent; color: transparent;
 }
+/* في المظلم: تدرج فاتح واضح — عنوان بيانات المصنع يفضل مقروء وواضح على الخلفية الغامقة */
+:root[data-skin="glass"][data-theme="dark"] .dash-title,
+:root[data-skin="glass"][data-theme="amoled"] .dash-title {
+  background: linear-gradient(90deg, #e9d5ff, #fbcfe8);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
 :root[data-skin="glass"] .icon-svg { stroke-width: 2.2; stroke-linecap: round; }
 :root[data-skin="glass"] .dash-grid-item .icon-svg { filter: drop-shadow(0 0 6px rgba(124,58,237,.4)); }
 :root[data-skin="glass"] .dash-grid-item { border-radius: 26px; }
@@ -4856,21 +4870,157 @@
 :root[data-skin="pro"] .dash-grid-item.create-invoice .icon-svg { color: #ffffff !important; background: rgba(255,255,255,.18); }
 :root[data-skin="glass"] .dash-grid-item.create-invoice .icon-svg { color: #ffffff !important; }
 
-/* ---------- ⑩ طبقة التناسق العامة: خط ↔ أيقونة (بطلب المالك — الخط كان يبدو أكبر من الأيقونات)
-   الحجم المرجعي: الأيقونة الأساسية 19px، والنصوص حواليها بتراتب φ متزن بدل إحساس الزوم ---------- */
-body { font-size: 14px; }
-.icon-svg { width: 19px; height: 19px; }
+/* ---------- ⑩ طبقة التناسق العامة: خط ↔ أيقونة (اقتراح v1.4 المعتمد — كثافة موحدة أصغر بتراتب φ)
+   كل النصوص والأيقونات اتنزل درجة واحدة متزنة — بدل إحساس «الزوم» على شاشات الأندرويد ---------- */
+body { font-size: 13.5px; }
+.icon-svg { width: 17px; height: 17px; }
 /* جداول أنحف وأصغر حجماً (تحسين شكلي فقط — بدون أي مساس بالمنطق) */
-table { font-size: 12px; }
-th { padding: 8px 6px; font-size: 11px; }
-td { padding: 8px 6px; font-size: 12px; }
+table { font-size: 11.5px; }
+th { padding: 7px 5px; font-size: 10.5px; }
+td { padding: 7px 5px; font-size: 11.5px; }
 .m-card-lbl { font-size: 9.5px !important; }
-.menu-btn { font-size: 13px; padding: 13px; }
-.settings-grid-item { font-size: 13px; }
-.page-title-neon { font-size: 14.5px; }
-.lux-nav-btn svg { width: 22px; height: 22px; }
-.dash-grid-item { font-size: 13px; }
-.lux-search input { font-size: 13.5px; }
+.menu-btn { font-size: 12.5px; padding: 12px; }
+.settings-grid-item { font-size: 12.5px; }
+.page-title-neon { font-size: 14px; }
+.lux-nav-btn svg { width: 20px; height: 20px; }
+.lux-nav-btn span { font-size: 10px; }
+.dash-grid-item { font-size: 12.5px; }
+.dash-grid-item .icon-svg { width: 27px; height: 27px; min-width: 27px; min-height: 27px; }
+:root[data-skin="modern"] .dash-grid-item .icon-svg { padding: 6px; }
+:root[data-skin="modern"] .dash-grid-item.create-invoice .icon-svg { padding: 6px; }
+.lux-nav-fab { width: 52px; height: 52px; flex: 0 0 52px; margin-top: -19px; }
+.lux-nav-fab svg { width: 24px; height: 24px; }
+/* شبكة الرئيسية: ارتفاع طبيعي مضبوط بدل التمدد المفرط (كان بيدي إحساس الزوم) */
+#mainDashboardGrid { flex: 0 0 auto; grid-auto-rows: minmax(128px, auto); }
+#mainDashboardGrid .dash-grid-item { padding: 10px 8px; }
+
+/* ---------- ⑫ الشريط السفلي: أيقونات أنحف + أرقام tabular ---------- */
+.lux-nav-btn { min-height: 46px; gap: 2px; }
+
+/* ---------- ⑬ بوب-أب البحث العام (من الشريط السفلي — يفتح في أي مكان) ---------- */
+.nav-search-catch {
+  position: fixed; inset: 0; z-index: 99997;
+  background: rgba(15, 12, 30, 0.30);
+  backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+  animation: wsFadeIn .18s ease both;
+}
+.nav-search-catch .ws-pop-card {
+  top: 86px; right: 12px; left: 12px; width: auto;
+  transform-origin: top center;
+  text-align: right;
+}
+.nav-search-catch .ws-pop-card::before { right: 50%; margin-right: -7px; }
+.nav-search-input-wrap { position: relative; margin-bottom: 6px; }
+.nav-search-input-wrap input {
+  width: 100%; min-height: 46px; border-radius: 999px;
+  border: 1.5px solid color-mix(in srgb, var(--primary) 35%, var(--border));
+  background: var(--input-bg); color: var(--input-text);
+  padding: 0 42px 0 14px; font-family: inherit; font-size: 13.5px; font-weight: 700;
+  outline: none; box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 8%, transparent);
+}
+.nav-search-input-wrap input:focus { border-color: var(--primary); }
+.nav-search-input-wrap .nav-search-ico {
+  position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+  width: 18px; height: 18px; color: var(--text-light); pointer-events: none;
+}
+.nav-search-hint { font-size: 10.5px; color: var(--text-light); margin: 0 4px 0; text-align: center; }
+
+/* ---------- ⑭ بوب-أب الملف/الوضع — نفس هيئة بوب أب كود الورشة ---------- */
+.ws-pop-user-row {
+  display: flex; align-items: center; gap: 10px;
+  background: color-mix(in srgb, var(--primary) 7%, var(--card-bg));
+  border: 1px solid var(--border); border-radius: var(--radius-phi);
+  padding: 10px 12px; margin-bottom: var(--sp-2); text-align: right;
+}
+.ws-pop-user-row img, .ws-pop-user-row .ws-pop-avatar {
+  width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: var(--on-primary); display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 17px;
+}
+.ws-pop-user-meta { min-width: 0; flex: 1; }
+.ws-pop-user-name { font-size: 13.5px; font-weight: 900; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ws-pop-user-role { font-size: 10.5px; font-weight: 700; color: var(--text-muted); margin-top: 2px; }
+.ws-pop-role-opts { display: flex; gap: 8px; margin-bottom: var(--sp-2); }
+.ws-pop-role-opt {
+  flex: 1; padding: 12px 8px; border-radius: var(--radius-phi);
+  border: 1.5px solid var(--border); background: var(--card-bg-alt);
+  color: var(--text); font-size: 12px; font-weight: 900; cursor: pointer; font-family: inherit;
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  transition: border-color .15s ease, background .15s ease, transform .15s ease;
+}
+.ws-pop-role-opt:active { transform: scale(.96); }
+.ws-pop-role-opt svg { width: 20px; height: 20px; }
+.ws-pop-role-opt.sel-role-admin { border-color: color-mix(in srgb, var(--primary) 55%, transparent); background: color-mix(in srgb, var(--primary) 10%, var(--card-bg)); color: var(--primary); }
+.ws-pop-role-opt.sel-role-craft { border-color: color-mix(in srgb, var(--warning) 55%, transparent); background: color-mix(in srgb, var(--warning) 10%, var(--card-bg)); color: var(--warning); }
+.ws-pop-pin-box { display: none; margin-bottom: var(--sp-2); }
+.ws-pop-pin-box.open { display: block; animation: wsPopIn .22s ease both; }
+.ws-pop-pin-box input {
+  width: 100%; padding: 10px; border-radius: var(--radius-phi); text-align: center;
+  border: 1.5px solid color-mix(in srgb, var(--primary) 40%, var(--border));
+  background: var(--input-bg); color: var(--input-text); font-size: 14px; font-weight: 900;
+  letter-spacing: 2px; outline: none; font-family: inherit; margin-bottom: 6px;
+}
+
+/* ---------- ⑮ زر شمس/قمر في هيدر الرئيسية (مقابل مجموعة الأيقونات) ---------- */
+#dashThemeToggleBtn {
+  position: absolute; top: 14px; left: 14px; z-index: 10;
+  width: 34px; height: 34px; padding: 6px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--card-bg); border: 1.5px solid color-mix(in srgb, var(--primary) 35%, var(--border));
+  color: var(--primary); cursor: pointer; transition: 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+#dashThemeToggleBtn:active { transform: scale(0.92); }
+#dashThemeToggleBtn .icon-svg { width: 19px; height: 19px; margin: 0; }
+@keyframes themeIconSwap { from { opacity: 0; transform: rotate(-40deg) scale(.6); } to { opacity: 1; transform: rotate(0) scale(1); } }
+#dashThemeToggleBtn .icon-svg.swap { animation: themeIconSwap .28s ease both; }
+
+/* ---------- ⑯ هيدر الرئيسية: حماية العنوان من الأيقونات العائمة + ألوان واضحة في كل الثيمات ---------- */
+.dash-header-card { padding-inline: 54px; gap: 2px; min-height: 138px; }
+.dash-header-card .dash-title { font-size: 18px !important; line-height: 1.45; }
+.dash-header-card .dash-subtitle { font-size: 12px; }
+.dash-header-card .logo-placeholder { width: 56px !important; height: 56px !important; font-size: 28px !important; }
+/* أيقونات الهيدر: قرص صلب بخلفية الثيم — واضحة فوق أي خلفية حتى المتدرجة */
+#dashTopRightActions button {
+  width: 32px !important; height: 32px !important; padding: 5px !important;
+  background: var(--card-bg) !important;
+  border: 1.5px solid color-mix(in srgb, var(--primary) 35%, var(--border)) !important;
+  color: var(--primary) !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.10) !important;
+}
+#dashTopRightActions button .icon-svg { width: 18px; height: 18px; }
+#dashTopRightActions button:hover { transform: scale(1.07); }
+#dashTopRoleBtn { color: var(--warning) !important; border-color: color-mix(in srgb, var(--warning) 45%, var(--border)) !important; }
+/* عصري/احترافي: هيدر متدرج — العناوين وحبوب البيانات كلها بيضاء واضحة */
+:root[data-skin="modern"] .dash-header-card,
+:root[data-skin="pro"] .dash-header-card { border-radius: var(--radius-phi-xl); --dash-hero-pill-bg: #ffffff; --dash-hero-pill-fg: #ffffff; }
+:root[data-skin="modern"] .dash-header-card .dash-title,
+:root[data-skin="modern"] .dash-header-card .dash-subtitle,
+:root[data-skin="pro"] .dash-header-card .dash-title,
+:root[data-skin="pro"] .dash-header-card .dash-subtitle { color: #ffffff !important; }
+:root[data-skin="modern"] .dash-header-card .dash-subtitle *,
+:root[data-skin="pro"] .dash-header-card .dash-subtitle * { color: #ffffff !important; }
+:root[data-skin="modern"] .dash-header-card .dash-subtitle svg,
+:root[data-skin="pro"] .dash-header-card .dash-subtitle svg { color: #ffffff !important; }
+:root[data-skin="modern"] .dash-header-card #logoContainer div,
+:root[data-skin="modern"] .dash-header-card #logoContainer img { border-color: rgba(255,255,255,.55) !important; }
+:root[data-skin="modern"] #dashTopRightActions button,
+:root[data-skin="pro"] #dashTopRightActions button,
+:root[data-skin="modern"] #dashThemeToggleBtn,
+:root[data-skin="pro"] #dashThemeToggleBtn {
+  background: rgba(255,255,255,0.92) !important;
+  border-color: rgba(255,255,255,0.35) !important;
+  color: #4f46e5 !important;
+}
+:root[data-skin="modern"] #dashTopRoleBtn,
+:root[data-skin="pro"] #dashTopRoleBtn { color: #d97706 !important; }
+:root[data-skin="pro"] #dashThemeToggleBtn { color: #0f4c81 !important; }
+
+/* ---------- ⑰ الإعدادات: الإطار الخارجي فقط — إزالة الإطارات الداخلية الباهتة ---------- */
+.settings-neon-box .wa-card { border-color: transparent !important; box-shadow: none !important; background: var(--card-bg-alt); }
+.settings-neon-box .wa-card:hover { border-color: transparent !important; }
+.settings-neon-box .settings-inline-frame { border-color: transparent !important; box-shadow: none !important; }
 </style>
   <meta property="og:image" content="https://bolt.new/static/og_default.png">
     <meta name="twitter:card" content="summary_large_image">
@@ -4907,10 +5057,15 @@ td { padding: 8px 6px; font-size: 12px; }
     <div class="dash-header-card">
       <!-- زر الترس العلوي اتشال بطلب المالك — الإعدادات بقى ليها زر الترس في شريط التنقل السفلي مكان "المزيد" -->
 
-      <!-- مجموعة الأزرار العلوية باليمين: 1. الملف والحساب | 2. مؤشر الوضع الحالي (مدير/صنايعي) | 3. توليد كود الورشة -->
+      <!-- زر شمس/قمر: تبديل سريع بين الفاتح والمظلم من الرئيسية (والتلقائي من الإعدادات) -->
+      <button type="button" id="dashThemeToggleBtn" onclick="toggleThemeFromHome()" title="تبديل المظهر: فاتح / مظلم" aria-label="تبديل المظهر">
+        <svg id="dashThemeToggleIcon" class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+
+      <!-- مجموعة الأزرار العلوية باليمين: 1. الملف والحساب | 2. مؤشر الوضع الحالي (مدير/صنايعي) | 3. توليد كود الورشة — كلها بوب أب ناعم بنفس الهيئة -->
       <div id="dashTopRightActions" style="position: absolute; top: 14px; right: 14px; display: flex; flex-direction: column; align-items: center; gap: 6px; z-index: 10;">
         <!-- 1. أيقونة الملف والحساب (يمين فوق بحجم متناسق ومصغر) -->
-        <button type="button" id="dashTopAccountBtn" onclick="openAppAuthModal()" style="width: 35px; height: 35px; padding: 6px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--primary) 10%, transparent); border: none; color: var(--primary); cursor: pointer; transition: 0.2s ease; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05);" title="الملف الشخصي والحساب" data-i18n-title="account_profile" onmouseover="this.style.background='color-mix(in srgb, var(--primary) 20%, transparent)'; this.style.transform='scale(1.06)';" onmouseout="this.style.background='color-mix(in srgb, var(--primary) 10%, transparent)'; this.style.transform='scale(1)';">
+        <button type="button" id="dashTopAccountBtn" onclick="openAccountBurst()" style="width: 35px; height: 35px; padding: 6px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--primary) 10%, transparent); border: none; color: var(--primary); cursor: pointer; transition: 0.2s ease; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05);" title="الملف الشخصي والحساب" data-i18n-title="account_profile">
           <svg id="dashTopAccountSvg" class="icon-svg" style="width: 20px; height: 20px; stroke-width: 2.1; margin: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
             <circle cx="12" cy="7" r="4"></circle>
@@ -4919,7 +5074,7 @@ td { padding: 8px 6px; font-size: 12px; }
         </button>
 
         <!-- 2. أيقونة توضح الوضع الحالي إذا كان مدير أم صنايعي -->
-        <button type="button" id="dashTopRoleBtn" onclick="openAppRoleModal()" style="width: 35px; height: 35px; padding: 6px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(245, 158, 11, 0.16); border: 1.5px solid rgba(245, 158, 11, 0.35); color: #d97706; cursor: pointer; transition: 0.2s ease; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05);" title="الوضع الحالي: مدير (كامل الصلاحيات) - انقر للتبديل" onmouseover="this.style.transform='scale(1.08)';" onmouseout="this.style.transform='scale(1)';">
+        <button type="button" id="dashTopRoleBtn" onclick="openRoleBurst()" style="width: 35px; height: 35px; padding: 6px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(245, 158, 11, 0.16); border: 1.5px solid rgba(245, 158, 11, 0.35); color: #d97706; cursor: pointer; transition: 0.2s ease; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05);" title="الوضع الحالي: مدير (كامل الصلاحيات) - انقر للتبديل">
           <svg id="dashTopRoleSvg" class="icon-svg" style="width: 20px; height: 20px; stroke-width: 2.1; margin: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/>
           </svg>
@@ -4973,10 +5128,6 @@ td { padding: 8px 6px; font-size: 12px; }
 
       <!-- صف بطاقات الإحصائيات الثلاث (المبيعات/المُحصل/المتأخرات) اتشال بالكامل بطلب المالك —
            الأرقام بتتحسب برضه في الخلفية (window.__luxRefreshStats) والبنر الأحمر للمتأخرات فوق مكان -->
-      <div class="lux-search no-print">
-        <svg class="lux-search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        <input type="search" id="luxGlobalSearch" placeholder="بحث سريع: عميل، رقم فاتورة، هاتف..." autocomplete="off">
-      </div>
       <div class="dash-grid" id="mainDashboardGrid">
       <!-- Row 1 (متاح للجميع: إنشاء الفواتير والأرشيف) -->
       <button type="button" class="dash-grid-item create-invoice" onclick="openNewInvoice()">
@@ -5006,10 +5157,7 @@ td { padding: 8px 6px; font-size: 12px; }
         <span data-i18n="client_data">بيانات العملاء</span>
       </button>
 
-      <button type="button" class="dash-grid-item calculator" onclick="switchView('calculatorView');">
-        <svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" ry="4"></rect><line x1="7" y1="9" x2="11" y2="9"></line><line x1="14" y1="7" x2="18" y2="11"></line><line x1="18" y1="7" x2="14" y2="11"></line><line x1="9" y1="14" x2="9" y2="18"></line><line x1="7" y1="16" x2="11" y2="16"></line><line x1="14" y1="15" x2="18" y2="15"></line><line x1="14" y1="17" x2="18" y2="17"></line></svg>
-        <span data-i18n="calculator">حاسبة</span>
-      </button>
+      <!-- أيقونة الحاسبة اتشالت من الرئيسية بطلب المالك — الحاسبة بقيت في الشريط السفلي كبوب أب يفتح في أي مكان (toggleCalcModal) -->
 
     </div>
   </div>
@@ -5112,16 +5260,17 @@ td { padding: 8px 6px; font-size: 12px; }
           <div class="settings-section" style="padding:0; margin-bottom:0; border:none; background:transparent; box-shadow:none;">
             <h4 style="margin:2px 0 6px; font-size:12px;">وضع العرض</h4>
             <div class="mode-toggle" style="margin-bottom:12px;">
-              <button type="button" class="mode-btn active" id="btnModeLight" onclick="setAppMode('light')"><svg class="icon-svg" style="width:1.2em; height:1.2em; margin:0 4px 0 0; vertical-align:-3px; display:inline-block; color:inherit;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg> Light</button>
-              <button type="button" class="mode-btn" id="btnModeDark" onclick="setAppMode('dark')"><svg class="icon-svg" style="width:1.2em; height:1.2em; margin:0 4px 0 0; vertical-align:-3px; display:inline-block; color:inherit;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg> Dark</button>
-              <button type="button" class="mode-btn" id="btnModeAmoled" onclick="setAppMode('amoled')"><svg class="icon-svg" style="width:1.2em; height:1.2em; margin:0 4px 0 0; vertical-align:-3px; display:inline-block; color:inherit;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><path d="M12 18h.01"/></svg> AMOLED</button>
+              <button type="button" class="mode-btn active" id="btnModeLight" onclick="setAppMode('light')"><svg class="icon-svg" style="width:1.2em; height:1.2em; margin:0 4px 0 0; vertical-align:-3px; display:inline-block; color:inherit;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg> فاتح</button>
+              <button type="button" class="mode-btn" id="btnModeAmoled" onclick="setAppMode('amoled')"><svg class="icon-svg" style="width:1.2em; height:1.2em; margin:0 4px 0 0; vertical-align:-3px; display:inline-block; color:inherit;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg> مظلم</button>
+              <button type="button" class="mode-btn" id="btnModeAuto" onclick="setAppMode('auto')"><svg class="icon-svg" style="width:1.2em; height:1.2em; margin:0 4px 0 0; vertical-align:-3px; display:inline-block; color:inherit;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg> تلقائي حسب الجهاز</button>
             </div>
+            <p style="font-size:11px; color:var(--text-muted); margin:-6px 0 10px; line-height:1.6;">وضع (تلقائي) بيتبدل لوحده بين الفاتح والمظلم حسب وضع العرض المسجل في جهازك — والوضع المظلم هنا هو أسود نقي موفر للبطارية (AMOLED).</p>
             <h4 style="margin:2px 0 6px; font-size:12px;">ثيم التطبيق</h4>
             <div class="skin-grid" id="skinCardsContainer"></div>
             <!-- قسم "لون التطبيق" (23 لون قديم) اتشال بطلب المالك — الثيمات الخمسة لوحاتها كاملة -->
 
-            <!-- Interface & Buttons Customizer Section Inside Theme Page -->
-            <div style="margin-top:20px; padding:16px; border-radius:14px; background:var(--card-bg-alt); border:1.5px solid var(--border); box-shadow:var(--shadow-sm);">
+            <!-- Interface & Buttons Customizer Section Inside Theme Page (الإطار الداخلي اتشال — الخارجي فقط) -->
+            <div class="settings-inline-frame" style="margin-top:20px; padding:16px; border-radius:14px; background:var(--card-bg-alt); border:1.5px solid var(--border); box-shadow:var(--shadow-sm);">
               <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
                 <div style="display:flex; align-items:center; gap:10px;">
                   <div style="width:38px; height:38px; border-radius:10px; background:rgba(37,99,235,0.12); color:var(--primary); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
@@ -6742,7 +6891,7 @@ td { padding: 8px 6px; font-size: 12px; }
       <div id="emptyState" class="empty-state no-print"><svg class="icon-svg" style="width:1.2em; height:1.2em; margin:0 4px 0 0; vertical-align:-3px; display:inline-block; color:inherit;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></svg> الفاتورة فارغة — اضغط الأزرار بالأعلى لإضافة الأصناف</div>
       <div id="tablesContainer"></div>
       <div class="grand-summary">
-        <div class="grand-row" style="font-size:11px; border-bottom:none; margin-bottom:-4px; opacity:0.85;">
+        <div class="grand-row" style="min-height:0; padding:7px 14px; opacity:0.9;">
           <span>المساحات: <span id="grandSqMeters">0 م²</span> | الأطوال: <span id="grandLinMeters">0 م.ط</span> | القطع: <span id="grandPieces">0</span></span>
         </div>
         <div class="grand-row"><span>الإجمالي:</span><span id="grandCost">0.00 ج.م</span></div>
@@ -6866,7 +7015,7 @@ td { padding: 8px 6px; font-size: 12px; }
           <button type="button" class="action-btn" style="background:var(--primary);" onclick="saveToArchive()"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> حفظ</button>
           <button type="button" id="newInvoiceCuttingBtn" class="action-btn" style="background:#0f766e;" onclick="openWorkshopCuttingSheet()"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M6 2v20M18 2v20M2 6h20M2 18h20"></path></svg> جدول التقطيع</button>
           <button type="button" class="action-btn" style="background:var(--whatsapp);" onclick="shareWhatsAppText()"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg> واتساب</button>
-          <button type="button" class="action-btn" style="background:var(--secondary);" onclick="toggleCalcModal(true)"><svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" ry="4"></rect><line x1="7" y1="9" x2="11" y2="9"></line><line x1="14" y1="7" x2="18" y2="11"></line><line x1="18" y1="7" x2="14" y2="11"></line><line x1="9" y1="14" x2="9" y2="18"></line><line x1="7" y1="16" x2="11" y2="16"></line><line x1="14" y1="15" x2="18" y2="15"></line><line x1="14" y1="17" x2="18" y2="17"></line></svg> حاسبة</button>
+          <!-- زر الحاسبة اتشال من صفحة إنشاء الفاتورة بطلب المالك — متاحة كبوب أب من الشريط السفلي في أي مكان -->
           <button type="button" class="action-btn" style="background:#64748b;" onclick="openPrintInvoice()"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M12 18v-6"></path><path d="M9 15l3 3 3-3"></path></svg> طباعة (PDF)</button>
           <button type="button" class="action-btn" style="background:#3b82f6;" onclick="sharePDFInvoice()"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M10 14v-2a3 3 0 0 1 3-3h3"></path><polyline points="13 6 16 9 13 12"></polyline></svg> مشاركة PDF</button>
         </div>
@@ -7525,24 +7674,67 @@ td { padding: 8px 6px; font-size: 12px; }
     const SKIN_META_COLOR = { marble: '#b8860b', modern: '#4f46e5', minimal: '#171717', pro: '#0f4c81', glass: '#7c3aed' };
 
     function applyTheme() {
-      const mode = localStorage.getItem('appMode') || 'light';
+      /* ترحيل الوضع القديم «dark» → «amoled» (المظلم) — الدارك اتشال بطلب المالك */
+      let mode = localStorage.getItem('appMode') || 'light';
+      if (mode === 'dark') { mode = 'amoled'; localStorage.setItem('appMode', 'amoled'); }
+      if (!['light', 'amoled', 'auto'].includes(mode)) mode = 'light';
       const skin = localStorage.getItem('appSkin') || 'marble';
-      document.documentElement.setAttribute('data-theme', mode);
+      /* الوضع التلقائي: بيتبع وضع الجهاز (فاتح/مظلم) لحظة بلحظة */
+      let resolved = mode;
+      if (mode === 'auto') {
+        try { resolved = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'amoled' : 'light'; } catch (e) { resolved = 'light'; }
+      }
+      document.documentElement.setAttribute('data-theme', resolved);
       document.documentElement.setAttribute('data-skin', skin);
+      document.documentElement.setAttribute('data-mode-pref', mode);
 
       /* كل الثيمات (ومنهم رخامي) لوحاتها كاملة من الـCSS — نشيل أي override قديم */
       ['--primary', '--secondary', '--on-primary'].forEach(v => document.documentElement.style.removeProperty(v));
 
-      ['btnModeLight','btnModeDark','btnModeAmoled'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.remove('active'); });
+      ['btnModeLight','btnModeAmoled','btnModeAuto'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.remove('active'); });
       const activeBtn = document.getElementById('btnMode' + mode.charAt(0).toUpperCase() + mode.slice(1));
       if (activeBtn) activeBtn.classList.add('active');
 
       document.querySelectorAll('.skin-card').forEach(card => card.classList.toggle('active', card.dataset.skin === skin));
 
       const meta = document.querySelector('meta[name="theme-color"]');
-      if (meta) meta.setAttribute('content', mode === 'light' ? (SKIN_META_COLOR[skin] || SKIN_META_COLOR.marble) : '#000000');
+      if (meta) meta.setAttribute('content', resolved === 'light' ? (SKIN_META_COLOR[skin] || SKIN_META_COLOR.marble) : '#000000');
+
+      /* زر الشمس/القمر في هيدر الرئيسية: قمر في الفاتح (اضغط → مظلم) وشمس في المظلم (اضغط → فاتح) */
+      const tIcon = document.getElementById('dashThemeToggleIcon');
+      if (tIcon) {
+        const isDark = resolved !== 'light';
+        const prev = tIcon.dataset.mode;
+        const cur = isDark ? 'dark' : 'light';
+        tIcon.innerHTML = isDark
+          ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>'
+          : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+        tIcon.dataset.mode = cur;
+        if (prev && prev !== cur) { tIcon.classList.remove('swap'); void tIcon.offsetWidth; tIcon.classList.add('swap'); }
+        const tBtn = document.getElementById('dashThemeToggleBtn');
+        if (tBtn) tBtn.title = isDark ? 'التبديل للمظهر الفاتح' : 'التبديل للمظهر المظلم';
+      }
     }
-    function setAppMode(mode) { localStorage.setItem('appMode', mode); applyTheme(); }
+    function setAppMode(mode) {
+      if (mode === 'dark') mode = 'amoled'; /* الدارك القديم = المظلم */
+      localStorage.setItem('appMode', mode); applyTheme();
+    }
+    /* زر الشمس/قمر من الرئيسية: تبديل مباشر بين الفاتح والمظلم (لو كان تلقائي بيتحول ليدوي) */
+    function toggleThemeFromHome() {
+      let m = localStorage.getItem('appMode') || 'light';
+      if (m === 'auto') {
+        try { m = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'amoled' : 'light'; } catch (e) { m = 'light'; }
+      }
+      setAppMode(m === 'light' ? 'amoled' : 'light');
+    }
+    window.toggleThemeFromHome = toggleThemeFromHome;
+    /* مستمع تغيّر وضع الجهاز: لو المطور «تلقائي» التطبيق يتبدل فوراً بدون إعادة فتح */
+    try {
+      const mq = window.matchMedia('(prefers-color-scheme: dark)');
+      const onSchemeChange = () => { if ((localStorage.getItem('appMode') || 'light') === 'auto') applyTheme(); };
+      if (mq.addEventListener) mq.addEventListener('change', onSchemeChange);
+      else if (mq.addListener) mq.addListener(onSchemeChange);
+    } catch (e) {}
     function setAppSkin(id) { if (!APP_SKINS.some(s => s.id === id)) return; localStorage.setItem('appSkin', id); applyTheme(); try { showToast && showToast('تم تطبيق الثيم: ' + (APP_SKINS.find(s => s.id === id) || {}).name); } catch (e) {} }
     function initThemeUI() {
       /* بطاقات الثيمات الخمسة (skins) */
@@ -7667,9 +7859,9 @@ td { padding: 8px 6px; font-size: 12px; }
       
       const isFullScreenNoScroll = (
         viewId === 'calculatorView' || 
-        viewId === 'loginView' || 
         (viewId === 'settingsView' && (!document.getElementById('settingsView')?.classList.contains('in-subpage') || document.getElementById('settingsView')?.classList.contains('compact-subpage')))
       );
+      /* الرئيسية بقت قابلة للتمرير — عشان لا يتغطى أي جزء من البطاقات بالشريط السفلي في أي ثيم */
       document.body.style.overflow = isFullScreenNoScroll ? 'hidden' : '';
       document.body.style.overflowY = isFullScreenNoScroll ? 'hidden' : 'auto';
       document.documentElement.style.overflow = isFullScreenNoScroll ? 'hidden' : '';
@@ -7760,13 +7952,13 @@ td { padding: 8px 6px; font-size: 12px; }
       if (subtitleEl) {
           let html = '';
           if (subtitle) html += `<div style="margin-bottom:6px;">${typeof escapeHtml === 'function' ? escapeHtml(subtitle) : subtitle}</div>`;
-          if (phone) html += `<div style="display:inline-flex; align-items:center; gap:6px; background:color-mix(in srgb, var(--primary) 15%, transparent); color:var(--primary); padding:6px 14px; border-radius:20px; font-weight:800; font-size:14px; box-shadow:0 2px 8px rgba(0,0,0,0.05); margin-top:4px;"><svg class="icon-svg" style="width:16px; height:16px; margin:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> <span dir="ltr">${typeof escapeHtml === 'function' ? escapeHtml(phone) : phone}</span></div>`;
+          if (phone) html += `<div style="display:inline-flex; align-items:center; gap:6px; background:color-mix(in srgb, var(--dash-hero-pill-bg, var(--primary)) 15%, transparent); color:var(--dash-hero-pill-fg, var(--primary)); padding:6px 14px; border-radius:20px; font-weight:800; font-size:13px; box-shadow:0 2px 8px rgba(0,0,0,0.05); margin-top:4px;"><svg class="icon-svg" style="width:15px; height:15px; margin:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> <span dir="ltr">${typeof escapeHtml === 'function' ? escapeHtml(phone) : phone}</span></div>`;
           subtitleEl.innerHTML = html;
       }
       
       const invNameEl = document.getElementById('invName');
       if (invNameEl) invNameEl.textContent = name;
-      renderLogo('logoContainer', 70);
+      renderLogo('logoContainer', 56);
       renderLogo('invLogoContainer', 64);
       
       let addrInfo = '';
@@ -13508,6 +13700,249 @@ td { padding: 8px 6px; font-size: 12px; }
       }
       openWorkshopCodeBurst();
     }
+
+    /* ═══ بوب-أب الملف والحساب — نفس هيئة بوب أب كود الورشة (للأيقونة فوق كود الورشة) ═══ */
+    function openAccountBurst() {
+      const existing = document.getElementById('accountBurstModal');
+      if (existing) existing.remove();
+      const name = (typeof getAppUserName === 'function') ? getAppUserName() : 'المستخدم';
+      const isCraft = (typeof isCraftsmanRole === 'function') && isCraftsmanRole();
+      const avatarImg = document.getElementById('dashTopAccountAvatar');
+      const avatarSrc = (avatarImg && avatarImg.style.display !== 'none' && avatarImg.src && !avatarImg.src.includes('data:image/gif')) ? avatarImg.src : '';
+      const initial = (name || 'م').trim().charAt(0);
+
+      const catcher = document.createElement('div');
+      catcher.id = 'accountBurstModal';
+      catcher.className = 'ws-pop-catch';
+
+      const card = document.createElement('div');
+      card.className = 'ws-pop-card';
+      card.setAttribute('role', 'dialog');
+      card.setAttribute('aria-modal', 'true');
+      card.setAttribute('aria-label', 'الملف والحساب');
+      card.innerHTML = `
+          <div class="ws-pop-badge">
+            <svg class="icon-svg" style="width:24px; height:24px; margin:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <h3 class="ws-pop-title">الملف والحساب</h3>
+          <p class="ws-pop-sub">بياناتك ووضع صلاحياتك داخل التطبيق</p>
+          <div class="ws-pop-user-row">
+            ${avatarSrc
+              ? `<img src="${avatarSrc}" alt="صورة الحساب">`
+              : `<div class="ws-pop-avatar">${typeof escapeHtml === 'function' ? escapeHtml(initial) : initial}</div>`}
+            <div class="ws-pop-user-meta">
+              <div class="ws-pop-user-name">${typeof escapeHtml === 'function' ? escapeHtml(name) : name}</div>
+              <div class="ws-pop-user-role">${isCraft ? 'وضع الصنايعي (صلاحيات محدودة)' : 'وضع المدير (كامل الصلاحيات)'}</div>
+            </div>
+          </div>
+          <div class="ws-pop-actions">
+            <button type="button" class="ws-btn-generate" onclick="accountBurstOpenFull()">
+              <svg class="icon-svg" style="width:14px; height:14px; margin:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              إدارة الملف والحساب
+            </button>
+          </div>`;
+
+      catcher.appendChild(card);
+      catcher.onclick = (e) => { if (e.target === catcher) closeAccountBurst(); };
+      document.body.appendChild(catcher);
+      catcher.style.display = 'block';
+
+      try {
+        const anchor = document.getElementById('dashTopRightActions');
+        if (anchor) {
+          const r = anchor.getBoundingClientRect();
+          const cw = card.offsetWidth || 318, ch = card.offsetHeight || 260;
+          let top = r.bottom + 9;
+          if (top + ch > window.innerHeight - 14) top = Math.max(12, r.top - ch - 9);
+          const right = Math.max(10, Math.min(window.innerWidth - r.right, window.innerWidth - cw - 10));
+          card.style.top = Math.max(10, top) + 'px';
+          card.style.right = right + 'px';
+        }
+      } catch (e) {}
+      try { if (typeof translateAppDOM === 'function' && typeof getAppLanguage === 'function') translateAppDOM(getAppLanguage()); } catch (e) {}
+      const onKey = (e) => { if (e.key === 'Escape') { closeAccountBurst(); document.removeEventListener('keydown', onKey); } };
+      document.addEventListener('keydown', onKey);
+    }
+    function closeAccountBurst() { const o = document.getElementById('accountBurstModal'); if (o) o.remove(); }
+    function accountBurstOpenFull() {
+      closeAccountBurst();
+      if (typeof openAppAuthModal === 'function') openAppAuthModal();
+    }
+    window.closeAccountBurst = closeAccountBurst;
+
+    /* ═══ بوب-أب تبديل الوضع (مدير/صنايعي) — نفس هيئة بوب أب كود الورشة ═══ */
+    function openRoleBurst() {
+      const existing = document.getElementById('roleBurstModal');
+      if (existing) existing.remove();
+      const isCraft = (typeof isCraftsmanRole === 'function') && isCraftsmanRole();
+
+      const catcher = document.createElement('div');
+      catcher.id = 'roleBurstModal';
+      catcher.className = 'ws-pop-catch';
+
+      const card = document.createElement('div');
+      card.className = 'ws-pop-card';
+      card.setAttribute('role', 'dialog');
+      card.setAttribute('aria-modal', 'true');
+      card.setAttribute('aria-label', 'تغيير وضع الاستخدام');
+      card.innerHTML = `
+          <div class="ws-pop-badge">
+            <svg class="icon-svg" style="width:24px; height:24px; margin:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/></svg>
+          </div>
+          <h3 class="ws-pop-title">وضع الاستخدام</h3>
+          <p class="ws-pop-sub">اختار الوضع اللي يناسب شغلك دلوقتي — التبديل للمدير محمي برمز أمان</p>
+          <div class="ws-pop-role-opts">
+            <button type="button" class="ws-pop-role-opt ${!isCraft ? 'sel-role-admin' : ''}" id="roleBurstAdminBtn" onclick="roleBurstPickAdmin()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/></svg>
+              مدير<br><span style="font-size:9.5px; font-weight:700; opacity:.75;">كامل الصلاحيات</span>
+            </button>
+            <button type="button" class="ws-pop-role-opt ${isCraft ? 'sel-role-craft' : ''}" id="roleBurstCraftBtn" onclick="roleBurstPickCraftsman()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+              صنايعي<br><span style="font-size:9.5px; font-weight:700; opacity:.75;">الفواتير والمظهر</span>
+            </button>
+          </div>
+          <div class="ws-pop-pin-box" id="roleBurstPinBox">
+            <input type="password" id="roleBurstPinInput" inputmode="numeric" placeholder="رمز الأمان" autocomplete="off">
+            <div class="ws-pop-actions">
+              <button type="button" class="ws-btn-generate" onclick="roleBurstConfirmAdmin()">تأكيد التبديل للمدير</button>
+            </div>
+          </div>
+          <p class="ws-pop-hint" id="roleBurstHint">${isCraft ? 'أنت الآن في وضع الصنايعي' : 'أنت الآن في وضع المدير'}</p>`;
+
+      catcher.appendChild(card);
+      catcher.onclick = (e) => { if (e.target === catcher) closeRoleBurst(); };
+      document.body.appendChild(catcher);
+      catcher.style.display = 'block';
+
+      try {
+        const anchor = document.getElementById('dashTopRightActions');
+        if (anchor) {
+          const r = anchor.getBoundingClientRect();
+          const cw = card.offsetWidth || 318, ch = card.offsetHeight || 280;
+          let top = r.bottom + 9;
+          if (top + ch > window.innerHeight - 14) top = Math.max(12, r.top - ch - 9);
+          const right = Math.max(10, Math.min(window.innerWidth - r.right, window.innerWidth - cw - 10));
+          card.style.top = Math.max(10, top) + 'px';
+          card.style.right = right + 'px';
+        }
+      } catch (e) {}
+      try { if (typeof translateAppDOM === 'function' && typeof getAppLanguage === 'function') translateAppDOM(getAppLanguage()); } catch (e) {}
+      const onKey = (e) => { if (e.key === 'Escape') { closeRoleBurst(); document.removeEventListener('keydown', onKey); } };
+      document.addEventListener('keydown', onKey);
+    }
+    function closeRoleBurst() { const o = document.getElementById('roleBurstModal'); if (o) o.remove(); }
+    function roleBurstPickCraftsman() {
+      if (typeof applyAppRole === 'function') applyAppRole('craftsman');
+      closeRoleBurst();
+      if (typeof showToast === 'function') showToast('تم التبديل لوضع الصنايعي (الفواتير والمظهر)', 'success');
+    }
+    function roleBurstPickAdmin() {
+      if (!(typeof isCraftsmanRole === 'function') || !isCraftsmanRole()) {
+        closeRoleBurst();
+        if (typeof showToast === 'function') showToast('أنت بالفعل في وضع المدير (كامل الصلاحيات)');
+        return;
+      }
+      const box = document.getElementById('roleBurstPinBox');
+      const hint = document.getElementById('roleBurstHint');
+      if (box) { box.classList.add('open'); const inp = document.getElementById('roleBurstPinInput'); if (inp) inp.focus(); }
+      if (hint) hint.textContent = 'اكتب رمز الأمان للتبديل لوضع المدير';
+    }
+    function roleBurstConfirmAdmin() {
+      const inp = document.getElementById('roleBurstPinInput');
+      const pin = inp ? inp.value.trim() : '';
+      if (!pin) { if (typeof showToast === 'function') showToast('يرجى إدخال رمز الأمان', 'warning'); return; }
+      if (typeof validateAdminSecurityPin === 'function') {
+        const res = validateAdminSecurityPin(pin);
+        if (!res || !res.valid) {
+          if (typeof showToast === 'function') showToast((res && res.errors && res.errors[0]) ? res.errors[0] : 'رمز الأمان غير صحيح', 'error');
+          return;
+        }
+      } else if (pin !== getStoredAdminPin()) {
+        if (typeof showToast === 'function') showToast('رمز الأمان غير صحيح', 'error');
+        return;
+      }
+      if (typeof applyAppRole === 'function') applyAppRole('admin');
+      closeRoleBurst();
+      if (typeof showToast === 'function') showToast('تم التبديل لوضع المدير (كامل الصلاحيات)', 'success');
+    }
+    window.closeRoleBurst = closeRoleBurst;
+
+    /* ═══ بوب-أب البحث العام — من أيقونة البحث في الشريط السفلي، يشتغل في أي مكان في التطبيق ═══ */
+    function openNavSearch() {
+      const existing = document.getElementById('navSearchModal');
+      if (existing) { const inp = document.getElementById('navSearchInput'); if (inp) inp.focus(); return; }
+
+      const catcher = document.createElement('div');
+      catcher.id = 'navSearchModal';
+      catcher.className = 'nav-search-catch';
+
+      const card = document.createElement('div');
+      card.className = 'ws-pop-card';
+      card.setAttribute('role', 'dialog');
+      card.setAttribute('aria-modal', 'true');
+      card.setAttribute('aria-label', 'بحث سريع');
+      card.innerHTML = `
+          <div class="ws-pop-badge" style="width:40px; height:40px;">
+            <svg class="icon-svg" style="width:20px; height:20px; margin:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          </div>
+          <h3 class="ws-pop-title" style="font-size:15px;">بحث سريع</h3>
+          <div class="nav-search-input-wrap">
+            <input type="search" id="navSearchInput" placeholder="ابحث بالاسم، رقم الفاتورة، الهاتف..." autocomplete="off">
+            <svg class="nav-search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          </div>
+          <p class="nav-search-hint">اكتب حرفين على الأقل — النتائج تظهر في الأرشيف تلقائياً</p>`;
+
+      catcher.appendChild(card);
+      catcher.onclick = (e) => { if (e.target === catcher) closeNavSearch(); };
+      document.body.appendChild(catcher);
+      catcher.style.display = 'block';
+
+      const inp = document.getElementById('navSearchInput');
+      if (inp) {
+        let tmr = null;
+        inp.addEventListener('input', function () {
+          clearTimeout(tmr);
+          const q = inp.value.trim();
+          if (q.length < 2) return;
+          tmr = setTimeout(function () {
+            try {
+              const as = document.getElementById('archiveSearchInput');
+              if (as && as.value !== q) {
+                as.value = q;
+                as.dispatchEvent(new Event('input', { bubbles: true })); /* triggers loadArchive() */
+              }
+              if (document.getElementById('archiveView') && !document.getElementById('archiveView').classList.contains('active-view')) {
+                if (typeof window.switchView === 'function') window.switchView('archiveView');
+              }
+              closeNavSearch();
+              if (typeof showToast === 'function') showToast('نتائج البحث عن: ' + q);
+            } catch (e) { console.warn('[nav-search] failed:', e); }
+          }, 500);
+        });
+        setTimeout(() => inp.focus(), 60);
+      }
+      const onKey = (e) => {
+        if (e.key === 'Escape') { closeNavSearch(); document.removeEventListener('keydown', onKey); }
+        if (e.key === 'Enter' && inp && inp.value.trim().length >= 2) {
+          clearTimeout(tmr);
+          const q = inp.value.trim();
+          try {
+            const as = document.getElementById('archiveSearchInput');
+            if (as) { as.value = q; as.dispatchEvent(new Event('input', { bubbles: true })); }
+            if (document.getElementById('archiveView') && !document.getElementById('archiveView').classList.contains('active-view')) {
+              if (typeof window.switchView === 'function') window.switchView('archiveView');
+            }
+            closeNavSearch();
+          } catch (err) {}
+        }
+      };
+      document.addEventListener('keydown', onKey);
+    }
+    function closeNavSearch() { const o = document.getElementById('navSearchModal'); if (o) o.remove(); }
+    window.openNavSearch = openNavSearch;
+    window.closeNavSearch = closeNavSearch;
+    window.openAccountBurst = openAccountBurst;
+    window.openRoleBurst = openRoleBurst;
 
     async function joinWorkshopByCode() {
       const codeInp = document.getElementById('craftsmanJoinCodeInput');
@@ -24949,22 +25384,22 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
   </div>
 
 
-<!-- ① Mobile bottom navigation + FAB (hidden on desktop ≥901px) -->
+<!-- ① Mobile bottom navigation + FAB (hidden on desktop ≥901px) — الترتيب من اليمين: الرئيسية • البحث • + • الحاسبة • الإعدادات (زر + في المنتصف تماماً) -->
   <nav class="lux-bottom-nav no-print" aria-label="التنقل السريع">
     <button type="button" class="lux-nav-btn active" data-lux-view="loginView" onclick="switchView('loginView')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       <span>الرئيسية</span>
     </button>
-    <button type="button" class="lux-nav-btn" data-lux-view="archiveView" onclick="switchView('archiveView')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>
-      <span>الأرشيف</span>
+    <button type="button" class="lux-nav-btn" id="navSearchBtn" onclick="openNavSearch()" aria-label="بحث سريع">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <span>البحث</span>
     </button>
     <button type="button" class="lux-nav-fab" aria-label="فاتورة جديدة" onclick="openNewInvoice()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
     </button>
-    <button type="button" class="lux-nav-btn" data-lux-view="inventoryView" onclick="switchView('inventoryView')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-      <span>المخزون</span>
+    <button type="button" class="lux-nav-btn" id="navCalcBtn" onclick="toggleCalcModal(true)" aria-label="الآلة الحاسبة">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><rect x="4" y="2" width="16" height="20" rx="3"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="12" x2="8" y2="12.01"/><line x1="12" y1="12" x2="12" y2="12.01"/><line x1="16" y1="12" x2="16" y2="12.01"/><line x1="8" y1="16" x2="8" y2="16.01"/><line x1="12" y1="16" x2="12" y2="16.01"/><line x1="16" y1="16" x2="16" y2="16.01"/></svg>
+      <span>الحاسبة</span>
     </button>
     <button type="button" class="lux-nav-btn" data-lux-view="settingsView" onclick="switchView('settingsView')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
