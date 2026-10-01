@@ -527,7 +527,8 @@
         content: '';
         position: absolute;
         inset: -2px;
-        border-radius: 26px;
+        /* v1.12: الهالة بتاخد نصف قطر الكارت نفسه (كانت 26px على كارت 24px فكانت بتطلع من الزوايا) */
+        border-radius: inherit;
         background: transparent;
         box-shadow: 0 0 15px color-mix(in srgb, var(--primary) 80%, transparent);
         z-index: -1;
@@ -550,7 +551,8 @@
         content: '';
         position: absolute;
         inset: -2px;
-        border-radius: 26px;
+        /* v1.12: الهالة بتاخد نصف قطر الكارت نفسه — توافق كامل مع الزوايا في كل الثيمات */
+        border-radius: inherit;
         background: transparent;
         box-shadow: 0 0 15px color-mix(in srgb, var(--primary) 80%, transparent);
         z-index: -1;
@@ -1643,9 +1645,20 @@
       body { display: block; }
       body > *:not(#appView) { display: none !important; }
       #appView { display: block !important; width: 100% !important; max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
+
+      /* v1.12: ترتيب أقسام الورقة المطبوعة — order من الإعدادات + وضع أبيض وأسود */
+      #invoiceCardContent.pdf-bw, #invoiceCardContent.pdf-bw * { background-image: none !important; box-shadow: none !important; text-shadow: none !important; }
+      #invoiceCardContent.pdf-bw, #invoiceCardContent.pdf-bw * { color: #111111 !important; border-color: #9aa0a6 !important; background-color: #ffffff !important; -webkit-print-color-adjust: economy; print-color-adjust: economy; }
+      .sb-order-mode#invoiceCardContent { display: flex; flex-direction: column; }
+      .sb-order-mode#invoiceCardContent > * { order: 99; }
+      .sb-order-mode#invoiceCardContent > .custom-print-header { order: 0 !important; }
+      .sb-order-mode#invoiceCardContent > .custom-print-footer { order: 98 !important; }
+      .pdf-bw, .pdf-bw * { background-image: none !important; box-shadow: none !important; text-shadow: none !important; }
+      .pdf-bw, .pdf-bw * { color: #111111 !important; border-color: #9aa0a6 !important; background-color: #ffffff !important; }
       
       #invoiceCardContent { 
-        display: block !important; 
+        display: flex !important; 
+        flex-direction: column !important;
         width: 100% !important; 
         max-width: 100% !important; 
         margin: 0 auto !important; 
@@ -2599,7 +2612,8 @@
         content: '';
         position: absolute;
         inset: -2px;
-        border-radius: 26px;
+        /* v1.12: الهالة بتاخد نصف قطر الكارت نفسه — بتشيل الظل النازل من زوايا كارت الهيدر */
+        border-radius: inherit;
         background: transparent;
         box-shadow: 0 0 15px color-mix(in srgb, var(--primary) 80%, transparent);
         z-index: -1;
@@ -4315,6 +4329,8 @@
     body.role-craftsman-active .admin-only-feature {
       display: none !important;
     }
+    /* v1.12: عناصر للصنايعي فقط — مخفية في وضع المدير */
+    body:not(.role-craftsman-active) .craftsman-only-feature { display: none !important; }
 
 
     /* ===== Dashboard & Settings Button Customizer Styles ===== */
@@ -4544,6 +4560,14 @@
   background: linear-gradient(135deg, #4f46e5, #7c3aed);
   box-shadow: 0 8px 20px -4px rgba(124,58,237,.55); border-radius: 50%;
 }
+/* v1.12: هالة نيون متوازنة في الثيم العصري — نفس زوايا الكارت تماماً وبتدرج أنعم (إصلاح الظل غير المتناسق) */
+:root[data-skin="modern"] .card-panel::after,
+:root[data-skin="modern"] .invoice-card::after,
+:root[data-skin="modern"] .dash-header-card::before {
+  border-radius: inherit;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--primary) 42%, transparent);
+  filter: blur(6px);
+}
 :root[data-skin="modern"] .lux-search input { border-radius: 999px; }
 :root[data-skin="modern"] .btn-primary,
 :root[data-skin="modern"] .btn-success,
@@ -4598,7 +4622,18 @@
 :root[data-skin="minimal"] .dash-grid-item.create-invoice { background: var(--primary) !important; color: var(--on-primary) !important; }
 :root[data-skin="minimal"] .dash-grid-item.create-invoice .icon-svg { color: var(--on-primary); }
 :root[data-skin="minimal"] .dash-grid-item.create-invoice:hover { filter: none; opacity: .85; }
-:root[data-skin="minimal"] .dash-header-card { border-radius: 0; border: none; border-bottom: 1px solid var(--border); background: var(--card-bg); box-shadow: none; }
+:root[data-skin="minimal"] .dash-header-card {
+  /* v1.12: إصلاح «المربع الحاد + الخط الرفيع» — زوايا مستديرة متسقة + حد شعري موحد + صفر هالات */
+  border-radius: 10px; border: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  background: var(--card-bg); box-shadow: none;
+}
+:root[data-skin="minimal"] .dash-header-card::before { content: none; }
+:root[data-skin="minimal"] .card-panel,
+:root[data-skin="minimal"] .invoice-card {
+  border-radius: 10px; border: 1px solid var(--border); box-shadow: none !important;
+}
+:root[data-skin="minimal"] .card-panel::after,
+:root[data-skin="minimal"] .invoice-card::after { content: none; }
 :root[data-skin="minimal"] .dash-title::after { content: none; }
 :root[data-skin="minimal"] .lux-stat-card { border-radius: 8px; border: 1px solid var(--border); box-shadow: none !important; }
 :root[data-skin="minimal"] .lux-stat-main { background: var(--primary) !important; color: var(--on-primary) !important; border-color: var(--primary); }
@@ -5265,6 +5300,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
   <!-- Firebase SDK for Google Workspace & Drive OAuth -->
   <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
   <div id="splashScreen">
@@ -5497,9 +5533,17 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
             <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
             <span data-i18n="menu_system">النظام والنسخ</span>
           </button>
-          <button type="button" class="dash-grid-item settings-grid-item" style="background: linear-gradient(135deg, #0d9488, #14b8a6);" onclick="openSettingsPage('language')">
+          <button type="button" class="dash-grid-item settings-grid-item craftsman-only-feature" style="background: linear-gradient(135deg, #0d9488, #14b8a6);" onclick="openSettingsPage('language')">
             <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"></circle><line x1="2" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="2"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" fill="none" stroke="currentColor" stroke-width="2"></path></svg>
             <span data-i18n="menu_language">لغة التطبيق</span>
+          </button>
+          <button type="button" class="dash-grid-item settings-grid-item admin-only-feature" style="background: linear-gradient(135deg, #8b5cf6, #c084fc);" onclick="openSettingsPage('permissions')">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/></svg>
+            <span data-i18n="menu_permissions">صلاحيات المدير والرمز</span>
+          </button>
+          <button type="button" class="dash-grid-item settings-grid-item craftsman-only-feature" style="background: linear-gradient(135deg, #0f766e, #2dd4bf);" onclick="openSettingsPage('cutting')">
+            <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="6" cy="18" r="3" fill="none" stroke="currentColor" stroke-width="2"/><line x1="8.2" y1="7.8" x2="20" y2="19" stroke="currentColor" stroke-width="2"/><line x1="8.2" y1="16.2" x2="20" y2="5" stroke="currentColor" stroke-width="2"/><line x1="14" y1="10.5" x2="17.5" y2="7" stroke="currentColor" stroke-width="2"/></svg>
+            <span data-i18n="menu_cutting">جداول التقطيع</span>
           </button>
         </div>
       </div>
@@ -5730,6 +5774,29 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
                    </div>
                 </div>
 
+                <!-- v1.12: الورقة والمقاس والألوان وترتيب الأقسام -->
+                <div class="pdf-section-box">
+                   <div class="pdf-section-title">
+                      <svg class="icon-svg" style="width:16px; height:16px; color:var(--primary);" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h8M8 14h5"/></svg>
+                      مقاس ورقة الطباعة
+                   </div>
+                   <div class="pdf-seg-group" id="pdfPaperSizeGroup" style="margin-bottom:14px;">
+                      <button type="button" class="pdf-seg-item active" data-paper="a4" onclick="selectPdfPaperSize('a4')">A4 (افتراضي)</button>
+                      <button type="button" class="pdf-seg-item" data-paper="a5" onclick="selectPdfPaperSize('a5')">A5</button>
+                      <button type="button" class="pdf-seg-item" data-paper="letter" onclick="selectPdfPaperSize('letter')">Letter</button>
+                   </div>
+                   <label class="pdf-toggle-label" style="margin-bottom:6px;">
+                      <span>طباعة الألوان (إيقافها = نسخة أبيض وأسود اقتصادية)</span>
+                      <input type="checkbox" id="pdf_printColors" checked onchange="selectPdfPrintColors(this.checked)">
+                   </label>
+
+                   <div class="pdf-section-title" style="margin-top:14px;">
+                      <svg class="icon-svg" style="width:16px; height:16px; color:var(--primary);" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="8 9 12 5 16 9"/><polyline points="8 15 12 19 16 15"/></svg>
+                      ترتيب أقسام الورقة المطبوعة
+                   </div>
+                   <div id="pdfSectionOrderList"></div>
+                </div>
+
                 <!-- 4. خيارات الإظهار والإخفاء -->
                 <div class="pdf-section-box">
                    <div class="pdf-section-title">
@@ -5822,28 +5889,19 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
 
           </div>
       </div>
-      <div id="settings-page-system" class="settings-page settings-neon-box" style="display:none; padding:18px 20px;">
-          <!-- Top Header Bar with Back Button -->
+      <!-- v1.12: صلاحيات المدير والرمز — قسم مستقل بطلب المالك -->
+      <div id="settings-page-permissions" class="settings-page settings-neon-box" style="display:none; padding:18px 20px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border); padding-bottom:12px; flex-wrap:wrap; gap:10px;">
              <div style="display:flex; align-items:center; gap:10px;">
-                <button type="button" class="back-btn" onclick="backToSettingsMenu()" title="الرجوع للقائمة الرئيسية">
-                  <svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                </button>
                 <div>
                   <h3 style="margin:0; font-size:16.5px; color:var(--primary); font-weight:900; display:flex; align-items:center; gap:8px;">
-                    <svg class="icon-svg" style="width:18px; height:18px;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                    <span>النظام والنسخ والأمان</span>
+                    <svg class="icon-svg" style="width:18px; height:18px;" viewBox="0 0 24 24"><path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/></svg>
+                    <span>صلاحيات المدير والرمز</span>
                   </h3>
-                  <span style="font-size:12px; color:var(--text-muted);">إدارة صلاحيات المدير، حماية الرمز السري (PIN)، النسخ السحابي والتلقائي</span>
+                  <span style="font-size:12px; color:var(--text-muted);">وضع المدير/الصنايعي، رمز الأمان (PIN)، واسترداد الرمز</span>
                 </div>
              </div>
-             <div>
-                <button type="button" class="action-btn" onclick="backToSettingsMenu()" style="width:auto; padding:7px 14px; font-size:11.5px; background:var(--card-bg-alt); color:var(--text); border:1px solid var(--border); border-radius:8px;">
-                  الرجوع للإعدادات
-                </button>
-             </div>
           </div>
-          
           <!-- App User Roles & Google Auth Management Section -->
           <div class="system-card-box" id="settingsRoleCard" style="background:var(--card-bg-alt); border:1.5px solid var(--border); border-radius:16px; padding:18px; margin-bottom:16px; box-sizing:border-box;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
@@ -5922,6 +5980,78 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
                 <svg class="icon-svg" style="width:14px; height:14px;" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
                 <span>شاشة البداية وتسجيل الدخول</span>
               </button>
+            </div>
+          </div>
+      </div>
+
+      <!-- v1.12: جداول التقطيع — قسم الصنايعي الجديد (يُفتح من زر جدول التقطيع في صفحة إنشاء الفاتورة) -->
+      <div id="settings-page-cutting" class="settings-page settings-neon-box" style="display:none; padding:18px 20px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border); padding-bottom:12px; flex-wrap:wrap; gap:10px;">
+             <div style="display:flex; align-items:center; gap:10px;">
+                <div>
+                  <h3 style="margin:0; font-size:16.5px; color:var(--primary); font-weight:900; display:flex; align-items:center; gap:8px;">
+                    <svg class="icon-svg" style="width:18px; height:18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="8.2" y1="7.8" x2="20" y2="19"/><line x1="8.2" y1="16.2" x2="20" y2="5"/><line x1="14" y1="10.5" x2="17.5" y2="7"/></svg>
+                    <span>جداول التقطيع</span>
+                  </h3>
+                  <span style="font-size:12px; color:var(--text-muted);">تقطيع الصفحة الحالية + سجل جداول التقطيع المحفوظة</span>
+                </div>
+             </div>
+          </div>
+          <div class="system-card-box" style="background:var(--card-bg-alt); border:1.5px solid var(--border); border-radius:16px; padding:16px 18px; margin-bottom:16px;">
+            <div style="font-size:14px; font-weight:800; color:var(--text); margin-bottom:10px;">جدول تقطيع الفاتورة الحالية</div>
+            <div id="cuttingPageCurrent" style="font-size:12.5px; color:var(--text-muted);">افتح صفحة إنشاء فاتورة واضغط زر «جدول التقطيع» — الجدول هيظهر هنا.</div>
+          </div>
+          <div class="system-card-box" style="background:var(--card-bg-alt); border:1.5px solid var(--border); border-radius:16px; padding:16px 18px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+              <div style="font-size:14px; font-weight:800; color:var(--text);">سجل جداول التقطيع</div>
+              <button type="button" onclick="clearCuttingSheetsHistory()" style="background:var(--card-bg); border:1px solid var(--border); color:var(--danger); padding:6px 12px; border-radius:8px; font-size:11.5px; font-weight:800; cursor:pointer;">مسح السجل</button>
+            </div>
+            <div id="cuttingPageSavedList" style="display:flex; flex-direction:column; gap:8px;"></div>
+          </div>
+      </div>
+
+      <div id="settings-page-system" class="settings-page settings-neon-box" style="display:none; padding:18px 20px;">
+          <!-- Top Header Bar with Back Button -->
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border); padding-bottom:12px; flex-wrap:wrap; gap:10px;">
+             <div style="display:flex; align-items:center; gap:10px;">
+                <div>
+                  <h3 style="margin:0; font-size:16.5px; color:var(--primary); font-weight:900; display:flex; align-items:center; gap:8px;">
+                    <svg class="icon-svg" style="width:18px; height:18px;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    <span>النظام والنسخ والأمان</span>
+                  </h3>
+                  <span style="font-size:12px; color:var(--text-muted);">اللغة، النسخ السحابي والتلقائي، وإعدادات التشغيل — صلاحيات المدير والرمز في قسم مستقل</span>
+                </div>
+             </div>
+          </div>
+          
+          <!-- v1.12: اللغة بقت داخل قسم النظام والنسخ (الوصول السريع) -->
+          <div class="system-card-box" id="systemLanguageCard" style="background:var(--card-bg-alt); border:1.5px solid var(--border); border-radius:16px; padding:16px 18px; margin-bottom:16px; box-sizing:border-box; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <svg class="icon-svg" style="width:22px; height:22px; color:var(--primary);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              <div>
+                <div style="font-size:14px; font-weight:800; color:var(--text);">اللغة والترجمة</div>
+                <div style="font-size:12px; color:var(--text-muted);">تغيير لغة الواجهة — العربية، الإنجليزية، الصينية</div>
+              </div>
+            </div>
+            <button type="button" onclick="openSettingsPage('language')" style="background:var(--primary); color:var(--on-primary); border:none; padding:8px 18px; border-radius:8px; font-size:12px; font-weight:800; cursor:pointer;">فتح إعدادات اللغة</button>
+          </div>
+
+          <!-- v1.12: مزامنة قاعدة بيانات Firebase -->
+          <div class="system-card-box" id="fbSyncCard" style="background:var(--card-bg-alt); border:1.5px solid var(--border); border-radius:16px; padding:16px 18px; margin-bottom:16px; box-sizing:border-box;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+              <h4 style="margin:0; font-size:14px; font-weight:800; color:var(--text); display:flex; align-items:center; gap:8px;">
+                <svg class="icon-svg" style="width:20px; height:20px; color:#f59e0b;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m8 17 4 4 4-4"/></svg>
+                <span>قاعدة البيانات السحابية (Firebase)</span>
+              </h4>
+              <span id="fbSyncStatusBadge" style="font-size:11px; font-weight:700;">غير متصل — سجّل الدخول بجوجل أولاً</span>
+            </div>
+            <p style="font-size:12px; color:var(--text-muted); margin:0 0 10px; line-height:1.7;">
+              رفع نسخة كاملة من بيانات التطبيق (الفواتير، المخزون، الأسعار، العمال) إلى قاعدة بيانات Firestore واسترجاعها على أي جهاز بنفس الحساب. يتطلب تفعيل Firebase من خطوات الدليل المرجعي.
+            </p>
+            <div id="fbSyncLastTime" style="font-size:11px; color:var(--text-muted); margin-bottom:8px;">لم تتم مزامنة بعد</div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button type="button" id="btnFbSyncUpload" onclick="sbFbUploadBackup()" style="background:var(--primary); color:var(--on-primary); border:none; padding:8px 16px; border-radius:8px; font-size:12px; font-weight:800; cursor:pointer;">رفع نسخة الآن</button>
+              <button type="button" id="btnFbSyncDownload" onclick="sbFbDownloadBackup()" style="background:var(--card-bg); color:var(--text); border:1px solid var(--border); padding:8px 16px; border-radius:8px; font-size:12px; font-weight:800; cursor:pointer;">استرجاع نسخة</button>
             </div>
           </div>
 
@@ -6154,7 +6284,40 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
               </select>
             </div>
             <button type="button" class="btn" style="background:var(--primary); color: var(--on-primary); width:100%; font-size:13px; padding:9px; border-radius:8px; font-weight:bold; margin-bottom:10px; border:none;" onclick="addCustomTableType()"><svg class="icon-svg" style="width:1.2em; height:1.2em; margin:0 4px 0 0; vertical-align:-3px; display:inline-block; color:inherit;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5v14"/></svg> إضافة نوع جدول جديد</button>
-            <div id="customTableTypesContainer" style="max-height:140px; overflow-y:auto;"></div>
+            <div id="customTableTypesContainer" style="max-height:200px; overflow-y:auto;"></div>
+
+            <!-- v1.12: جدول بمعادلة مخصصة (تخصيص كامل) -->
+            <div style="border:1.5px dashed var(--primary); border-radius:12px; padding:12px; margin-top:14px; background:var(--card-bg-alt);">
+              <div style="font-size:13px; font-weight:900; color:var(--primary); margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+                <svg class="icon-svg" style="width:16px; height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 5H5L12 12 5 19h14"/></svg>
+                جدول بمعادلة مخصصة (تخصيص كامل)
+              </div>
+              <input type="text" id="sbFtName" placeholder="اسم الجدول الجديد (مثال: سكاكين مطبخ)" style="width:100%; padding:8px 10px; border-radius:8px; border:1.5px solid var(--border); background:var(--input-bg); color:var(--input-text); font-weight:700; margin-bottom:8px; box-sizing:border-box;">
+              <div style="font-size:11.5px; font-weight:800; color:var(--text); margin-bottom:5px;">أعمدة الجدول:</div>
+              <div id="sbFtCols" style="display:flex; flex-direction:column; gap:6px; margin-bottom:8px;"></div>
+              <div style="display:flex; gap:8px;">
+                <button type="button" onclick="sbAddFtCol()" style="flex:1; background:var(--card-bg); border:1px solid var(--border); color:var(--text); padding:7px; border-radius:8px; font-size:11.5px; font-weight:800; cursor:pointer;">+ عمود رقمي</button>
+                <button type="button" onclick="sbAddFtCol(true)" style="flex:1; background:var(--card-bg); border:1px solid var(--border); color:var(--text); padding:7px; border-radius:8px; font-size:11.5px; font-weight:800; cursor:pointer;">+ عمود نصي</button>
+              </div>
+              <div style="font-size:11.5px; font-weight:800; color:var(--text); margin:10px 0 5px;">معادلة إجمالي الصف (استخدم أسماء الأعمدة كما كتبتها):</div>
+              <input type="text" id="sbFtFormula" placeholder="مثال: الطول * العرض * السعر" style="width:100%; padding:8px 10px; border-radius:8px; border:1.5px solid var(--primary); background:var(--input-bg); color:var(--input-text); font-weight:700; margin-bottom:6px; box-sizing:border-box;">
+              <div style="font-size:10.5px; color:var(--text-muted); margin-bottom:8px; line-height:1.6;">العمليات المدعومة: + - * / والأقواس. المجموع بيتحسب تلقائياً في الإجمالي الكلي للفاتورة.</div>
+              <button type="button" onclick="sbCreateFormulaTable()" style="width:100%; background:var(--primary); color:var(--on-primary); border:none; padding:9px; border-radius:8px; font-size:12.5px; font-weight:800; cursor:pointer;">إنشاء جدول المعادلة</button>
+            </div>
+
+            <!-- v1.12: دمج جدولين -->
+            <div style="border:1.5px dashed var(--primary); border-radius:12px; padding:12px; margin-top:12px; background:var(--card-bg-alt);">
+              <div style="font-size:13px; font-weight:900; color:var(--primary); margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+                <svg class="icon-svg" style="width:16px; height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/><path d="M13 7h8M7 13v8"/></svg>
+                دمج جدولين في مجموعة واحدة
+              </div>
+              <input type="text" id="sbMgName" placeholder="اسم المجموعة (مثال: مطبخ كامل)" style="width:100%; padding:8px 10px; border-radius:8px; border:1.5px solid var(--border); background:var(--input-bg); color:var(--input-text); font-weight:700; margin-bottom:8px; box-sizing:border-box;">
+              <div style="display:flex; gap:8px; margin-bottom:8px;">
+                <select id="sbMgA" style="flex:1; padding:8px; border-radius:8px; border:1.5px solid var(--border); background:var(--input-bg); color:var(--input-text);"></select>
+                <select id="sbMgB" style="flex:1; padding:8px; border-radius:8px; border:1.5px solid var(--border); background:var(--input-bg); color:var(--input-text);"></select>
+              </div>
+              <button type="button" onclick="sbCreateMergedTable()" style="width:100%; background:var(--primary); color:var(--on-primary); border:none; padding:9px; border-radius:8px; font-size:12.5px; font-weight:800; cursor:pointer;">إنشاء الجدول المدموج</button>
+            </div>
           </div>
       </div>
 
@@ -6514,6 +6677,20 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
            </div>
         </div>
 
+        <!-- v1.12: تبويبات موسّعة — قسم العمال / قسم المصروفات -->
+        <div style="display:flex; gap:8px; margin-bottom:14px; background:var(--card-bg); border:1px solid var(--border); border-radius:12px; padding:6px;">
+          <button type="button" id="expTabBtnWorkers" class="action-btn" onclick="sbExpTab('workers')" style="flex:1; padding:10px; font-size:13px; font-weight:800; background:var(--primary); color:var(--on-primary); border:none; border-radius:9px; display:inline-flex; align-items:center; justify-content:center; gap:6px;">
+            <svg class="icon-svg" style="width:16px; height:16px;" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            حسابات العمال
+          </button>
+          <button type="button" id="expTabBtnExpenses" class="action-btn" onclick="sbExpTab('expenses')" style="flex:1; padding:10px; font-size:13px; font-weight:800; background:var(--card-bg-alt); color:var(--text); border:1px solid var(--border); border-radius:9px; display:inline-flex; align-items:center; justify-content:center; gap:6px;">
+            <svg class="icon-svg" style="width:16px; height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            المصروفات (كهرباء / مياه / صيانة)
+          </button>
+        </div>
+
+        <div id="expTabWorkers">
+
         <!-- 1. Simple 2-Field Add Worker Section (خانة للاسم وخانة لليومية) -->
         <div style="background:var(--card-bg); border:1.5px solid var(--primary); border-radius:12px; padding:14px 16px; margin-bottom:14px; box-shadow:var(--shadow-sm);">
            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:6px;">
@@ -6750,6 +6927,57 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         </div>
 
         <!-- Worker Statement Modal (كشف حساب العامل) -->
+        </div><!-- /expTabWorkers -->
+
+        <!-- v1.12: تبويب المصروفات — كهرباء / مياه / صيانة -->
+        <div id="expTabExpenses" style="display:none;">
+          <div style="background:var(--card-bg); border:1.5px solid var(--primary); border-radius:12px; padding:14px 16px; margin-bottom:14px;">
+            <div style="font-size:14px; font-weight:800; color:var(--text); margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+              <svg class="icon-svg" style="width:17px; height:17px; color:var(--primary);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              تسجيل مصروف ورشة
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;" id="sbExpenseTypeBtns">
+              <button type="button" class="sb-exp-type active" data-type="كهرباء" onclick="sbSetExpenseType(this)" style="flex:1; min-width:90px; padding:9px; border-radius:9px; border:2px solid var(--primary); background:var(--primary); color:var(--on-primary); font-weight:800; font-size:12.5px; cursor:pointer;">⚡ كهرباء</button>
+              <button type="button" class="sb-exp-type" data-type="مياه" onclick="sbSetExpenseType(this)" style="flex:1; min-width:90px; padding:9px; border-radius:9px; border:2px solid var(--border); background:var(--card-bg-alt); color:var(--text); font-weight:800; font-size:12.5px; cursor:pointer;">💧 مياه</button>
+              <button type="button" class="sb-exp-type" data-type="صيانة" onclick="sbSetExpenseType(this)" style="flex:1; min-width:90px; padding:9px; border-radius:9px; border:2px solid var(--border); background:var(--card-bg-alt); color:var(--text); font-weight:800; font-size:12.5px; cursor:pointer;">🔧 صيانة</button>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:8px; margin-bottom:10px;">
+              <div>
+                <label style="display:block; font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:3px;">المبلغ (ج.م) *</label>
+                <input type="number" inputmode="decimal" id="sbExpenseAmount" placeholder="0" style="width:100%; padding:8px 10px; border-radius:8px; border:1.5px solid var(--border); background:var(--input-bg); color:var(--input-text); font-weight:800; box-sizing:border-box;">
+              </div>
+              <div>
+                <label style="display:block; font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:3px;">التاريخ</label>
+                <input type="date" id="sbExpenseDate" style="width:100%; padding:8px 10px; border-radius:8px; border:1.5px solid var(--border); background:var(--input-bg); color:var(--input-text); box-sizing:border-box;">
+              </div>
+              <div>
+                <label style="display:block; font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:3px;">بيان (اختياري)</label>
+                <input type="text" id="sbExpenseNote" placeholder="مثال: فاتورة الشهر" style="width:100%; padding:8px 10px; border-radius:8px; border:1.5px solid var(--border); background:var(--input-bg); color:var(--input-text); box-sizing:border-box;">
+              </div>
+            </div>
+            <button type="button" onclick="sbAddWorkshopExpense()" style="width:100%; background:var(--primary); color:var(--on-primary); border:none; padding:10px; border-radius:9px; font-weight:800; font-size:13px; cursor:pointer;">+ تسجيل المصروف</button>
+          </div>
+
+          <div style="background:var(--card-bg); border:1px solid var(--border); border-radius:12px; padding:14px 16px; margin-bottom:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+              <div style="font-size:14px; font-weight:800; color:var(--text);">سجل المصروفات</div>
+              <div style="font-size:12.5px; font-weight:800; color:var(--danger);" id="sbExpensesMonthTotal">إجمالي الشهر: 0 ج</div>
+            </div>
+            <div style="overflow-x:auto;">
+              <table style="width:100%; border-collapse:collapse; font-size:12px;">
+                <thead><tr style="background:var(--card-bg-alt);">
+                  <th style="padding:8px 6px; text-align:right;">النوع</th>
+                  <th style="padding:8px 6px;">المبلغ</th>
+                  <th style="padding:8px 6px;">التاريخ</th>
+                  <th style="padding:8px 6px; text-align:right;">البيان</th>
+                  <th style="padding:8px 6px;"></th>
+                </tr></thead>
+                <tbody id="sbExpensesTableBody"><tr><td colspan="5" style="padding:12px; text-align:center; color:var(--text-muted);">لا توجد مصروفات مسجلة بعد</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div><!-- /expTabExpenses -->
+
         <div id="workerStatementModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center; padding:16px;">
            <div style="background:var(--card-bg); border:1px solid var(--border); border-radius:14px; max-width:560px; width:100%; max-height:90vh; display:flex; flex-direction:column; padding:18px 20px; box-shadow:var(--shadow-lg);">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--border); padding-bottom:8px;">
@@ -7150,7 +7378,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
           <button type="button" class="calc-btn" onclick="calcInput('2')">2</button>
           <button type="button" class="calc-btn" onclick="calcInput('3')">3</button>
           <button type="button" class="calc-btn calc-op" onclick="calcSetOp('+')">+</button>
-          <button type="button" class="calc-btn calc-conv" onclick="openUnitsConverter()" title="محول الوحدات" aria-label="محول الوحدات"><svg class="icon-svg" style="margin:0; width:22px; height:22px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1.8" y="8.2" width="20.4" height="7.6" rx="1.8"/><line x1="6.2" y1="8.2" x2="6.2" y2="11.2"/><line x1="10.2" y1="8.2" x2="10.2" y2="12.4"/><line x1="14.2" y1="8.2" x2="14.2" y2="11.2"/><line x1="18.2" y1="8.2" x2="18.2" y2="12.4"/></svg></button>
+          <button type="button" class="calc-btn calc-op calc-paren-btn" onclick="calcParen()" title="أقواس" aria-label="أقواس">(</button>
           <button type="button" class="calc-btn" onclick="calcInput('0')">0</button>
           <button type="button" class="calc-btn" onclick="calcInput('.')">.</button>
           <button type="button" class="calc-btn calc-eq" onclick="calcEquals()">=</button>
@@ -7340,7 +7568,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
       </div>
       
       <!-- Customer Legal Protection Clause -->
-      <div style="font-size:10px; text-align:center; color:var(--text-muted); margin-top:15px; border-top:1px solid var(--border); padding-top:10px; page-break-inside: avoid; line-height:1.6;">
+      <div id="invoiceLegalClause" style="font-size:10px; text-align:center; color:var(--text-muted); margin-top:15px; border-top:1px solid var(--border); padding-top:10px; page-break-inside: avoid; line-height:1.6;">
         <span style="font-weight:800; color:var(--danger);"><svg class="icon-svg" style="width:1.2em; height:1.2em; margin:0 4px 0 0; vertical-align:-3px; display:inline-block; color:inherit;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> حماية المستهلك (إخلاء مسؤولية):</span>
         تعتبر هذه الفاتورة <b>غير ملزمة للعميل ولا يعتد بها</b> للمطالبة المالية ما لم تكن <b>موقعة إلكترونياً بخط يده</b> أعلاه، أو تم إرسالها إليه <b>عبر الواتساب من رقم الشركة المعتمد وقت إصدارها</b> كإثبات موثق.
       </div>
@@ -7404,7 +7632,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
           <button type="button" class="calc-btn" onclick="calcInput('2')">2</button>
           <button type="button" class="calc-btn" onclick="calcInput('3')">3</button>
           <button type="button" class="calc-btn calc-op" onclick="calcSetOp('+')">+</button>
-          <button type="button" class="calc-btn calc-conv" onclick="openUnitsConverter()" title="محول الوحدات" aria-label="محول الوحدات"><svg class="icon-svg" style="margin:0; width:22px; height:22px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1.8" y="8.2" width="20.4" height="7.6" rx="1.8"/><line x1="6.2" y1="8.2" x2="6.2" y2="11.2"/><line x1="10.2" y1="8.2" x2="10.2" y2="12.4"/><line x1="14.2" y1="8.2" x2="14.2" y2="11.2"/><line x1="18.2" y1="8.2" x2="18.2" y2="12.4"/></svg></button>
+          <button type="button" class="calc-btn calc-op calc-paren-btn" onclick="calcParen()" title="أقواس" aria-label="أقواس">(</button>
           <button type="button" class="calc-btn" onclick="calcInput('0')">0</button>
           <button type="button" class="calc-btn" onclick="calcInput('.')">.</button>
           <button type="button" class="calc-btn calc-eq" onclick="calcEquals()">=</button>
@@ -7932,10 +8160,12 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
     }
 
     function resetWAConfigToDefault() {
-      if (!confirm('هل أنت متأكد من استعادة الكلمات والخيارات الافتراضية لرسائل الواتساب؟')) return;
+      /* v1.12: نافذة موحّدة بدل confirm الأصلية */
+      sbConfirm('هل أنت متأكد من استعادة الكلمات والخيارات الافتراضية لرسائل الواتساب؟', () => {
       saveWAConfig(defaultWAConfig);
       loadWAConfigForm();
       showToast('<svg class="icon-svg" style="width:1.2em; height:1.2em; margin:0 4px 0 0; vertical-align:-3px; display:inline-block; color:inherit;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> تم استعادة الكلمات الافتراضية');
+      });
     }
 
     function copyWALivePreviewText() {
@@ -8101,7 +8331,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
     
     
         function openSettingsPage(pageId) {
-        if (typeof isCraftsmanRole === 'function' && isCraftsmanRole() && !['theme', 'language'].includes(pageId)) {
+        if (typeof isCraftsmanRole === 'function' && isCraftsmanRole() && !['theme', 'language', 'cutting'].includes(pageId)) {
             if (typeof showToast === 'function') {
                 showToast('هذا القسم مخصص للمدير فقط، يرجى التبديل لوضع المدير برمز الأمان', 'warning');
             }
@@ -8112,7 +8342,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         showSettingsSubPage(pageId);
     }
     function showSettingsSubPage(pageId) {
-        if (typeof isCraftsmanRole === 'function' && isCraftsmanRole() && !['theme', 'language'].includes(pageId)) {
+        if (typeof isCraftsmanRole === 'function' && isCraftsmanRole() && !['theme', 'language', 'cutting'].includes(pageId)) {
             showSettingsMainMenu();
             return;
         }
@@ -8333,10 +8563,33 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
     let activePdfColor = '#1e3a8a';
     let activePdfFontSize = '11px';
     let activePdfTableStyle = 'grid';
+    /* v1.12: مقاس الورقة + ألوان الطباعة + ترتيب أقسام الورقة */
+    let activePdfPaperSize = 'a4';
+    let activePdfPrintColors = true;
+    const SB_PDF_SECTIONS = [
+      { key: 'header',      label: 'الترويسة (الشعار وبيانات المصنع)', sel: '.inv-header' },
+      { key: 'info',        label: 'بيانات العميل والتاريخ',            sel: '.invoice-info' },
+      { key: 'tables',      label: 'جداول الأصناف',                     sel: '#tablesContainer' },
+      { key: 'summary',     label: 'الإجماليات والمدفوعات',             sel: '.grand-summary' },
+      { key: 'notes',       label: 'الملاحظات',                         sel: '.invoice-notes' },
+      { key: 'signatures',  label: 'التوقيعات وكود التحقق',             sel: '.security-signatures-area' },
+      { key: 'legal',       label: 'شرط حماية المستهلك',                sel: '#invoiceLegalClause' }
+    ];
+    const SB_DEFAULT_SECTION_ORDER = ['header', 'info', 'tables', 'summary', 'notes', 'signatures', 'legal'];
+    let activePdfSectionOrder = SB_DEFAULT_SECTION_ORDER.slice();
+    function __sbNormSectionOrder(order) {
+      const clean = Array.isArray(order) ? order.filter(k => SB_DEFAULT_SECTION_ORDER.includes(k)) : [];
+      SB_DEFAULT_SECTION_ORDER.forEach(k => { if (!clean.includes(k)) clean.push(k); });
+      return clean.slice(0, SB_DEFAULT_SECTION_ORDER.length);
+    }
 
     function getDefaultPdfConfig() {
         return {
             template: 'classic',
+            /* v1.12: مقاس الورقة الافتراضي A4 + طباعة الألوان مفعّلة + ترتيب الأقسام الطبيعي */
+            paperSize: 'a4',
+            printColors: true,
+            sectionOrder: SB_DEFAULT_SECTION_ORDER.slice(),
             accentColor: '#1e3a8a',
             fontSize: '11px',
             tableStyle: 'grid',
@@ -8371,6 +8624,10 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         activePdfColor = config.accentColor || '#1e3a8a';
         activePdfFontSize = config.fontSize || '11px';
         activePdfTableStyle = config.tableStyle || 'grid';
+        /* v1.12: تحميل مقاس الورقة والألوان وترتيب الأقسام */
+        activePdfPaperSize = config.paperSize || 'a4';
+        activePdfPrintColors = config.printColors !== false;
+        activePdfSectionOrder = __sbNormSectionOrder(config.sectionOrder);
 
         const hText = document.getElementById('pdf_headerText');
         if (hText) hText.value = config.headerText || '';
@@ -8396,6 +8653,10 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         updatePdfColorUI();
         updatePdfFontSizeUI();
         updatePdfTableStyleUI();
+        updatePdfPaperSizeUI();
+        const pcTgl = document.getElementById('pdf_printColors');
+        if (pcTgl) pcTgl.checked = activePdfPrintColors;
+        renderPdfSectionOrder();
 
         updatePdfLivePreview();
     }
@@ -8449,6 +8710,45 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         onPdfOptionChange();
     }
 
+    /* ===== v1.12: مقاس الورقة + طباعة الألوان + ترتيب أقسام الورقة ===== */
+    function updatePdfPaperSizeUI() {
+        document.querySelectorAll('#pdfPaperSizeGroup .pdf-seg-item').forEach(btn => {
+            btn.classList.toggle('active', btn.getAttribute('data-paper') === activePdfPaperSize);
+        });
+    }
+    function selectPdfPaperSize(p) {
+        activePdfPaperSize = p;
+        updatePdfPaperSizeUI();
+        onPdfOptionChange();
+    }
+    function selectPdfPrintColors(on) {
+        activePdfPrintColors = !!on;
+        onPdfOptionChange();
+    }
+    function renderPdfSectionOrder() {
+        const list = document.getElementById('pdfSectionOrderList');
+        if (!list) return;
+        list.innerHTML = activePdfSectionOrder.map((key, i) => {
+            const def = SB_PDF_SECTIONS.find(s => s.key === key);
+            if (!def) return '';
+            return '<div style="display:flex; align-items:center; gap:8px; padding:7px 10px; background:var(--card-bg-alt); border:1px solid var(--border); border-radius:8px; margin-bottom:6px;">' +
+              '<span style="flex:1; font-size:12.5px; font-weight:700; color:var(--text); text-align:right;">' + (i + 1) + '. ' + def.label + '</span>' +
+              '<button type="button" title="لفوق" onclick="movePdfSection(' + i + ',-1)" style="width:26px; height:26px; border-radius:6px; border:1px solid var(--border); background:var(--card-bg); color:var(--primary); cursor:pointer; font-weight:800;">↑</button>' +
+              '<button type="button" title="لتحت" onclick="movePdfSection(' + i + ',1)" style="width:26px; height:26px; border-radius:6px; border:1px solid var(--border); background:var(--card-bg); color:var(--primary); cursor:pointer; font-weight:800;">↓</button>' +
+            '</div>';
+        }).join('');
+    }
+    function movePdfSection(index, dir) {
+        const j = index + dir;
+        if (j < 0 || j >= activePdfSectionOrder.length) return;
+        const arr = activePdfSectionOrder.slice();
+        [arr[index], arr[j]] = [arr[j], arr[index]];
+        activePdfSectionOrder = arr;
+        renderPdfSectionOrder();
+        onPdfOptionChange();
+    }
+    window.movePdfSection = movePdfSection;
+
     function switchPdfSubTab(tab) {
         const grid = document.getElementById('pdfCustomizerGrid');
         const bCtrl = document.getElementById('pdfTabBtnControls');
@@ -8486,6 +8786,10 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
             accentColor: activePdfColor,
             fontSize: activePdfFontSize,
             tableStyle: activePdfTableStyle,
+            /* v1.12: حقول الورقة الجديدة */
+            paperSize: activePdfPaperSize || 'a4',
+            printColors: activePdfPrintColors !== false,
+            sectionOrder: __sbNormSectionOrder(activePdfSectionOrder),
             headerText: document.getElementById('pdf_headerText') ? document.getElementById('pdf_headerText').value : '',
             footerText: document.getElementById('pdf_footerText') ? document.getElementById('pdf_footerText').value : '',
             showLogo: document.getElementById('pdf_showLogo') ? document.getElementById('pdf_showLogo').checked : true,
@@ -8519,7 +8823,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         if (typeof customConfirm === 'function') {
             customConfirm('هل تريد استعادة إعدادات وقالب الطباعة الافتراضية؟', doReset);
         } else {
-            if (confirm('هل تريد استعادة إعدادات وقالب الطباعة الافتراضية؟')) doReset();
+            sbConfirm('هل تريد استعادة إعدادات وقالب الطباعة الافتراضية؟', doReset);
         }
     }
 
@@ -8594,6 +8898,25 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         }
         printFooter.innerText = config.footerText || '';
         printFooter.style.display = config.footerText ? '' : 'none';
+
+        /* v1.12: تطبيق مقاس الورقة على الطباعة الأصلية (@page ديناميكي — A4 افتراضياً) */
+        let sizeStyle = document.getElementById('sbPageSizeMode');
+        if (!sizeStyle) {
+            sizeStyle = document.createElement('style');
+            sizeStyle.id = 'sbPageSizeMode';
+            document.head.appendChild(sizeStyle);
+        }
+        const PAPER_CSS = { a4: 'A4', a5: 'A5', letter: 'letter' };
+        sizeStyle.textContent = '@media print { @page { size: ' + (PAPER_CSS[config.paperSize] || 'A4') + ' portrait; margin: 10mm; } }';
+
+        /* v1.12: تطبيق ترتيب أقسام الورقة (order بيتحترم في الطباعة وPDF) */
+        const order = __sbNormSectionOrder(config.sectionOrder);
+        order.forEach((key, i) => {
+            const def = SB_PDF_SECTIONS.find(s => s.key === key);
+            if (!def) return;
+            const el = invoiceContent.querySelector(def.sel);
+            if (el) el.style.order = String(i + 1);
+        });
     }
     function updatePdfLivePreview() {
         const sheet = document.getElementById('pdfLivePreviewSheet');
@@ -9428,7 +9751,8 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
     }
 
     function deleteMaterialGroup(name) {
-      if (!confirm(`هل أنت متأكد من حذف جميع أسعار خامة "${name}"؟`)) return;
+      /* v1.12: نافذة موحّدة بدل confirm الأصلية */
+      sbConfirm(`هل أنت متأكد من حذف جميع أسعار خامة "${name}"؟`, () => {
       playDeleteSound();
       priceDB = priceDB.filter(i => (i.name || '').trim().toLowerCase() !== (name || '').trim().toLowerCase());
       localStorage.setItem('marblePriceDB', JSON.stringify(priceDB));
@@ -9436,6 +9760,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
       populateMaterialDatalist();
       onMaterialNameOrTypeChange();
       showToast(`<svg class="icon-svg" style="width:1.2em; height:1.2em; margin:0 4px 0 0; vertical-align:-3px; display:inline-block; color:inherit;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg> تم حذف خامة "${name}" بالكامل`);
+      });
     }
 
     function deleteMaterialTableGroup(name, type) {
@@ -9583,8 +9908,13 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
       const customTypes = JSON.parse(localStorage.getItem('customTableTypes')) || [];
       let html = '';
       customTypes.forEach(t => {
+        /* v1.12: عرض نوع الجدول — العادي بطريقة الجداول المدمجة، والمعادلة/المدموج بوسم خاص */
+        let modeLabel;
+        if (t.mode === 'formula') modeLabel = 'معادلة مخصصة';
+        else if (t.mode === 'merged') modeLabel = 'مدموج من جدولين';
+        else modeLabel = (t.calc === 'marble' ? 'رخام' : t.calc === 'tawlat' ? 'طاولات' : t.calc === 'slabs' ? 'شرايح' : t.calc === 'lengths-shorts' ? 'أطوال وقصاير' : t.calc === 'stairs-lin' ? 'درج م.ط' : t.calc === 'stairs-thick' ? 'درج بتخانة' : t.calc === 'talabis' ? 'تلابيس' : 'ترابيع');
         html += `<div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px; padding:10px 12px; background:var(--card-bg); border:1px solid color-mix(in srgb, var(--primary) 35%, var(--border)); border-radius:8px; margin-bottom:8px; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
-          <span style="font-size:14px; font-weight:800; color:var(--text);">${t.name} <span style="font-size:12px; color:var(--text-muted); font-weight:normal;">(${t.calc === 'marble' ? 'رخام' : t.calc === 'tawlat' ? 'طاولات' : t.calc === 'slabs' ? 'شرايح' : t.calc === 'lengths-shorts' ? 'أطوال وقصاير' : t.calc === 'stairs-lin' ? 'درج م.ط' : t.calc === 'stairs-thick' ? 'درج بتخانة' : t.calc === 'talabis' ? 'تلابيس' : 'ترابيع'})</span></span>
+          <span style="font-size:14px; font-weight:800; color:var(--text);">${t.name} <span style="font-size:12px; color:var(--text-muted); font-weight:normal;">(${modeLabel})</span></span>
           <button type="button" class="vdel" style="background:var(--danger); color: var(--on-primary); border: none; border-radius:6px; padding:4px 12px; font-size:12px; font-weight:bold; cursor:pointer;" onclick="deleteCustomTableType('${t.id}')">حذف</button>
         </div>`;
       });
@@ -9601,10 +9931,14 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
                      <button type="button" class="btn-table-choice" onclick="addBlock('talabis')"><svg class="icon-svg" style="color:var(--primary);" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>تلابيس</button>
                      <button type="button" class="btn-table-choice" onclick="addBlock('tarabee')"><svg class="icon-svg" style="color:var(--primary);" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>ترابيع</button>`;
         customTypes.forEach(t => {
-           bHtml += `<button type="button" class="btn-table-choice" onclick="addBlock('${t.id}')"><svg class="icon-svg" style="color:var(--primary);" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"></rect><line x1="8" y1="12" x2="16" y2="12"></line><line x1="12" y1="8" x2="12" y2="16"></line></svg>${t.name}</button>`;
+           /* v1.12: الأنواع المتقدمة (معادلة/مدموج) بتفتح بناuilder خاص بيها */
+           const act = (t.mode === 'formula' || t.mode === 'merged') ? `addCustomAdvancedBlock('${t.id}')` : `addBlock('${t.id}')`;
+           const tag = t.mode === 'formula' ? ' ⚡' : (t.mode === 'merged' ? ' ⧉' : '');
+           bHtml += `<button type="button" class="btn-table-choice" onclick="${act}"><svg class="icon-svg" style="color:var(--primary);" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"></rect><line x1="8" y1="12" x2="16" y2="12"></line><line x1="12" y1="8" x2="12" y2="16"></line></svg>${t.name}${tag}</button>`;
         });
         btnsContainer.innerHTML = bHtml;
       }
+      sbPopulateMergeSelects();
     }
 
     function addCustomTableType() {
@@ -11956,6 +12290,115 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         document.body.appendChild(overlay);
     }
 
+    /* ===== v1.12: نوافذ حوار موحّدة تتبع الثيمات (بديل confirm/alert/prompt الأصلية) =====
+       النوافذ الأصلية للمتصفح كانت بتظهر بخلفية بيضاء وخط مختلف تماماً عن هوية التطبيق
+       (زي نافذة «مسح النسخ الاحتياطية» في الصورة) — دي نسخة موحّدة تتبع var(--card-bg)
+       وvar(--text) وvar(--primary) فتتماشى مع كل الثيمات (ذهبي/عصري/بسيط/احترافي/زجاجي) */
+    function __sbDialogShell(opts) {
+        const overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,0.62); display:flex; align-items:center; justify-content:center; z-index:99999; backdrop-filter:blur(4px); padding:16px;';
+        const box = document.createElement('div');
+        box.style.cssText = 'background:var(--card-bg); color:var(--text); border:1px solid var(--border); padding:22px 20px; border-radius:16px; box-shadow:0 18px 50px rgba(0,0,0,0.35); width:100%; max-width:340px; font-family:\'Cairo\',sans-serif; text-align:center; box-sizing:border-box;';
+        if (opts.iconSvg) {
+            const ic = document.createElement('div');
+            ic.style.cssText = 'margin-bottom:10px; color:' + (opts.danger ? 'var(--danger)' : 'var(--primary)') + ';';
+            ic.innerHTML = opts.iconSvg;
+            box.appendChild(ic);
+        }
+        if (opts.title) {
+            const t = document.createElement('div');
+            t.style.cssText = 'font-weight:800; font-size:16px; margin-bottom:8px;';
+            t.textContent = opts.title;
+            box.appendChild(t);
+        }
+        if (opts.message) {
+            const m = document.createElement('div');
+            m.style.cssText = 'font-size:13.5px; color:var(--text-muted); line-height:1.7; margin-bottom:18px; word-break:break-word;';
+            m.innerHTML = opts.message;
+            box.appendChild(m);
+        }
+        overlay.appendChild(box);
+        overlay.addEventListener('click', (e) => { if (e.target === overlay && !opts.modal) close(); });
+        const close = () => { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); };
+        document.body.appendChild(overlay);
+        return { overlay, box, close };
+    }
+    function __sbDialogBtn(label, kind, onClick) {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = label;
+        b.style.cssText = 'flex:1; padding:11px 14px; border-radius:10px; cursor:pointer; font-weight:800; font-size:14px; font-family:inherit; border:none;';
+        if (kind === 'ok-danger') { b.style.background = 'var(--danger)'; b.style.color = '#fff'; }
+        else if (kind === 'ok') { b.style.background = 'var(--primary)'; b.style.color = 'var(--on-primary)'; }
+        else { b.style.background = 'var(--card-bg-alt)'; b.style.color = 'var(--text)'; b.style.border = '1px solid var(--border)'; }
+        b.onclick = onClick;
+        return b;
+    }
+    /* تأكيد موحّد — بديل confirm() الأصلية */
+    function sbConfirm(message, onOk, opts) {
+        opts = opts || {};
+        const { box, close } = __sbDialogShell({
+            title: opts.title || '',
+            message: message,
+            danger: opts.danger !== false,
+            iconSvg: '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
+            modal: opts.modal
+        });
+        const btns = document.createElement('div');
+        btns.style.cssText = 'display:flex; gap:10px;';
+        btns.appendChild(__sbDialogBtn(opts.cancelText || 'إلغاء', 'cancel', close));
+        btns.appendChild(__sbDialogBtn(opts.okText || 'نعم، متأكد', opts.danger === false ? 'ok' : 'ok-danger', () => { close(); if (typeof onOk === 'function') onOk(); }));
+        box.appendChild(btns);
+        return { close };
+    }
+    /* تنبيه موحّد — بديل alert() الأصلية */
+    function sbAlert(message, opts) {
+        opts = opts || {};
+        const { box, close } = __sbDialogShell({
+            title: opts.title || '',
+            message: message,
+            danger: opts.type === 'danger',
+            iconSvg: opts.type === 'danger'
+                ? '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+                : '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>'
+        });
+        const btns = document.createElement('div');
+        btns.style.cssText = 'display:flex;';
+        btns.appendChild(__sbDialogBtn(opts.okText || 'حسناً', 'ok', close));
+        box.appendChild(btns);
+        return { close };
+    }
+    /* إدخال موحّد — بديل prompt() الأصلية (نصي أو رقمي حسب inputmode) */
+    function sbPrompt(title, defaultValue, onOk, opts) {
+        opts = opts || {};
+        const { box, close } = __sbDialogShell({
+            title: title,
+            message: opts.message || '',
+            danger: false,
+            modal: true
+        });
+        const input = document.createElement('input');
+        input.type = opts.password ? 'password' : (opts.inputmode === 'numeric' ? 'number' : 'text');
+        if (opts.inputmode) input.setAttribute('inputmode', opts.inputmode);
+        input.value = defaultValue == null ? '' : defaultValue;
+        input.autocomplete = 'off';
+        input.style.cssText = 'width:100%; padding:12px; border-radius:10px; border:2px solid var(--primary); background:var(--input-bg); color:var(--input-text); font-size:15px; margin-bottom:18px; box-sizing:border-box; font-family:inherit; text-align:center;';
+        box.appendChild(input);
+        const submit = () => {
+            const val = input.value;
+            close();
+            if (typeof onOk === 'function') onOk(val);
+        };
+        input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); submit(); } });
+        const btns = document.createElement('div');
+        btns.style.cssText = 'display:flex; gap:10px;';
+        btns.appendChild(__sbDialogBtn(opts.cancelText || 'إلغاء', 'cancel', close));
+        btns.appendChild(__sbDialogBtn(opts.okText || 'تأكيد', 'ok', submit));
+        box.appendChild(btns);
+        setTimeout(() => { try { input.focus(); input.select(); } catch (e) {} }, 120);
+        return { close, input };
+    }
+
     function markAsPaidFromArchive(id) {
       customConfirm('تأكيد سداد الفاتورة بالكامل؟', () => {
           archiveDB = JSON.parse(localStorage.getItem('marbleArchiveV2')) || [];
@@ -12219,13 +12662,17 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
          المعالجة على جذر الدوكيومنت كاملة: html2canvas يقرأ حتى scrollbar-color على <html> وجدوال ألوان عناصر خارج الفاتورة */
       const __san = __pdfSanitizeColors(document.documentElement);
       const __colorRestore = __san.restore;
+      /* v1.12: مقاس الورقة من الإعدادات (A4 افتراضي) + ألوان الطباعة + ترتيب الأقسام */
+      const __pdfCfg = (typeof getPdfConfig === 'function') ? getPdfConfig() : {};
       const opt = {
         margin:       10,
         filename:     client + '.pdf',
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { scale: 2, useCORS: true },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        jsPDF:        { unit: 'mm', format: (__pdfCfg.paperSize || 'a4'), orientation: 'portrait' }
       };
+      if (__pdfCfg.printColors === false) element.classList.add('pdf-bw');
+      element.classList.add('sb-order-mode');
 
       try {
         const pdfWorker = await html2pdf().set(opt).from(element).output('blob');
@@ -12239,6 +12686,8 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         __imgUndo.forEach(([img, src]) => { try { if (src === null) img.removeAttribute('src'); else img.setAttribute('src', src); } catch (e) {} });
         document.documentElement.classList.remove('pdf-generating');
         element.classList.remove('pdf-render-mode');
+        element.classList.remove('pdf-bw');
+        element.classList.remove('sb-order-mode');
         if(viewActions) viewActions.style.display = 'flex';
       }
     }
@@ -12253,6 +12702,19 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         }, 50);
     }
 
+    /* v1.12: طباعة موحّدة — في APK تستدعي الطباعة الأصلية (حوار أندرويد الرسمي) لأن
+       window.print() داخل WebView نقرة بلا استجابة، وفي المتصفح تستخدم window.print() عادي */
+    function sbPrint() {
+      try {
+        if (window.AndroidInterface && typeof window.AndroidInterface.printPage === 'function') {
+          window.AndroidInterface.printPage();
+          return;
+        }
+      } catch (e) {}
+      try { window.print(); } catch (e) { showToast('الطباعة غير متاحة هنا', 'warning'); }
+    }
+    window.sbPrint = sbPrint;
+
     function openPrintInvoice() {
         if (typeof applyPdfConfig === 'function') applyPdfConfig();
         const config = (typeof getPdfConfig === 'function') ? getPdfConfig() : { template: 'classic', tableStyle: 'grid' };
@@ -12260,6 +12722,9 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         if (invoiceContent) {
             invoiceContent.classList.add('pdf-tpl-' + (config.template || 'classic'));
             invoiceContent.classList.add('pdf-tbl-' + (config.tableStyle || 'grid'));
+            /* v1.12: وضع أبيض وأسود لو طباعة الألوان مقفولة + وضع ترتيب الأقسام */
+            if (config.printColors === false) invoiceContent.classList.add('pdf-bw');
+            invoiceContent.classList.add('sb-order-mode');
         }
         // Sync values for native print too, just in case
         document.querySelectorAll('#invoiceCardContent input').forEach(inp => inp.setAttribute('value', inp.value));
@@ -12270,11 +12735,13 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
                 else opt.removeAttribute('selected');
             });
         });
-        window.print();
+        sbPrint();
         setTimeout(() => {
             if (invoiceContent) {
                 ['classic', 'modern', 'luxury', 'compact', 'corporate'].forEach(t => invoiceContent.classList.remove('pdf-tpl-' + t));
                 ['grid', 'lines', 'striped'].forEach(s => invoiceContent.classList.remove('pdf-tbl-' + s));
+                invoiceContent.classList.remove('pdf-bw');
+                invoiceContent.classList.remove('sb-order-mode');
             }
         }, 1500);
     }
@@ -12282,14 +12749,23 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
       const client = document.getElementById('clientName')?.value.trim() || 'فاتورة';
       const element = document.getElementById('invoiceCardContent');
       const viewActions = document.getElementById('viewActions');
-      
+
       showToast('جاري إنشاء ملف PDF...');
-      const result = await getPdfBlob(client, element, viewActions);
-      
+      let result = null;
+      try {
+        result = await getPdfBlob(client, element, viewActions);
+      } catch (genErr) {
+        console.error('PDF generation threw:', genErr);
+        /* v1.12: الفشل الصامت كان بيخلي المشاركة شكلها «لا تستجيب» — نعرض رسالة واضحة */
+        showToast('تعذر إنشاء الـ PDF: ' + (genErr && genErr.message ? genErr.message : 'خطأ غير متوقع'), 'danger');
+        element.querySelectorAll('.no-print').forEach(el => el.style.display = '');
+        return;
+      }
+
       // Restore .no-print elements that were hidden in getPdfBlob
       element.querySelectorAll('.no-print').forEach(el => el.style.display = '');
-      
-      if (!result) return;
+
+      if (!result) { showToast('تعذر إنشاء ملف PDF — جرّب تاني أو استخدم الطباعة', 'warning'); return; }
       
       const { pdfWorker, opt } = result;
 
@@ -12349,6 +12825,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         marbleWorkersDB: JSON.parse(localStorage.getItem('marbleWorkersDB') || '[]'),
         marbleWorkerLedgerDB: JSON.parse(localStorage.getItem('marbleWorkerLedgerDB') || '[]'),
         customTableTypes: JSON.parse(localStorage.getItem('customTableTypes') || '[]'),
+        workshopExpenses: JSON.parse(localStorage.getItem('sb_workshop_expenses') || '[]'), /* v1.12 */
         tableTypeOverrides: JSON.parse(localStorage.getItem('tableTypeOverrides') || '{}'),
         factoryName: localStorage.getItem('factoryName') || '',
         factorySubtitle: localStorage.getItem('factorySubtitle') || '',
@@ -12502,6 +12979,10 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
       if (data.pdfConfig && typeof data.pdfConfig === 'object') {
         localStorage.setItem('pdfConfig', JSON.stringify(data.pdfConfig));
       }
+      /* v1.12: استرجاع مصروفات الورشة */
+      if (Array.isArray(data.workshopExpenses)) {
+        localStorage.setItem('sb_workshop_expenses', JSON.stringify(data.workshopExpenses));
+      }
       if (data.waConfig && typeof data.waConfig === 'object') {
         localStorage.setItem('waConfig', JSON.stringify(data.waConfig));
       }
@@ -12571,6 +13052,10 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
             fbApp = window.firebase.apps[0];
           }
           fbAuth = window.firebase.auth();
+          /* v1.12: تهيئة Firestore لمزامنة قاعدة البيانات السحابية */
+          if (window.firebase.firestore && !fbDb) {
+            try { fbDb = window.firebase.firestore(); } catch (e) { console.warn('Firestore init:', e); }
+          }
 
           // Auth state listener for Google Drive
           fbAuth.onAuthStateChanged(async (user) => {
@@ -12578,13 +13063,30 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
               if (!user.isAnonymous) {
                 gdriveCurrentUser = user;
                 updateGoogleDriveUI();
+                updateFirebaseSyncUI();
               }
             } else {
               gdriveCurrentUser = null;
               gdriveCachedAccessToken = null;
               updateGoogleDriveUI();
+              updateFirebaseSyncUI();
             }
           });
+
+          /* v1.12: إكمال تسجيل الدخول بعد الرجوع من redirect — بيئة الـ APK
+             (النوافذ المنبثقة popup لا تعمل داخل WebView فهذا هو المسار البديل الرسمي) */
+          try {
+            const __rr = await fbAuth.getRedirectResult();
+            if (__rr && __rr.user) {
+              const __cred = __rr.credential;
+              if (__cred && __cred.accessToken) gdriveCachedAccessToken = __cred.accessToken;
+              else if (__rr._tokenResponse && __rr._tokenResponse.oauthAccessToken) gdriveCachedAccessToken = __rr._tokenResponse.oauthAccessToken;
+              gdriveCurrentUser = __rr.user;
+              updateGoogleDriveUI();
+              if (typeof showToast === 'function') showToast('تم تسجيل الدخول إلى Google بنجاح');
+              if (typeof fetchGoogleDriveBackupsList === 'function') { try { fetchGoogleDriveBackupsList(); } catch (e) {} }
+            }
+          } catch (__rrErr) { console.warn('getRedirectResult:', __rrErr); }
         }
       } catch (err) {
         console.error('Firebase init error:', err);
@@ -12650,6 +13152,12 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
           access_type: 'offline'
         });
 
+        /* v1.12: داخل التطبيق (WebView) الـ popup لا يشتغل — تحويل redirect كامل الشاشة ثم رجوع تلقائي */
+        if (typeof sbIsCapacitorApp === 'function' && sbIsCapacitorApp()) {
+          await fbAuth.signInWithRedirect(provider);
+          return;
+        }
+
         const result = await fbAuth.signInWithPopup(provider);
         const credential = result.credential;
         if (credential && credential.accessToken) {
@@ -12693,6 +13201,111 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
       await loginWithGoogleForDrive();
       return gdriveCachedAccessToken;
     }
+
+    /* ===== v1.12: مزامنة قاعدة البيانات السحابية (Firebase Firestore) =====
+       رفع/تنزيل نسخة كاملة من كل بيانات التطبيق على Firestore تحت حساب المستخدم —
+       الكتل الكبيرة تتقسم أوتوماتيكياً (حد المستند 1MB) */
+    function sbIsCapacitorApp() {
+      return !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform());
+    }
+    window.sbIsCapacitorApp = sbIsCapacitorApp;
+    function sbFbReady() { return !!(fbDb && gdriveCurrentUser); }
+    function updateFirebaseSyncUI() {
+      const badge = document.getElementById('fbSyncStatusBadge');
+      if (badge) {
+        if (sbFbReady()) {
+          badge.textContent = 'متصل — ' + (gdriveCurrentUser.email || '');
+          badge.style.color = 'var(--success)';
+        } else {
+          badge.textContent = 'غير متصل — سجّل الدخول بجوجل أولاً';
+          badge.style.color = 'var(--text-muted)';
+        }
+      }
+      const up = document.getElementById('btnFbSyncUpload');
+      const dn = document.getElementById('btnFbSyncDownload');
+      [up, dn].forEach(b => { if (b) b.disabled = !sbFbReady(); });
+      const last = localStorage.getItem('sb_fb_last_sync');
+      const el = document.getElementById('fbSyncLastTime');
+      if (el) el.textContent = last ? ('آخر مزامنة: ' + last) : 'لم تتم مزامنة بعد';
+    }
+    async function sbFbUploadBackup() {
+      if (typeof initFirebaseForGoogleDrive === 'function') await initFirebaseForGoogleDrive();
+      if (!fbDb || !gdriveCurrentUser) {
+        showToast('سجّل الدخول بحساب Google أولاً لتفعيل مزامنة قاعدة البيانات', 'warning');
+        return;
+      }
+      const btn = document.getElementById('btnFbSyncUpload');
+      const orig = btn ? btn.innerHTML : '';
+      if (btn) { btn.disabled = true; btn.innerHTML = 'جاري الرفع...'; }
+      try {
+        const payload = JSON.stringify(generateAppBackupData());
+        const uid = gdriveCurrentUser.uid;
+        const ref = fbDb.collection('sb_backups').doc(uid).collection('snapshots').doc('latest');
+        const CHUNK = 700 * 1024;
+        const parts = [];
+        for (let i = 0; i < payload.length; i += CHUNK) parts.push(payload.slice(i, i + CHUNK));
+        const meta = {
+          updatedAt: new Date().toISOString(),
+          size: payload.length,
+          chunks: parts.length,
+          appVersion: '1.12',
+          device: (typeof sbIsCapacitorApp === 'function' && sbIsCapacitorApp()) ? 'android-app' : 'web'
+        };
+        await ref.set(meta);
+        for (let i = 0; i < parts.length; i++) {
+          await ref.collection('parts').doc('p' + i).set({ i: i, data: parts[i] });
+        }
+        const when = new Date().toLocaleString('ar-EG');
+        localStorage.setItem('sb_fb_last_sync', when);
+        updateFirebaseSyncUI();
+        showToast('تم رفع نسخة البيانات إلى قاعدة بيانات Firebase بنجاح');
+      } catch (e) {
+        console.error('Firestore upload:', e);
+        showToast('فشل رفع النسخة إلى Firebase: ' + (e.message || e), 'danger');
+      } finally {
+        if (btn) { btn.disabled = false; btn.innerHTML = orig; }
+      }
+    }
+    async function sbFbDownloadBackup() {
+      if (typeof initFirebaseForGoogleDrive === 'function') await initFirebaseForGoogleDrive();
+      if (!fbDb || !gdriveCurrentUser) {
+        showToast('سجّل الدخول بحساب Google أولاً', 'warning');
+        return;
+      }
+      const btn = document.getElementById('btnFbSyncDownload');
+      const orig = btn ? btn.innerHTML : '';
+      if (btn) { btn.disabled = true; btn.innerHTML = 'جاري التنزيل...'; }
+      try {
+        const ref = fbDb.collection('sb_backups').doc(gdriveCurrentUser.uid).collection('snapshots').doc('latest');
+        const meta = await ref.get();
+        if (!meta.exists) { showToast('لا توجد نسخة محفوظة على السحابة لهذا الحساب', 'warning'); return; }
+        const chunks = meta.data().chunks || 1;
+        let payload = '';
+        for (let i = 0; i < chunks; i++) {
+          const part = await ref.collection('parts').doc('p' + i).get();
+          if (!part.exists) throw new Error('جزء مفقود من النسخة السحابية (#' + i + ')');
+          payload += part.data().data || '';
+        }
+        sbConfirm('استرجاع نسخة Firebase ستستبدل البيانات الحالية على هذا الجهاز. متابعة؟', () => {
+          try {
+            restoreAppBackupData(JSON.parse(payload));
+            const when = new Date().toLocaleString('ar-EG');
+            localStorage.setItem('sb_fb_last_sync', when);
+            showToast('تم استرجاع نسخة قاعدة البيانات من Firebase بنجاح');
+          } catch (e) {
+            showToast('فشل استرجاع النسخة: ' + (e.message || e), 'danger');
+          }
+        });
+      } catch (e) {
+        console.error('Firestore download:', e);
+        showToast('فشل تنزيل النسخة من Firebase: ' + (e.message || e), 'danger');
+      } finally {
+        if (btn) { btn.disabled = false; btn.innerHTML = orig; }
+      }
+    }
+    window.sbFbUploadBackup = sbFbUploadBackup;
+    window.sbFbDownloadBackup = sbFbDownloadBackup;
+    window.updateFirebaseSyncUI = updateFirebaseSyncUI;
 
     // Upload Backup to Google Drive
     async function uploadBackupToGoogleDrive() {
@@ -12931,13 +13544,8 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         }
       };
 
-      if (typeof customConfirm === 'function') {
-        customConfirm(confirmMsg, proceedRestore);
-      } else {
-        if (window.confirm(confirmMsg)) {
-          proceedRestore();
-        }
-      }
+      /* v1.12: نافذة موحّدة بدل confirm الأصلية */
+      sbConfirm(confirmMsg, proceedRestore);
     }
 
     // Delete Backup from Drive with Confirmation
@@ -12981,13 +13589,8 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         }
       };
 
-      if (typeof customConfirm === 'function') {
-        customConfirm(confirmMsg, proceedDelete);
-      } else {
-        if (window.confirm(confirmMsg)) {
-          proceedDelete();
-        }
-      }
+      /* v1.12: نافذة موحّدة بدل confirm الأصلية */
+      sbConfirm(confirmMsg, proceedDelete);
     }
 
     // Attach to global window
@@ -13008,7 +13611,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
     
     /* ===== App User Roles, Workshop Linking & Identity Management ===== */
     let currentAppRole = localStorage.getItem('app_user_role') || 'admin';
-    let adminSecurityPin = localStorage.getItem('app_admin_pin') || '1234';
+    let adminSecurityPin = localStorage.getItem('app_admin_pin') || ''; /* v1.12: لا رمز افتراضي */
     let modalSelectedRole = currentAppRole;
 
     function getAppUserRole() {
@@ -13791,11 +14394,22 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
 
     // Prompt Admin PIN to instantly approve a craftsman (when Manager is physically present)
     function promptAdminPinForCraftsmanApproval() {
-      const pin = prompt('أدخل رمز أمان المدير (PIN) للاعتماد والموافقة الفورية على الصنايعي:');
-      if (pin === null) return;
-      const expectedPin = typeof getStoredAdminPin === 'function' ? getStoredAdminPin() : (localStorage.getItem('app_admin_pin') || 'Admin@1234');
+      /* v1.12: إدخال موحّد بدل prompt الأصلية */
+      sbPrompt('رمز أمان المدير', '', (pin) => {
+        if (pin === null) return;
+        __sbVerifyAdminPinAndApprove(pin);
+      }, { password: true, message: 'أدخل الرمز للاعتماد والموافقة الفورية على الصنايعي:' });
+    }
+    function __sbVerifyAdminPinAndApprove(pin) {
+      pin = String(pin == null ? '' : pin);
+      const expectedPin = typeof getStoredAdminPin === 'function' ? getStoredAdminPin() : localStorage.getItem('app_admin_pin');
+      /* v1.12: مفيش رمز محفوظ → اطلب إنشاء رمز أولاً بدل المقارنة */
+      if (!expectedPin) {
+        if (typeof showToast === 'function') showToast('أنشئ رمز أمان المدير أولاً من قسم «صلاحيات المدير والرمز»', 'warning');
+        return;
+      }
       if (pin.trim() !== expectedPin) {
-        if (typeof showToast === 'function') showToast(`رمز أمان المدير غير صحيح! (الافتراضي: ${expectedPin === 'Admin@1234' ? 'Admin@1234' : '••••••••'})`, 'danger');
+        if (typeof showToast === 'function') showToast('رمز أمان المدير غير صحيح!', 'danger');
         return;
       }
       const linked = getCraftsmanLinkedWorkshop();
@@ -14572,7 +15186,8 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         if (optAdmin) optAdmin.classList.add('selected');
         if (optCraft) optCraft.classList.remove('selected');
         // If currently in craftsman mode and switching to admin, show PIN input
-        if (currentAppRole === 'craftsman') {
+        /* v1.12: لو مفيش رمز محفوظ → خانة إنشاء الرمز تظهر في كل الاتجاهات */
+        if (currentAppRole === 'craftsman' || !getStoredAdminPin()) {
           if (pinBox) pinBox.style.display = 'block';
         } else {
           if (pinBox) pinBox.style.display = 'none';
@@ -14580,17 +15195,24 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
       } else {
         if (optAdmin) optAdmin.classList.remove('selected');
         if (optCraft) optCraft.classList.add('selected');
-        if (pinBox) pinBox.style.display = 'none';
+        /* v1.12: التبديل من المدير للصنايعي بدون رمز محفوظ = إنشاء رمز أولاً */
+        if (!getStoredAdminPin()) {
+          if (pinBox) pinBox.style.display = 'block';
+        } else {
+          if (pinBox) pinBox.style.display = 'none';
+        }
       }
     }
 
     function getStoredAdminPin() {
+      /* v1.12: لا رمز افتراضي نهائياً — الرمز القديم الافتراضي (Admin@1234 / 1234) يُعتبر "لا يوجد" ويمسح،
+         وأول تبديل بين الوضعين يتطلب إنشاء رمز جديد أولاً */
       let pin = localStorage.getItem('app_admin_pin');
-      if (!pin || pin === '1234') {
-        pin = 'Admin@1234';
-        localStorage.setItem('app_admin_pin', pin);
+      if (pin === 'Admin@1234' || pin === '1234') {
+        pin = null;
+        localStorage.removeItem('app_admin_pin');
       }
-      return pin;
+      return pin || null;
     }
 
     function validateAdminSecurityPin(pin) {
@@ -14641,8 +15263,13 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
       const pinDisp = document.getElementById('settingsCurrentPinDisplay');
       if (pinDisp) {
         const isRevealed = pinDisp.dataset.revealed === 'true';
+        /* v1.12: الرمز قد يكون غير مُنشأ (لا افتراضي بعد الآن) */
         const curPin = getStoredAdminPin();
-        pinDisp.textContent = isRevealed ? curPin : '•'.repeat(Math.min(Math.max(curPin.length, 8), 15));
+        if (!curPin) {
+          pinDisp.textContent = 'لم يُنشأ رمز بعد';
+        } else {
+          pinDisp.textContent = isRevealed ? curPin : '•'.repeat(Math.min(Math.max(curPin.length, 8), 15));
+        }
       }
       const masterKeyEl = document.getElementById('settingsMasterKeyDisplay');
       if (masterKeyEl) {
@@ -14735,10 +15362,11 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         navigator.clipboard.writeText(key).then(() => {
           if (typeof showToast === 'function') showToast(`تم نسخ مفتاح الاسترداد: ${key}`);
         }).catch(() => {
-          prompt('مفتاح الاسترداد الاحتياطي:', key);
+          /* v1.12: نافذة موحّدة لعرض المفتاح بدل prompt الأصلية */
+          sbPrompt('مفتاح الاسترداد الاحتياطي', key, () => {}, { okText: 'إغلاق', cancelText: 'إغلاق' });
         });
       } else {
-        prompt('مفتاح الاسترداد الاحتياطي:', key);
+        sbPrompt('مفتاح الاسترداد الاحتياطي', key, () => {}, { okText: 'إغلاق', cancelText: 'إغلاق' });
       }
     }
 
@@ -14944,13 +15572,30 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
     }
 
     function confirmRoleSelection() {
+      const storedPin = getStoredAdminPin();
+      const pinInput = document.getElementById('adminPinInput');
+      const pinBox = document.getElementById('adminPinProtectionBox');
+      /* v1.12: لو مفيش رمز محفوظ → أي تبديل وضع يتطلب إنشاء رمز أولاً من نفس النافذة */
+      if (!storedPin) {
+        const newPin = (pinInput ? pinInput.value : '').trim();
+        const v = (typeof validateAdminSecurityPin === 'function') ? validateAdminSecurityPin(newPin) : { valid: newPin.length >= 8 };
+        if (!v.valid) {
+          if (typeof showToast === 'function') showToast('أنشئ رمز أمان للمدير أولاً (8-15 خانة: حروف وأرقام ورموز) ثم أكد التبديل', 'warning');
+          if (pinBox) pinBox.style.display = 'block';
+          if (pinInput) pinInput.focus();
+          return;
+        }
+        localStorage.setItem('app_admin_pin', newPin);
+        applyAppRole(modalSelectedRole);
+        closeAppRoleModal();
+        if (typeof showToast === 'function') showToast('تم إنشاء رمز أمان المدير وتفعيل الوضع بنجاح');
+        return;
+      }
       if (modalSelectedRole === 'admin' && currentAppRole === 'craftsman') {
-        const pinInput = document.getElementById('adminPinInput');
         const enteredPin = (pinInput ? pinInput.value : '').trim();
-        const expectedPin = getStoredAdminPin();
-        if (enteredPin !== expectedPin) {
+        if (enteredPin !== storedPin) {
           if (typeof showToast === 'function') {
-            showToast(`رمز أمان المدير غير صحيح! (الافتراضي: ${expectedPin === 'Admin@1234' ? 'Admin@1234' : '••••••••'} أو انقر على هل نسيت الرمز)`, 'danger');
+            showToast('رمز أمان المدير غير صحيح! أو انقر على هل نسيت الرمز', 'danger');
           }
           if (pinInput) pinInput.focus();
           return;
@@ -15222,6 +15867,27 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         adminOnly: true,
         defaultCategory: 'settings'
       },
+      'permissions': {
+        id: 'permissions',
+        title: 'صلاحيات المدير والرمز',
+        i18n: 'menu_permissions',
+        style: 'background: linear-gradient(135deg, #8b5cf6, #c084fc);',
+        icon: '<svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/></svg>',
+        action: "openSettingsPage('permissions')",
+        adminOnly: true,
+        defaultCategory: 'settings'
+      },
+      'cutting': {
+        id: 'cutting',
+        title: 'جداول التقطيع',
+        i18n: 'menu_cutting',
+        style: 'background: linear-gradient(135deg, #0f766e, #2dd4bf);',
+        icon: '<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="8.2" y1="7.8" x2="20" y2="19"/><line x1="8.2" y1="16.2" x2="20" y2="5"/><line x1="14" y1="10.5" x2="17.5" y2="7"/></svg>',
+        action: "openSettingsPage('cutting')",
+        adminOnly: false,
+        craftsmanOnly: true,
+        defaultCategory: 'settings'
+      },
       'language': {
         id: 'language',
         title: 'لغة التطبيق',
@@ -15230,6 +15896,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         icon: '<svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"></circle><line x1="2" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="2"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" fill="none" stroke="currentColor" stroke-width="2"></path></svg>',
         action: "openSettingsPage('language')",
         adminOnly: false,
+        craftsmanOnly: true,
         defaultCategory: 'settings'
       },
       'workshop': {
@@ -15272,8 +15939,11 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
       'whatsapp',
       'materials',
       'pdf',
+      'expenses',
       'system',
-      'language'
+      'permissions',
+      'language',
+      'cutting'
     ];
     /* v1.7: ترحيل لمرة واحدة لتخطيط الأزرار — عشان الـ ٦ أيقونات الجديدة تظهر فوراً عند كل المستخدمين */
     function migrateGridLayoutsV17() {
@@ -15285,6 +15955,19 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
       } catch (e) {}
     }
     migrateGridLayoutsV17();
+    /* v1.12: ترحيل التخطيط المحفوظ — إضافة زرّي «صلاحيات المدير والرمز» و«جداول التقطيع» للتخطيطات القديمة */
+    function migrateGridLayoutsV12() {
+      try {
+        if (localStorage.getItem('sb_layout_v12') === '1') return;
+        const stored = JSON.parse(localStorage.getItem('app_settings_buttons_layout') || 'null');
+        if (Array.isArray(stored)) {
+          const missing = DEFAULT_SETTINGS_KEYS.filter(k => !stored.includes(k));
+          if (missing.length) localStorage.setItem('app_settings_buttons_layout', JSON.stringify(DEFAULT_SETTINGS_KEYS.slice()));
+        }
+        localStorage.setItem('sb_layout_v12', '1');
+      } catch (e) {}
+    }
+    migrateGridLayoutsV12();
 
     function getAppGridLayouts() {
       let dash = null;
@@ -15335,7 +16018,8 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
           const btn = APP_BUTTONS_CATALOG[key];
           if (!btn) return '';
           const adminCls = btn.adminOnly ? ' admin-only-feature' : '';
-          const customClass = btn.className ? ` ${btn.className}` : '';
+          const craftsmanCls = btn.craftsmanOnly ? ' craftsman-only-feature' : '';
+          const customClass = (btn.className ? ` ${btn.className}` : '') + craftsmanCls;
           const customStyle = btn.style ? ` style="${btn.style}"` : '';
           const i18nAttr = btn.i18n ? ` data-i18n="${btn.i18n}"` : '';
 
@@ -15352,10 +16036,11 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
           const btn = APP_BUTTONS_CATALOG[key];
           if (!btn) return '';
           const adminCls = btn.adminOnly ? ' admin-only-feature' : '';
+          const craftsmanCls = btn.craftsmanOnly ? ' craftsman-only-feature' : '';
           const customStyle = btn.style ? ` style="${btn.style}"` : ' style="background: linear-gradient(135deg, #475569, #64748b);"';
           const i18nAttr = btn.i18n ? ` data-i18n="${btn.i18n}"` : '';
 
-          return `<button type="button" class="dash-grid-item settings-grid-item${adminCls}"${customStyle} onclick="handleCustomButtonClick('${btn.id}', 'settings')" title="${escapeHtml(btn.title)}">
+          return `<button type="button" class="dash-grid-item settings-grid-item${adminCls}${craftsmanCls}"${customStyle} onclick="handleCustomButtonClick('${btn.id}', 'settings')" title="${escapeHtml(btn.title)}">
             ${btn.icon}
             <span${i18nAttr}>${escapeHtml(btn.title)}</span>
           </button>`;
@@ -15597,7 +16282,8 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
     }
 
     function customizerResetToDefaults() {
-      if (!confirm('هل تريد بالتأكيد استعادة الترتيب الافتراضي للأزرار في الشاشة الرئيسية والإعدادات؟')) return;
+      /* v1.12: نافذة موحّدة بدل confirm الأصلية */
+      sbConfirm('هل تريد بالتأكيد استعادة الترتيب الافتراضي للأزرار في الشاشة الرئيسية والإعدادات؟', () => {
       customizerWorkingDash = [...DEFAULT_DASHBOARD_KEYS];
       customizerWorkingSettings = [...DEFAULT_SETTINGS_KEYS];
       saveAppGridLayouts(customizerWorkingDash, customizerWorkingSettings);
@@ -15606,6 +16292,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
       if (typeof showToast === 'function') {
         showToast('تمت استعادة الترتيب الافتراضي بنجاح', 'info');
       }
+      });
     }
 
     window.getAppGridLayouts = getAppGridLayouts;
@@ -15878,11 +16565,8 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
         }
       };
 
-      if (typeof customConfirm === 'function') {
-        customConfirm(confirmMsg, doRestore);
-      } else if (window.confirm(confirmMsg)) {
-        doRestore();
-      }
+      /* v1.12: نافذة موحّدة بدل confirm الأصلية */
+      sbConfirm(confirmMsg, doRestore);
     }
 
     async function downloadBackupSnapshotById(snapshotId) {
@@ -15900,7 +16584,8 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
     }
 
     async function deleteBackupSnapshotById(snapshotId) {
-      if (!confirm('هل تريد بالتأكيد حذف هذه النسخة الاحتياطية من السجل؟')) return;
+      /* v1.12: نافذة موحّدة بدل confirm الأصلية */
+      sbConfirm('هل تريد بالتأكيد حذف هذه النسخة الاحتياطية من السجل؟', async () => {
       const db = await openBackupDB();
       if (db) {
         const tx = db.transaction([BACKUP_STORE_NAME], 'readwrite');
@@ -15917,10 +16602,12 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
         renderBackupStatusBadges();
         if (typeof showToast === 'function') showToast('تم حذف النسخة بنجاح', 'info');
       }
+      });
     }
 
     async function clearAllBackupSnapshots() {
-      if (!confirm('هل تريد بالتأكيد مسح جميع النسخ الاحتياطية المحلية من السجل؟')) return;
+      /* v1.12: نافذة موحّدة بدل confirm الأصلية */
+      sbConfirm('هل تريد بالتأكيد مسح جميع النسخ الاحتياطية المحلية من السجل؟', async () => {
       const db = await openBackupDB();
       if (db) {
         const tx = db.transaction([BACKUP_STORE_NAME], 'readwrite');
@@ -15936,6 +16623,7 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
         renderBackupStatusBadges();
         if (typeof showToast === 'function') showToast('تم مسح سجل النسخ الاحتياطية', 'info');
       }
+      });
     }
 
     // Immediate Manual Backup Trigger
@@ -16312,13 +17000,8 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
             }
           };
 
-          if (typeof customConfirm === 'function') {
-            customConfirm(confirmMsg, executeRestore);
-          } else {
-            if (window.confirm(confirmMsg)) {
-              executeRestore();
-            }
-          }
+          /* v1.12: نافذة موحّدة بدل confirm الأصلية */
+          sbConfirm(confirmMsg, executeRestore);
         } catch(err) {
           showToast('<svg class="icon-svg" style="width:1.2em; height:1.2em; margin:0 4px 0 0; vertical-align:-3px; display:inline-block; color:inherit;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> خطأ في قراءة الملف: ' + err.message);
         }
@@ -16334,8 +17017,13 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
     function evaluateMath(expr) {
       try {
         let toEval = expr.replace(/×/g, '*').replace(/÷/g, '/');
-        toEval = toEval.replace(/[^0-9+\-*/.]/g, ''); 
+        /* v1.12: الاحتفاظ بالأقواس ( ) — زر الأقواس الجديد في الحاسبة */
+        toEval = toEval.replace(/[^0-9+\-*/.()]/g, ''); 
         toEval = toEval.replace(/[+\-*/.]+$/, ''); 
+        /* v1.12: إغلاق الأقواس غير المكتملة تلقائياً عشان النتيجة الحية تفضل شغالة أثناء الكتابة */
+        let __openCount = 0;
+        for (const __ch of toEval) { if (__ch === '(') __openCount++; else if (__ch === ')') __openCount--; }
+        while (__openCount-- > 0) toEval += ')';
         if(!toEval) return '';
         let res = new Function('return ' + toEval)();
         if(res === undefined || isNaN(res) || !isFinite(res)) return '';
@@ -16354,6 +17042,39 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
           liveEl.scrollLeft = liveEl.scrollWidth;
         }
       }); 
+      /* v1.12: زر الأقواس الذكي — النص بيتغير بين ( و ) حسب سياق التعبير */
+      document.querySelectorAll('.calc-paren-btn').forEach(pb => {
+        pb.textContent = calcParenNextLabel();
+        pb.title = calcParenNextLabel() === '(' ? 'فتح قوس' : 'قفل القوس';
+      });
+    }
+    /* v1.12: منطق زر الأقواس — بيبص لآخر حرف وعدد الأقواس المفتوحة */
+    function calcParenState() {
+      const opens = (calcExp.match(/\(/g) || []).length;
+      const closes = (calcExp.match(/\)/g) || []).length;
+      const last = calcExp ? calcExp.slice(-1) : '';
+      const canClose = opens > closes && /[0-9)]/.test(last);
+      return { opens, closes, last, canClose };
+    }
+    function calcParenNextLabel() {
+      return calcParenState().canClose ? ')' : '(';
+    }
+    function calcParen() { 
+      if (calcEvaluated) { calcEvaluated = false; }
+      const st = calcParenState();
+      if (!calcExp || calcExp === '0') {
+        calcExp = '(';
+      } else if (st.canClose) {
+        calcExp += ')';
+      } else if (/[0-9)]/.test(st.last)) {
+        /* بعد رقم أو قوس مقفول والأقواس متوازنة → ضرب ضمني في قوس جديد */
+        calcExp += '×(';
+      } else {
+        calcExp += '(';
+      }
+      const res = evaluateMath(calcExp);
+      calcLiveResultStr = (res !== calcExp && res !== '') ? res : '';
+      calcUpdateDisplay(); 
     }
     function toggleCalcModal(open) { const modal = document.getElementById('calcModal'); if (modal) modal.classList.toggle('open', open); calcUpdateDisplay(); }
     window.addEventListener('keydown', (e) => {
@@ -16466,11 +17187,15 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
     function calcInput(d) { 
       if (calcEvaluated) { calcExp = ''; calcEvaluated = false; }
       if (d === '.') {
+        /* v1.12: الفاصلة العشرية ممنوعة بعد قوس مقفول */
+        if (/\)$/.test(calcExp)) return;
         const parts = calcExp.split(/[+\-×÷]/);
         const lastPart = parts[parts.length - 1];
         if (lastPart.includes('.')) return;
-        if (lastPart === '') calcExp += '0';
+        if (lastPart === '' || lastPart === '(') calcExp += '0';
       }
+      /* v1.12: رقم بعد قوس مقفول = ضرب ضمني */
+      if (/\)$/.test(calcExp) && /[0-9]/.test(d)) calcExp += '×';
       if (calcExp === '0' && d !== '.') calcExp = d; else calcExp += d; 
       const res = evaluateMath(calcExp);
       calcLiveResultStr = (res !== calcExp && res !== '') ? res : ''; 
@@ -16824,17 +17549,25 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
       try {
         if (!draft) return;
         if (typeof isViewingArchive !== 'undefined' && isViewingArchive) return;
+        /* v1.12: الحفظ بمجرد كتابة أي شيء في الصفحة — اسم عميل أو هاتف أو خصم أو مدفوع
+           أو ملاحظات أو حتى جدول واحد — الصفحة الفاضية تماماً فقط لا تُحفظ */
         const name = (draft.clientName || '').trim();
-        /* v1.11: الحفظ بمجرد كتابة اسم العميل — حرف واحد يكفي، والصفحة مسموح تكون فاضية تماماً
-           (قبل كده كان بيشتغل بس لما الاسم حرفين+ فكان شكله «مش بيحفظ») */
-        if (!name) return;
+        const phone = (draft.clientPhone || '').trim();
+        const __nz = (v) => String(v || '').trim() !== '';
+        const hasTableContent = !!(draft.htmlContent && draft.htmlContent.replace(/\s/g, '').length > 5);
+        const hasAnyContent = __nz(name) || __nz(phone) || __nz(draft.discountVal) || __nz(draft.paidVal) ||
+                              __nz(draft.tipVal) || __nz(draft.dueDays) || __nz(draft.notes) || hasTableContent;
+        if (!hasAnyContent) return;
         if (!__sbPageUid) __sbPageUid = __sbNewPageUid();
         let list = [];
         try { list = JSON.parse(localStorage.getItem('sbInvoiceSessions') || '[]'); } catch (e) { list = []; }
         if (!Array.isArray(list)) list = [];
+        const noName = !__nz(name);
         const entry = {
           id: 'sbsn-' + __sbPageUid,
-          name: name,
+          /* v1.12: صفحات بدون اسم عميل تُحفظ كمان — اسم عرض مؤقت بدل رفض الحفظ */
+          name: name || 'بدون اسم',
+          noName: noName,
           phone: draft.clientPhone || '',
           invNum: draft.invNum || '',
           savedAt: Date.now(),
@@ -16861,7 +17594,7 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
       /* تنظيف: مدخلات صالحة فقط + إزالة التكرار بنفس المعرّف
          v1.11: اسم بحرف واحد كفاية عشان الصفحة تظهر في القائمة */
       const seen = new Map();
-      list.filter(s => s && s.name && String(s.name).trim().length >= 1)
+      list.filter(s => s && s.name && String(s.name).trim().length >= 1 && !s.deleted)
         .sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0)).forEach(s => {
           const k = __sbEntryKey(s);
           const idKey = s.id || ('name:' + k);
@@ -16873,10 +17606,12 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
       const arr = Array.from(seen.values());
       const merged = [];
       arr.forEach(s => {
+        /* v1.12: صفحات «بدون اسم» لا تُدمج مع بعضها — كل واحدة صفحة مستقلة بمعرّفها */
+        if (s.noName) { merged.push(s); return; }
         const k = __sbEntryKey(s);
         const hit = merged.find(m => {
           const mk = __sbEntryKey(m);
-          if (!mk || !k) return false;
+          if (!mk || !k || m.noName) return false;
           if (mk === k) return true;
           const newerIsLonger = k.length > mk.length;
           const shorter = newerIsLonger ? mk : k;
@@ -16920,7 +17655,8 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
         currentViewedArchiveId = null;
         clearSignature();
         const cName = document.getElementById('clientName');
-        if (cName) cName.value = s.name || '';
+        /* v1.12: الصفحات بدون اسم تترجع بخانة اسم فاضية (مش بنص «بدون اسم») */
+        if (cName) cName.value = s.noName ? '' : (s.name || '');
         const cPhone = document.getElementById('clientPhone');
         if (cPhone) cPhone.value = s.phone || '';
         const invNum = document.getElementById('invNum');
@@ -16987,7 +17723,12 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
       overlay.id = 'recentInvoicesModal';
       overlay.className = 'recent-inv-catch';
       const rowsHtml = sessions.length ? sessions.map(s => {
-        const initial = (s.name || '؟').trim().charAt(0);
+        /* v1.12: صفحات بدون اسم عميل بتظهر بوسم واضح بدل اسم وهمي */
+        const displayName = s.name || 'بدون اسم';
+        const nameHtml = s.noName
+          ? 'فاتورة <span style="opacity:.65; font-weight:600;">بدون اسم</span>'
+          : 'فاتورة ' + escapeHtml(displayName);
+        const initial = (displayName || '؟').trim().charAt(0);
         const subParts = [];
         if (s.invNum) subParts.push('رقم: ' + s.invNum);
         if (s.phone) subParts.push(s.phone);
@@ -17001,7 +17742,7 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
           '<button type="button" class="recent-inv-row" data-sid="' + escapeHtml(s.id) + '">' +
             '<span class="recent-inv-avatar">' + initial + '</span>' +
             '<span class="recent-inv-meta">' +
-              '<span class="recent-inv-name">فاتورة ' + escapeHtml(s.name) + '</span>' +
+              '<span class="recent-inv-name">' + nameHtml + '</span>' +
               '<span class="recent-inv-sub">' + subParts.map(p => '<span>' + escapeHtml(p) + '</span>').join('') + '</span>' +
             '</span>' +
             '<svg class="recent-inv-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>' +
@@ -17010,7 +17751,7 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
       }).join('') :
       ('<div class="recent-inv-empty">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' +
-        'مفيش فواتير مفتوحة لسه<br>افتح «إنشاء فاتورة» واكتب اسم العميل —<br>وهتلاقيها هنا عشان ترجعلها في أي وقت' +
+        'مفيش صفحات محفوظة لسه' +
       '</div>');
       overlay.innerHTML = '<div class="ws-pop-card" role="dialog" aria-label="آخر الفواتير المفتوحة">' +
         '<div class="recent-inv-head">' +
@@ -17021,7 +17762,6 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
           '<button type="button" class="recent-inv-close" onclick="event.stopPropagation(); closeRecentInvoicesBurst()" aria-label="إغلاق">✕</button>' +
         '</div>' +
         '<div class="recent-inv-list">' + rowsHtml + '</div>' +
-        '<div class="recent-inv-hint">اضغطة مطولة على + تعرض القائمة دي — واسحب أي فاتورة لليسار عشان تحذفها</div>' +
       '</div>';
       overlay.addEventListener('click', function (e) { if (e.target === overlay) closeRecentInvoicesBurst(); });
       overlay.querySelectorAll('.recent-inv-row').forEach(row => {
@@ -17198,20 +17938,17 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
                 e.stopPropagation();
                 if (opt.dataset.val === 'custom') {
                     const currentVal = el.querySelector('input').value;
-                    let val = null;
-                    try {
-                        val = prompt('أدخل المقاس المطلوب (سم):', currentVal);
-                    } catch(err) {
-                        val = null;
-                    }
-                    if (val !== null && val.trim() !== '') {
-                        const cleanVal = val.trim();
-                        el.querySelector('input').value = cleanVal;
-                        el.querySelector('.selected-val span').innerText = cleanVal;
-                        el.classList.remove('open');
-                        list.remove();
-                        calculateAll();
-                    }
+                    /* v1.12: إدخال موحّد بدل prompt الأصلية */
+                    sbPrompt('المقاس المطلوب', currentVal, (val) => {
+                        if (val !== null && String(val).trim() !== '') {
+                            const cleanVal = String(val).trim();
+                            el.querySelector('input').value = cleanVal;
+                            el.querySelector('.selected-val span').innerText = cleanVal;
+                            el.classList.remove('open');
+                            list.remove();
+                            calculateAll();
+                        }
+                    }, { inputmode: 'decimal', message: 'أدخل المقاس بالسنتيمتر:' });
                     return;
                 }
                 el.querySelector('input').value = opt.dataset.val;
@@ -18538,7 +19275,7 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
 
     function printReceiptVoucher() {
       document.body.classList.add('print-receipt-mode');
-      window.print();
+      sbPrint();
       setTimeout(() => {
         document.body.classList.remove('print-receipt-mode');
       }, 1000);
@@ -19326,7 +20063,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       `;
 
       document.body.classList.add('print-inventory-mode');
-      window.print();
+      sbPrint();
       setTimeout(() => {
         document.body.classList.remove('print-inventory-mode');
       }, 1000);
@@ -20233,6 +20970,121 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       renderCuttingSheetView();
     }
 
+    /* ===== v1.12: قسم جداول التقطيع (صفحة الصنايعي) + سجل الجداول المحفوظة ===== */
+    function getCuttingSheetsHistory() {
+      try { return JSON.parse(localStorage.getItem('sb_cutting_sheets') || '[]'); } catch (e) { return []; }
+    }
+    function saveCuttingSheetToHistory(sheet) {
+      try {
+        if (!sheet || !sheet.data) return;
+        const list = getCuttingSheetsHistory();
+        list.unshift({
+          id: 'cut' + Date.now(), savedAt: Date.now(),
+          client: sheet.client || '', invNum: sheet.invNum || '',
+          date: sheet.date || '', phone: sheet.phone || '', data: sheet.data
+        });
+        localStorage.setItem('sb_cutting_sheets', JSON.stringify(list.slice(0, 20)));
+      } catch (e) {}
+    }
+    function fmtCuttingQty(n) {
+      const x = parseFloat(n) || 0;
+      return (Math.round(x * 100) / 100).toLocaleString('en-US');
+    }
+    function renderCuttingPage() {
+      const cur = document.getElementById('cuttingPageCurrent');
+      if (cur) {
+        const cd = window.currentCuttingData;
+        if (cd && cd.data && (cd.data.flatList || []).length) {
+          let rows = cd.data.flatList.map(p =>
+            '<tr style="border-bottom:1px solid var(--border);">' +
+            '<td style="padding:6px 8px;">' + escapeHtml(p.material || 'عام') + '</td>' +
+            '<td style="padding:6px 8px; text-align:center;">' + fmtCuttingQty(p.width) + ' × ' + fmtCuttingQty(p.length) + '</td>' +
+            '<td style="padding:6px 8px; text-align:center;">' + fmtCuttingQty(p.thickness) + ' سم</td>' +
+            '<td style="padding:6px 8px; text-align:center; font-weight:800;">' + fmtCuttingQty(p.qty) + '</td>' +
+            '</tr>').join('');
+          cur.innerHTML = '<div style="overflow-x:auto;"><table style="width:100%; border-collapse:collapse; font-size:12px;">' +
+            '<thead><tr style="background:var(--card-bg);"><th style="padding:7px 8px; text-align:right;">الخامة</th><th style="padding:7px 8px;">المقاس (سم)</th><th style="padding:7px 8px;">التخانة</th><th style="padding:7px 8px;">العدد</th></tr></thead>' +
+            '<tbody>' + rows + '</tbody></table></div>' +
+            '<div style="margin-top:8px; font-size:12px; color:var(--text-muted);">إجمالي القطع: <b>' + fmtCuttingQty(cd.data.grandTotalQty) + '</b> — إجمالي المساحة: <b>' + fmtCuttingQty(cd.data.grandTotalArea) + '</b> م²' +
+            (cd.data.formahCount ? ' — فرمح: <b>' + fmtCuttingQty(cd.data.formahCount) + '</b>' : '') + '</div>' +
+            '<button type="button" onclick="sbPrintCuttingPage()" style="margin-top:10px; background:var(--primary); color:var(--on-primary); border:none; padding:8px 16px; border-radius:8px; font-size:12px; font-weight:800; cursor:pointer;">طباعة الجدول</button>';
+        } else {
+          cur.innerHTML = 'افتح صفحة إنشاء فاتورة فيها مقاسات واضغط زر «جدول التقطيع» — الجدول هيظهر هنا.';
+        }
+      }
+      const listEl = document.getElementById('cuttingPageSavedList');
+      if (listEl) {
+        const hist = getCuttingSheetsHistory();
+        if (!hist.length) {
+          listEl.innerHTML = '<div style="font-size:12.5px; color:var(--text-muted); padding:8px;">لا يوجد سجل بعد.</div>';
+        } else {
+          listEl.innerHTML = hist.map(h => {
+            const when = new Date(h.savedAt).toLocaleString('ar-EG', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+            const cnt = h.data && h.data.flatList ? h.data.flatList.length : 0;
+            return '<div style="display:flex; align-items:center; gap:10px; background:var(--card-bg); border:1px solid var(--border); border-radius:10px; padding:10px 12px;">' +
+              '<div style="flex:1; min-width:0;">' +
+                '<div style="font-size:13px; font-weight:800; color:var(--text);">' + escapeHtml(h.client || 'فاتورة') + (h.invNum ? ' — ' + escapeHtml(h.invNum) : '') + '</div>' +
+                '<div style="font-size:11px; color:var(--text-muted);">' + when + ' — ' + cnt + ' مقاس</div>' +
+              '</div>' +
+              '<button type="button" onclick="viewCuttingSheetFromHistory(\'' + h.id + '\')" style="background:var(--primary); color:var(--on-primary); border:none; padding:6px 12px; border-radius:8px; font-size:11.5px; font-weight:800; cursor:pointer;">عرض</button>' +
+              '<button type="button" onclick="deleteCuttingSheetFromHistory(\'' + h.id + '\')" style="background:var(--card-bg); border:1px solid var(--border); color:var(--danger); padding:6px 12px; border-radius:8px; font-size:11.5px; font-weight:800; cursor:pointer;">حذف</button>' +
+            '</div>';
+          }).join('');
+        }
+      }
+    }
+    function viewCuttingSheetFromHistory(id) {
+      const h = getCuttingSheetsHistory().find(x => x.id === id);
+      if (!h || !h.data) return;
+      window.currentCuttingData = { client: h.client, invNum: h.invNum, date: h.date, phone: h.phone, data: h.data };
+      if (typeof renderCuttingSheetView === 'function') renderCuttingSheetView();
+      const modal = document.getElementById('cuttingSheetModal');
+      if (modal) modal.style.display = 'flex';
+    }
+    function deleteCuttingSheetFromHistory(id) {
+      playDeleteSound();
+      const list = getCuttingSheetsHistory().filter(x => x.id !== id);
+      localStorage.setItem('sb_cutting_sheets', JSON.stringify(list));
+      renderCuttingPage();
+    }
+    function clearCuttingSheetsHistory() {
+      sbConfirm('مسح كل سجل جداول التقطيع المحفوظة؟', () => {
+        localStorage.removeItem('sb_cutting_sheets');
+        renderCuttingPage();
+        showToast('تم مسح السجل');
+      });
+    }
+    function sbPrintCuttingPage() {
+      const el = document.getElementById('cuttingPageCurrent');
+      if (!el || !el.querySelector('table')) { showToast('لا يوجد جدول لطباعته'); return; }
+      const win = window;
+      const html = '<html dir="rtl"><head><meta charset="utf-8"><title>جدول تقطيع</title>' +
+        '<style>body{font-family:Arial,sans-serif;padding:16px;} table{width:100%;border-collapse:collapse;} th,td{border:1px solid #999;padding:6px;text-align:center;font-size:13px;} th{background:#eee;} h3{text-align:center;}</style></head><body>' +
+        '<h3>جدول التقطيع' + (window.currentCuttingData && window.currentCuttingData.client ? ' — ' + window.currentCuttingData.client : '') + '</h3>' +
+        el.innerHTML + '</body></html>';
+      try {
+        if (window.AndroidInterface && typeof window.AndroidInterface.shareFile === 'function') {
+          /* في الـ APK: نطبع عبر نافذة مؤقتة لن يشتغل — نستخدم الطباعة الأصلية على العنصر الحالي */
+          const w = window.open('', '_blank');
+          if (w) { w.document.write(html); w.document.close(); setTimeout(() => { try { w.focus(); w.print(); } catch (e) {} }, 350); }
+          else sbAlert('تعذر فتح نافذة الطباعة', { type: 'danger' });
+          return;
+        }
+        const w = win.open('', '_blank');
+        if (w) { w.document.write(html); w.document.close(); setTimeout(() => { try { w.focus(); w.print(); } catch (e) {} }, 350); }
+      } catch (e) { sbAlert('الطباعة غير متاحة: ' + e.message, { type: 'danger' }); }
+    }
+    window.sbPrintCuttingPage = sbPrintCuttingPage;
+    window.renderCuttingPage = renderCuttingPage;
+    window.clearCuttingSheetsHistory = clearCuttingSheetsHistory;
+
+    /* v1.12: زر الإعدادات في الشريط السفلي — دايماً بيوصل للقائمة الرئيسية (بعد إزالة زرّي الرجوع) */
+    function sbNavSettings() {
+      if (typeof switchView === 'function') switchView('settingsView', false);
+      if (typeof showSettingsMainMenu === 'function') showSettingsMainMenu();
+    }
+    window.sbNavSettings = sbNavSettings;
+
     function openWorkshopCuttingSheet() {
       let container = null;
       let client = '';
@@ -20272,6 +21124,13 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       };
 
       renderCuttingSheetView();
+      /* v1.12: حفظ الجدول في سجل جداول التقطيع + الصنايعي يفتح القسم الجديد بدل النافذة */
+      saveCuttingSheetToHistory(currentCuttingData);
+      if (typeof isCraftsmanRole === 'function' && isCraftsmanRole()) {
+        if (typeof openSettingsPage === 'function') openSettingsPage('cutting');
+        renderCuttingPage();
+        return;
+      }
       const modal = document.getElementById('cuttingSheetModal');
       if (modal) modal.style.display = 'flex';
     }
@@ -20343,7 +21202,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
     function printCuttingSheet() {
       if (!currentCuttingData) return;
       document.body.classList.add('print-cutting-sheet-mode');
-      window.print();
+      sbPrint();
       setTimeout(() => {
         document.body.classList.remove('print-cutting-sheet-mode');
       }, 1000);
@@ -20581,6 +21440,93 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
     }
 
     // Initialize the Workers & Wages Page
+    /* ===== v1.12: تبويبات قسم العمال/المصروفات + مصروفات الورشة (كهرباء/مياه/صيانة) ===== */
+    function sbExpTab(which) {
+      const w = document.getElementById('expTabWorkers');
+      const e = document.getElementById('expTabExpenses');
+      const bw = document.getElementById('expTabBtnWorkers');
+      const be = document.getElementById('expTabBtnExpenses');
+      const isExp = which === 'expenses';
+      if (w) w.style.display = isExp ? 'none' : 'block';
+      if (e) e.style.display = isExp ? 'block' : 'none';
+      if (bw) { bw.style.background = isExp ? 'var(--card-bg-alt)' : 'var(--primary)'; bw.style.color = isExp ? 'var(--text)' : 'var(--on-primary)'; bw.style.border = isExp ? '1px solid var(--border)' : 'none'; }
+      if (be) { be.style.background = isExp ? 'var(--primary)' : 'var(--card-bg-alt)'; be.style.color = isExp ? 'var(--on-primary)' : 'var(--text)'; be.style.border = isExp ? 'none' : '1px solid var(--border)'; }
+      if (!isExp) { try { refreshWorkersView(); } catch (err) {} }
+      if (isExp) { try { sbRenderWorkshopExpenses(); } catch (err) {} }
+    }
+    window.sbExpTab = sbExpTab;
+    function sbGetExpensesDB() {
+      try { return JSON.parse(localStorage.getItem('sb_workshop_expenses') || '[]'); } catch (e) { return []; }
+    }
+    var __sbExpType = 'كهرباء';
+    function sbSetExpenseType(btn) {
+      __sbExpType = btn.getAttribute('data-type') || 'كهرباء';
+      document.querySelectorAll('.sb-exp-type').forEach(b => {
+        const on = b.getAttribute('data-type') === __sbExpType;
+        b.style.background = on ? 'var(--primary)' : 'var(--card-bg-alt)';
+        b.style.color = on ? 'var(--on-primary)' : 'var(--text)';
+        b.style.borderColor = on ? 'var(--primary)' : 'var(--border)';
+      });
+    }
+    function sbAddWorkshopExpense() {
+      const amountEl = document.getElementById('sbExpenseAmount');
+      const dateEl = document.getElementById('sbExpenseDate');
+      const noteEl = document.getElementById('sbExpenseNote');
+      const amount = parseFloat(String(amountEl ? amountEl.value : '').replace(/,/g, '.'));
+      if (!isFinite(amount) || amount <= 0) {
+        showToast('اكتب مبلغ صحيح أكبر من صفر', 'warning');
+        if (amountEl) amountEl.focus();
+        return;
+      }
+      const db = sbGetExpensesDB();
+      db.unshift({
+        id: 'exp' + Date.now(),
+        type: __sbExpType,
+        amount: amount,
+        date: (dateEl && dateEl.value) ? dateEl.value : new Date().toISOString().split('T')[0],
+        note: (noteEl && noteEl.value.trim()) || ''
+      });
+      localStorage.setItem('sb_workshop_expenses', JSON.stringify(db.slice(0, 500)));
+      if (amountEl) amountEl.value = '';
+      if (noteEl) noteEl.value = '';
+      sbRenderWorkshopExpenses();
+      showToast('تم تسجيل مصروف ' + __sbExpType + ' بنجاح');
+    }
+    function sbDeleteWorkshopExpense(id) {
+      playDeleteSound();
+      const db = sbGetExpensesDB().filter(x => x.id !== id);
+      localStorage.setItem('sb_workshop_expenses', JSON.stringify(db));
+      sbRenderWorkshopExpenses();
+    }
+    function sbRenderWorkshopExpenses() {
+      const tbody = document.getElementById('sbExpensesTableBody');
+      const totalEl = document.getElementById('sbExpensesMonthTotal');
+      const dateEl = document.getElementById('sbExpenseDate');
+      if (dateEl && !dateEl.value) dateEl.value = new Date().toISOString().split('T')[0];
+      const db = sbGetExpensesDB();
+      const month = new Date().toISOString().slice(0, 7);
+      const monthTotal = db.filter(x => String(x.date || '').startsWith(month)).reduce((a, x) => a + (parseFloat(x.amount) || 0), 0);
+      if (totalEl) totalEl.textContent = 'إجمالي الشهر: ' + monthTotal.toLocaleString('en-US', { maximumFractionDigits: 2 }) + ' ج';
+      if (!tbody) return;
+      if (!db.length) {
+        tbody.innerHTML = '<tr><td colspan="5" style="padding:12px; text-align:center; color:var(--text-muted);">لا توجد مصروفات مسجلة بعد</td></tr>';
+        return;
+      }
+      const ICONS = { 'كهرباء': '⚡', 'مياه': '💧', 'صيانة': '🔧' };
+      tbody.innerHTML = db.slice(0, 100).map(x =>
+        '<tr style="border-bottom:1px solid var(--border);">' +
+        '<td style="padding:7px 6px; font-weight:800;">' + (ICONS[x.type] || '') + ' ' + escapeHtml(x.type || '') + '</td>' +
+        '<td style="padding:7px 6px; text-align:center; font-weight:800; color:var(--danger);">' + (parseFloat(x.amount) || 0).toLocaleString('en-US', { maximumFractionDigits: 2 }) + ' ج</td>' +
+        '<td style="padding:7px 6px; text-align:center; color:var(--text-muted);">' + escapeHtml(x.date || '') + '</td>' +
+        '<td style="padding:7px 6px; color:var(--text-muted);">' + escapeHtml(x.note || '-') + '</td>' +
+        '<td style="padding:7px 6px; text-align:center;"><button type="button" onclick="sbDeleteWorkshopExpense(\'' + x.id + '\')" style="background:var(--card-bg-alt); border:1px solid var(--border); color:var(--danger); padding:3px 10px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer;">حذف</button></td>' +
+        '</tr>').join('');
+    }
+    window.sbAddWorkshopExpense = sbAddWorkshopExpense;
+    window.sbDeleteWorkshopExpense = sbDeleteWorkshopExpense;
+    window.sbRenderWorkshopExpenses = sbRenderWorkshopExpenses;
+    window.sbSetExpenseType = sbSetExpenseType;
+
     function initExpensesPage() {
       const todayStr = new Date().toISOString().split('T')[0];
       const wDate = document.getElementById('wageDateInput');
@@ -20934,7 +21880,8 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
           `----------------------------------------\n` +
           `التطبيق لا يسمح بصرف سُلف بزيادة عن أيام العمل التي اشتغلها العامل.`;
 
-        alert(errorAlert);
+        /* v1.12: تنبيه موحّد بدل alert الأصلية */
+        sbAlert(errorAlert, { type: 'danger', title: 'سُلفة غير مسموحة' });
         if (typeof showToast === 'function') {
           showToast(`عفواً، الحد الأقصى المتاح لـ ${bal.worker.name} هو ${bal.availableBalance} ج فقط`, 'danger');
         }
@@ -21228,7 +22175,8 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       if (!worker) return;
 
       const confirmMsg = `هل أنت متأكد من حذف العامل: [ ${worker.name} ]؟\n\nتنبيه: سيتم حذف بيانات العامل وكافة قيود يومياته وسُلفه من الورشة نهائياً.`;
-      if (!confirm(confirmMsg)) return;
+      /* v1.12: نافذة موحّدة بدل confirm الأصلية */
+      sbConfirm(String(confirmMsg).replace(/\n/g, '<br>'), () => {
 
       const updatedWorkers = workers.filter(w => w.id !== workerId);
       saveWorkersList(updatedWorkers);
@@ -21241,6 +22189,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
 
       populateWorkerDropdowns();
       refreshWorkersView();
+      });
     }
 
     // Render operations ledger table with filters
@@ -21308,12 +22257,14 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
 
     // Delete single transaction item
     function deleteWorkerLedgerItem(id) {
-      if (!confirm('هل أنت متأكد من حذف هذا القيد من سجل العمليات؟')) return;
+      /* v1.12: نافذة موحّدة بدل confirm الأصلية */
+      sbConfirm('هل أنت متأكد من حذف هذا القيد من سجل العمليات؟', () => {
       let ledger = getWorkerLedger();
       ledger = ledger.filter(item => item.id !== id);
       saveWorkerLedger(ledger);
       if (typeof showToast === 'function') showToast('تم حذف القيد بنجاح', 'info');
       refreshWorkersView();
+      });
     }
 
     // Perform Thursday Settlement for a worker
@@ -21337,7 +22288,15 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
         `----------------------------------------\n` +
         `هل تريد إتمام صرف تصفية الخميس وإقفال هذه الفترة؟`;
 
-      if (!confirm(confirmMsg)) return;
+      /* v1.12: نافذة موحّدة بدل confirm الأصلية — إعادة دخول بعلم مؤقت عشان الجسم الطويل مايتكربكش */
+      if (!window.__sbSettleConfirm) {
+        sbConfirm(confirmMsg, () => {
+          window.__sbSettleConfirm = true;
+          try { settleWorkerThursday(workerId); } finally { window.__sbSettleConfirm = false; }
+        });
+        return;
+      }
+      window.__sbSettleConfirm = false;
 
       const todayStr = new Date().toISOString().split('T')[0];
       const settlementId = 'settle_' + Date.now();
@@ -21576,7 +22535,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
              <span>الصافي المطلوب: ${bal.netSettlement} ج</span>
           </div>
           <div style="margin-top:30px; text-align:center;">
-             <button onclick="window.print()" style="padding:8px 24px; font-size:14px; cursor:pointer;">طباعة</button>
+             <button onclick="sbPrint()" style="padding:8px 24px; font-size:14px; cursor:pointer;">طباعة</button>
           </div>
         
   </body>
@@ -21665,7 +22624,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
              <span>اعتماد الإدارة: .............................</span>
           </div>
           <div style="margin-top:30px; text-align:center;">
-             <button onclick="window.print()" style="padding:8px 24px; font-size:14px; font-weight:bold; cursor:pointer;">طباعة الكشف</button>
+             <button onclick="sbPrint()" style="padding:8px 24px; font-size:14px; font-weight:bold; cursor:pointer;">طباعة الكشف</button>
           </div>
         </body>
         </html>`);
@@ -25866,18 +26825,19 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       <!-- Admin PIN Protection Section (when switching back to Admin) -->
       <div id="adminPinProtectionBox" style="display:none; background:var(--card-bg-alt); border:1.5px solid var(--border); border-radius:14px; padding:14px; margin-bottom:16px; box-sizing:border-box;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-          <label style="font-size:12px; font-weight:800; color:var(--text);">
+          <label style="font-size:12px; font-weight:800; color:var(--text);" id="adminPinBoxLabel">
             أدخل رمز أمان المدير (PIN):
           </label>
           <span style="font-size:10.5px; color:var(--text-muted); background:var(--card-bg); padding:2px 8px; border-radius:6px; border:1px solid var(--border);">8 - 15 خانة</span>
         </div>
         <div style="display:flex; gap:8px; margin-bottom:8px;">
-          <input type="password" id="adminPinInput" placeholder="مثال: Admin@1234" maxlength="15" autocomplete="current-password" onkeydown="if(event.key==='Enter') confirmRoleSelection()" style="flex:1; padding:9px 12px; font-size:13.5px; border:1.5px solid var(--border); border-radius:8px; background:var(--input-bg); color:var(--input-text); text-align:center; font-weight:bold; letter-spacing:1px; outline:none;">
+          <input type="password" id="adminPinInput" placeholder="الرمز الجديد (8-15 خانة)" maxlength="15" autocomplete="current-password" onkeydown="if(event.key==='Enter') confirmRoleSelection()" style="flex:1; padding:9px 12px; font-size:13.5px; border:1.5px solid var(--border); border-radius:8px; background:var(--input-bg); color:var(--input-text); text-align:center; font-weight:bold; letter-spacing:1px; outline:none;">
           <button type="button" id="adminPinToggleBtn" onclick="toggleAdminPinVisibility()" style="padding:0 12px; background:var(--card-bg); border:1px solid var(--border); border-radius:8px; cursor:pointer;" title="إظهار/إخفاء الرمز"><svg class="icon-svg" style="width:16px; height:16px; margin:0;" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="7" r="4"></circle></svg></button>
         </div>
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
           <div style="font-size:11px; color:var(--text-muted);">
-            الرمز الافتراضي: <b style="color:var(--primary); font-family:monospace;">Admin@1234</b>
+            <!-- v1.12: لا رمز افتراضي — أول تبديل يتطلب إنشاء رمز -->
+            <span id="adminPinFootnoteText">أول مرة؟ اكتب رمزاً جديداً (8-15 خانة: حروف وأرقام ورموز) وسيُحفظ كرمز أمان المدير</span>
           </div>
           <button type="button" onclick="openForgotAdminPinModal()" style="background:transparent; border:none; color:var(--primary); font-size:11.5px; font-weight:800; text-decoration:underline; cursor:pointer; padding:0; display:inline-flex; align-items:center; gap:4px;">
             🔑 هل نسيت الرمز؟
@@ -26265,14 +27225,15 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       <span>البحث</span>
     </button>
     <button type="button" class="lux-nav-fab" id="navAddFabBtn" aria-label="فاتورة جديدة" onclick="openNewInvoice()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
+      <!-- v1.12: أيقونة صفحات متراكبة مع + — توحي بوجود صفحات فواتير متعددة (ضغطة مطولة = قائمة الصفحات) -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 6.5V5a2 2 0 0 1 2-2H19a2 2 0 0 1 2 2v8.5a2 2 0 0 1-2 2h-1.5"/><rect x="3" y="6.5" width="13.5" height="14" rx="2"/><path d="M9.75 11v5.5M7 13.75h5.5"/></svg>
     </button>
     <button type="button" class="lux-nav-btn" id="navCalcBtn" onclick="toggleCalcModal(true)" aria-label="الآلة الحاسبة">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><rect x="4" y="2" width="16" height="20" rx="3"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="12" x2="8" y2="12.01"/><line x1="12" y1="12" x2="12" y2="12.01"/><line x1="16" y1="12" x2="16" y2="12.01"/><line x1="8" y1="16" x2="8" y2="16.01"/><line x1="12" y1="16" x2="12" y2="16.01"/><line x1="16" y1="16" x2="16" y2="16.01"/></svg>
       <span>الحاسبة</span>
     </button>
     <!-- الحاسبة: بوب أب يشتغل من أي شاشة في التطبيق (v1.5) -->
-    <button type="button" class="lux-nav-btn" data-lux-view="settingsView" onclick="switchView('settingsView')">
+    <button type="button" class="lux-nav-btn" data-lux-view="settingsView" onclick="sbNavSettings()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       <span>الإعدادات</span>
     </button>
@@ -26468,5 +27429,321 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
     });
   })();
   </script>
+
+<script>
+/* =============================================================
+   v1.12 — الجداول المخصصة بالكامل: معادلة مخصصة + دمج جدولين
+   (منطق الجداول التسعة المدمجة ومحصّن — الإضافة دي طبقة جديدة
+   مستقلة تماماً فوق محرك الجداول الموجود بلا أي تعديل فيه)
+   ============================================================= */
+(function () {
+  'use strict';
+  if (window.__sbAdvancedTables) return;
+  window.__sbAdvancedTables = true;
+
+  /* ---------- أدوات مساعدة ---------- */
+  function getCustomTypes() {
+    try { return JSON.parse(localStorage.getItem('customTableTypes') || '[]'); } catch (e) { return []; }
+  }
+  function saveCustomTypes(list) {
+    localStorage.setItem('customTableTypes', JSON.stringify(list));
+  }
+  function esc(x) {
+    return String(x == null ? '' : x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function parseN(v) { const x = parseFloat(String(v == null ? '' : v).replace(/[^\d.\-]/g, '')); return isFinite(x) ? x : 0; }
+
+  /* ---------- باني المعادلة (الواجهة) ---------- */
+  var __sbFtCols = [{ name: 'الطول', kind: 'number' }, { name: 'العرض', kind: 'number' }, { name: 'السعر', kind: 'number' }];
+  function sbFtRenderCols() {
+    var cont = document.getElementById('sbFtCols');
+    if (!cont) return;
+    cont.innerHTML = __sbFtCols.map(function (c, i) {
+      return '<div style="display:flex; gap:6px; align-items:center;">' +
+        '<input type="text" value="' + esc(c.name) + '" oninput="__sbFtCols[' + i + '].name=this.value" placeholder="اسم العمود" style="flex:1; padding:7px 10px; border-radius:8px; border:1.5px solid var(--border); background:var(--input-bg); color:var(--input-text); font-weight:700; box-sizing:border-box;">' +
+        '<span style="font-size:10.5px; color:var(--text-muted); white-space:nowrap;">' + (c.kind === 'text' ? 'نصي' : 'رقمي') + '</span>' +
+        '<button type="button" onclick="sbRemoveFtCol(' + i + ')" style="width:26px; height:26px; border-radius:6px; border:1px solid var(--border); background:var(--card-bg); color:var(--danger); font-weight:800; cursor:pointer;">✕</button>' +
+        '</div>';
+    }).join('');
+  }
+  window.sbAddFtCol = function (isText) {
+    __sbFtCols.push({ name: 'عمود ' + (__sbFtCols.length + 1), kind: isText ? 'text' : 'number' });
+    sbFtRenderCols();
+  };
+  window.sbRemoveFtCol = function (i) {
+    if (__sbFtCols.length <= 1) return;
+    __sbFtCols.splice(i, 1);
+    sbFtRenderCols();
+  };
+  window.__sbFtCols = __sbFtCols;
+
+  window.sbCreateFormulaTable = function () {
+    var nameEl = document.getElementById('sbFtName');
+    var formulaEl = document.getElementById('sbFtFormula');
+    var name = (nameEl ? nameEl.value : '').trim();
+    var formula = (formulaEl ? formulaEl.value : '').trim();
+    if (!name) { if (window.showToast) showToast('اكتب اسم الجدول أولاً', 'warning'); return; }
+    if (!formula) { if (window.showToast) showToast('اكتب معادلة إجمالي الصف', 'warning'); return; }
+    var cols = __sbFtCols.filter(function (c) { return c.name && c.name.trim(); }).map(function (c) { return { name: c.name.trim(), kind: c.kind }; });
+    if (!cols.length) { if (window.showToast) showToast('أضف عموداً واحداً على الأقل', 'warning'); return; }
+    /* تحقق أن المعادلة تتكوّن من أسماء أعمدة وعمليات فقط */
+    var probe = formula.replace(/×/g, '*').replace(/÷/g, '/').replace(/\^/g, ' + ');
+    var sorted = cols.slice().sort(function (a, b) { return b.name.length - a.name.length; });
+    sorted.forEach(function (c) { probe = probe.split(c.name).join(' '); });
+    probe = probe.replace(/[\d\s+\-*/().]/g, '');
+    if (probe) { if (window.showToast) showToast('المعادلة فيها رموز غير معروفة: ' + probe.slice(0, 20), 'warning'); return; }
+    var types = getCustomTypes();
+    types.push({ id: 'custom-' + Date.now(), name: name, mode: 'formula', color: '#4f46e5', columns: cols, formula: formula });
+    saveCustomTypes(types);
+    nameEl.value = ''; formulaEl.value = '';
+    if (typeof renderCustomTableTypes === 'function') renderCustomTableTypes();
+    if (window.showToast) showToast('تم إنشاء جدول «' + name + '» بمعادلة مخصصة — موجود دلوقتي في أزرار إضافة الجداول');
+  };
+
+  /* ---------- دمج جدولين (الواجهة) ---------- */
+  window.sbPopulateMergeSelects = function () {
+    var a = document.getElementById('sbMgA'), b = document.getElementById('sbMgB');
+    if (!a || !b) return;
+    var BUILTIN = [
+      ['marble', 'رخام م²'], ['granite', 'جرانيت م²'], ['tawlat', 'طاولات'], ['slabs', 'شرايح'],
+      ['lengths-shorts', 'أطوال وقصاير'], ['stairs-lin', 'درج (م.ط)'], ['stairs-thick', 'درج بتخانة'],
+      ['talabis', 'تلابيس'], ['tarabee', 'ترابيع']
+    ];
+    var opts = BUILTIN.map(function (x) { return '<option value="' + x[0] + '">' + x[1] + '</option>'; }).join('');
+    getCustomTypes().forEach(function (t) {
+      if (!t.mode) opts += '<option value="' + t.id + '">' + esc(t.name) + ' (مخصص)</option>';
+    });
+    var va = a.value, vb = b.value;
+    a.innerHTML = opts; b.innerHTML = opts;
+    if (va) a.value = va; if (vb) b.value = vb;
+  };
+  window.sbCreateMergedTable = function () {
+    var nameEl = document.getElementById('sbMgName');
+    var a = document.getElementById('sbMgA'), b = document.getElementById('sbMgB');
+    var name = (nameEl ? nameEl.value : '').trim();
+    if (!name) { if (window.showToast) showToast('اكتب اسم المجموعة', 'warning'); return; }
+    if (!a.value || !b.value) { if (window.showToast) showToast('اختار الجدولين', 'warning'); return; }
+    var types = getCustomTypes();
+    types.push({ id: 'custom-' + Date.now(), name: name, mode: 'merged', color: '#0f766e', parts: [a.value, b.value] });
+    saveCustomTypes(types);
+    nameEl.value = '';
+    if (typeof renderCustomTableTypes === 'function') renderCustomTableTypes();
+    if (window.showToast) showToast('تم إنشاء مجموعة «' + name + '» — بتضيف الجدولين مع بعض بضغطة واحدة');
+  };
+
+  /* ---------- إضافة البلوكات المتقدمة للفاتورة ---------- */
+  window.addCustomAdvancedBlock = function (typeId) {
+    var def = null;
+    try { def = (typeof getTableTypes === 'function' ? getTableTypes() : []).find(function (t) { return t.id === typeId; }); } catch (e) {}
+    if (!def) { if (window.showToast) showToast('النوع غير موجود', 'warning'); return; }
+    if (def.mode === 'merged') { addMergedBlock(def); return; }
+    if (def.mode === 'formula') { addFormulaBlock(def); return; }
+    if (typeof window.addBlock === 'function') window.addBlock(typeId);
+  };
+
+  function addMergedBlock(def) {
+    var cont = document.getElementById('tablesContainer');
+    if (!cont) return;
+    var group = document.createElement('div');
+    group.className = 'sb-merged-group';
+    group.setAttribute('data-merged-id', def.id);
+    group.style.cssText = 'position:relative; margin:0 0 20px; border:2px dashed color-mix(in srgb, var(--primary) 45%, var(--border)); border-radius:14px; padding:30px 8px 8px;';
+    group.innerHTML =
+      '<div style="position:absolute; top:-1px; right:14px; background:var(--primary); color:var(--on-primary); font-size:11px; font-weight:800; padding:3px 12px; border-radius:0 0 8px 8px; display:flex; align-items:center; gap:8px;">' +
+        '⧉ ' + esc(def.name) +
+        '<button type="button" onclick="sbDeleteMergedGroup(this)" title="حذف المجموعة بالكامل" style="background:transparent; border:none; color:inherit; font-weight:900; cursor:pointer; font-size:13px; padding:0;">✕</button>' +
+      '</div>';
+    cont.appendChild(group);
+    var before = Array.prototype.slice.call(cont.children);
+    (def.parts || []).forEach(function (t) {
+      try { if (typeof window.addBlock === 'function') window.addBlock(t); } catch (e) { console.warn('merged part:', e); }
+    });
+    Array.prototype.slice.call(cont.children).forEach(function (ch) {
+      if (ch !== group && before.indexOf(ch) === -1) group.appendChild(ch);
+    });
+    if (typeof checkEmptyState === 'function') checkEmptyState();
+  }
+  window.sbDeleteMergedGroup = function (btn) {
+    var group = btn && btn.closest ? btn.closest('.sb-merged-group') : null;
+    if (!group) return;
+    if (typeof playDeleteSound === 'function') playDeleteSound();
+    group.remove();
+    if (typeof checkEmptyState === 'function') checkEmptyState();
+    if (typeof calculateAll === 'function') calculateAll();
+  };
+
+  function addFormulaBlock(def) {
+    var cont = document.getElementById('tablesContainer');
+    if (!cont) return;
+    var cols = def.columns || [];
+    var card = document.createElement('div');
+    card.className = 'block-card';
+    card.id = 'blk' + Date.now() + Math.random().toString(36).slice(2, 6);
+    card.setAttribute('data-type', def.id);
+    card.setAttribute('data-calc-type', 'formula');
+    card.setAttribute('data-mode', 'formula');
+    card.setAttribute('data-tid', def.id);
+    card.setAttribute('data-total', '0');
+    var headCells = cols.map(function (c) {
+      return '<th style="padding:6px 4px; text-align:center;">' + esc(c.name) + '</th>';
+    }).join('');
+    card.innerHTML =
+      '<div class="block-header" style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap;">' +
+        '<span class="section-name dev-neon-box table-neon-title" style="font-size:13px; font-weight:900; color:var(--primary); display:flex; align-items:center; gap:6px;">' +
+          '<svg class="icon-svg" style="width:15px; height:15px; margin:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 5H5L12 12 5 19h14"/></svg>' + esc(def.name) +
+        '</span>' +
+        '<span style="display:flex; align-items:center; gap:10px;">' +
+          '<span style="font-size:12px; font-weight:800; color:var(--text);">الإجمالي: <b id="' + card.id + '-total" style="color:var(--primary);">0.00</b> ج</span>' +
+          '<button type="button" onclick="sbRemoveFormulaBlock(this)" style="background:var(--danger); color:#fff; border:none; border-radius:6px; width:24px; height:24px; font-weight:900; cursor:pointer;">✕</button>' +
+        '</span>' +
+      '</div>' +
+      '<div style="overflow-x:auto;">' +
+        '<table class="fatoura-table" style="width:100%; border-collapse:collapse; font-size:11.5px;">' +
+          '<thead><tr style="background:var(--th-bg);">' + headCells + '<th style="padding:6px 4px; text-align:center;">الإجمالي</th></tr></thead>' +
+          '<tbody class="rows-body"></tbody>' +
+        '</table>' +
+      '</div>' +
+      '<button type="button" onclick="sbAddFormulaRow(this.closest(\'.block-card\'))" style="margin-top:8px; width:100%; background:var(--card-bg-alt); color:var(--primary); border:1.5px dashed var(--primary); border-radius:8px; padding:8px; font-size:12px; font-weight:800; cursor:pointer;">+ إضافة صف</button>';
+    cont.appendChild(card);
+    window.sbAddFormulaRow(card);
+    if (typeof checkEmptyState === 'function') checkEmptyState();
+  }
+  window.sbRemoveFormulaBlock = function (btn) {
+    var card = btn && btn.closest ? btn.closest('.block-card') : null;
+    if (!card) return;
+    if (typeof playDeleteSound === 'function') playDeleteSound();
+    card.remove();
+    if (typeof checkEmptyState === 'function') checkEmptyState();
+    if (typeof calculateAll === 'function') calculateAll();
+  };
+  window.sbAddFormulaRow = function (card) {
+    if (!card) return;
+    var def = null;
+    var tid = card.getAttribute('data-tid');
+    try { def = (typeof getTableTypes === 'function' ? getTableTypes() : []).find(function (t) { return t.id === tid; }); } catch (e) {}
+    if (!def) return;
+    var cols = def.columns || [];
+    var body = card.querySelector('.rows-body');
+    if (!body) return;
+    var tr = document.createElement('tr');
+    tr.setAttribute('data-frow', '1');
+    var cells = cols.map(function (c, i) {
+      if (c.kind === 'text') {
+        return '<td style="padding:3px 2px;"><input type="text" data-col="' + esc(c.name) + '" class="neon-input" style="width:100%; min-width:64px; padding:5px 6px; border:1px solid var(--border); border-radius:6px; background:var(--input-bg); color:var(--input-text); box-sizing:border-box; text-align:center;" oninput="sbRecalcFormulaRow(this)"></td>';
+      }
+      return '<td style="padding:3px 2px;"><input type="number" inputmode="decimal" data-col="' + esc(c.name) + '" class="neon-input" style="width:100%; min-width:64px; padding:5px 6px; border:1px solid var(--border); border-radius:6px; background:var(--input-bg); color:var(--input-text); box-sizing:border-box; text-align:center;" oninput="sbRecalcFormulaRow(this)"></td>';
+    }).join('');
+    tr.innerHTML = cells +
+      '<td style="padding:3px 2px; position:relative;">' +
+        '<span class="f-row-total" style="display:block; font-weight:900; color:var(--primary); text-align:center; padding:5px 4px;">0.00</span>' +
+        '<button type="button" onclick="sbRemoveFormulaRow(this)" title="حذف الصف" style="position:absolute; top:-6px; left:-4px; width:18px; height:18px; border-radius:50%; background:var(--danger); color:#fff; border:none; font-size:10px; font-weight:900; cursor:pointer; line-height:1;">✕</button>' +
+      '</td>';
+    body.appendChild(tr);
+    window.sbRecalcFormulaRow(tr);
+  };
+  window.sbRemoveFormulaRow = function (btn) {
+    var tr = btn && btn.closest ? btn.closest('tr') : null;
+    if (!tr) return;
+    if (typeof playDeleteSound === 'function') playDeleteSound();
+    var card = tr.closest('.block-card');
+    tr.remove();
+    if (card) window.sbRecalcFormulaRow(card);
+  };
+
+  /* تقييم المعادلة بأمان — أسماء الأعمدة تُستبدل بقيمها ثم فحص whitelist صارم */
+  function evalFormula(formula, values) {
+    var expr = String(formula || '').replace(/×/g, '*').replace(/÷/g, '/').replace(/\^/g, '**');
+    var names = Object.keys(values).sort(function (a, b) { return b.length - a.length; });
+    names.forEach(function (n) { expr = expr.split(n).join('(' + (values[n] || 0) + ')'); });
+    expr = expr.replace(/[\u0600-\u06FF\u200B-\u200F]/g, '');
+    if (!/^[\d+\-*/().\s]+$/.test(expr)) return NaN;
+    try { var r = new Function('return (' + expr + ')')(); return isFinite(r) ? r : NaN; } catch (e) { return NaN; }
+  }
+  function recalcCard(card) {
+    if (!card) return;
+    var tid = card.getAttribute('data-tid');
+    var def = null;
+    try { def = (typeof getTableTypes === 'function' ? getTableTypes() : []).find(function (t) { return t.id === tid; }); } catch (e) {}
+    if (!def || !def.formula) return;
+    var total = 0;
+    card.querySelectorAll('.rows-body tr[data-frow]').forEach(function (tr) {
+      var values = {};
+      tr.querySelectorAll('input[data-col]').forEach(function (inp) {
+        values[inp.getAttribute('data-col')] = inp.getAttribute('data-kind') === 'text' ? 0 : parseN(inp.value);
+      });
+      var v = evalFormula(def.formula, values);
+      var cell = tr.querySelector('.f-row-total');
+      if (cell) cell.textContent = isFinite(v) ? v.toFixed(2) : '—';
+      if (isFinite(v)) total += v;
+    });
+    card.setAttribute('data-total', String(total));
+    var tEl = card.querySelector('.block-header b');
+    if (tEl) tEl.textContent = total.toFixed(2);
+  }
+  window.sbRecalcFormulaRow = function (el) {
+    var card = el && el.closest ? el.closest('.block-card[data-mode="formula"]') : null;
+    if (!card) return;
+    recalcCard(card);
+    if (typeof calculateAll === 'function') calculateAll();
+  };
+
+  /* ---------- دمج مجاميع جداول المعادلة في الإجمالي الكلي ----------
+     (بدون أي تعديل داخل دالة calculateAll المحمية — تغليف من الخارج فقط) */
+  function applyFormulaTotals() {
+    var ft = 0;
+    document.querySelectorAll('#tablesContainer .block-card[data-mode="formula"]').forEach(function (b) {
+      ft += parseFloat(b.getAttribute('data-total')) || 0;
+    });
+    if (!ft) return;
+    var gcEl = document.getElementById('grandCost');
+    if (!gcEl) return;
+    var gCost = (parseFloat(String(gcEl.innerText).replace(/[^\d.\-]/g, '')) || 0) + ft;
+    gcEl.innerText = gCost.toFixed(2) + ' ج.م';
+    var pn = function (v) { return parseFloat(String(v == null ? '' : v).replace(/[^\d.\-]/g, '')) || 0; };
+    var discount = pn((document.getElementById('discountVal') || {}).value);
+    var net = gCost - discount;
+    var netEl = document.getElementById('netCost');
+    if (netEl) netEl.innerText = net.toFixed(2) + ' ج.م';
+    var paid = pn((document.getElementById('paidVal') || {}).value);
+    var baseRemaining = net - paid;
+    var finalRemaining = baseRemaining;
+    var instSection = document.getElementById('installmentConfigSection');
+    var isInst = instSection && instSection.style.display === 'block';
+    if (isInst && baseRemaining > 0) {
+      var rate = pn((document.getElementById('instInterestRate') || {}).value);
+      var interest = baseRemaining * (rate / 100);
+      finalRemaining += interest;
+      var ir = document.getElementById('interestRow');
+      if (ir) ir.style.display = 'flex';
+      var ia = document.getElementById('interestAmount');
+      if (ia) ia.innerText = interest.toFixed(2) + ' ج.م';
+      var itc = document.getElementById('installmentsTableContainer');
+      if (itc) itc.style.display = 'block';
+      if (typeof generateInstallmentsTable === 'function') generateInstallmentsTable(finalRemaining);
+    }
+    var remEl = document.getElementById('remainingCost');
+    if (remEl) remEl.innerText = finalRemaining.toFixed(2) + ' ج.م';
+    var tafEl = document.getElementById('tafqeetText');
+    if (tafEl && typeof tafqeet === 'function') tafEl.innerText = tafqeet(finalRemaining);
+  }
+  function wrapCalcAll() {
+    if (window.__sbCalcPatched) return;
+    if (typeof window.calculateAll !== 'function') return;
+    var orig = window.calculateAll;
+    window.calculateAll = function () {
+      var r = orig.apply(this, arguments);
+      try { applyFormulaTotals(); } catch (e) { console.warn('formula totals:', e); }
+      return r;
+    };
+    window.__sbCalcPatched = true;
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wrapCalcAll);
+  else wrapCalcAll();
+
+  /* رسم أعمدة باني المعادلة عند التحميل */
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', sbFtRenderCols);
+  else sbFtRenderCols();
+})();
+</script>
 </body>
 </html>

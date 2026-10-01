@@ -83,5 +83,25 @@ public class MainActivity extends BridgeActivity {
         public void showToast(final String msg) {
             Toast.makeText(ctx, msg == null ? "" : msg, Toast.LENGTH_SHORT).show();
         }
+
+        /**
+         * v1.12 — الطباعة الأصلية: window.print() لا يعمل داخل WebView (نقرة بلا استجابة).
+         * PrintManager + createPrintDocumentAdapter يفتحان حوار طباعة أندرويد الرسمي —
+         * منه الطباعة على أي طابعة أو «حفظ كـ PDF» مباشرة، ويحترم @page size وتنسيقات الطباعة.
+         */
+        @JavascriptInterface
+        public void printPage() {
+            final android.webkit.WebView wv = (bridge != null) ? bridge.getWebView() : null;
+            if (wv == null) return;
+            wv.post(() -> {
+                try {
+                    android.print.PrintManager pm = (android.print.PrintManager) ctx.getSystemService(Context.PRINT_SERVICE);
+                    android.print.PrintDocumentAdapter adapter = wv.createPrintDocumentAdapter("StoneBill");
+                    pm.print("StoneBill", adapter, new android.print.PrintAttributes.Builder().build());
+                } catch (Throwable t) {
+                    Toast.makeText(ctx, "الطباعة غير متاحة على هذا الجهاز: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 }
