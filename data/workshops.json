@@ -222,7 +222,7 @@
     "ownerName": "المدير المسؤول",
     "ownerEmail": "",
     "craftsmen": [],
-    "updatedAt": "2026-09-30T15:20:28.028Z"
+    "updatedAt": "2026-10-01T12:16:55.622Z"
   },
   "ws_1790767431438_wqvg36": {
     "id": "ws_1790767431438_wqvg36",
@@ -394,5 +394,32 @@
     "ownerEmail": "",
     "craftsmen": [],
     "updatedAt": "2026-09-30T15:23:23.058Z"
+  },
+  "ws_1790856886205_ll5hms": {
+    "id": "ws_1790856886205_ll5hms",
+    "code": "WRK-8318",
+    "name": "مصنع وورشة الرخام والجرانيت",
+    "ownerName": "المدير المسؤول",
+    "ownerEmail": "",
+    "craftsmen": [],
+    "updatedAt": "2026-10-01T12:14:50.747Z"
+  },
+  "ws_1790856921201_sptk80": {
+    "id": "ws_1790856921201_sptk80",
+    "code": "WRK-3593",
+    "name": "مصنع وورشة الرخام والجرانيت",
+    "ownerName": "المدير المسؤول",
+    "ownerEmail": "",
+    "craftsmen": [],
+    "updatedAt": "2026-10-01T12:15:25.747Z"
+  },
+  "ws_1790856961564_ll0e2f": {
+    "id": "ws_1790856961564_ll0e2f",
+    "code": "WRK-6457",
+    "name": "مصنع وورشة الرخام والجرانيت",
+    "ownerName": "المدير المسؤول",
+    "ownerEmail": "",
+    "craftsmen": [],
+    "updatedAt": "2026-10-01T12:16:06.094Z"
   }
 }

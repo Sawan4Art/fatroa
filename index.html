@@ -1601,14 +1601,14 @@
     .calc-expression { font-size: 36px; line-height: 1.15; font-weight: 800; color: var(--calc-display-text); min-height: 41px; width: 100%; text-align: right; overflow-x: auto; white-space: nowrap; }
     .calc-live { font-size: 20px; font-weight: 700; color: var(--text-muted); min-height: 24px; width: 100%; text-align: right; overflow-x: auto; white-space: nowrap; }
     .calc-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; direction: ltr; width: 100%; box-sizing: border-box; }
-    /* v1.9: أزرار الحاسبة دائرية — نفس ألوان أيقونات الرئيسية (خلفية الكارت + لون هوية الثيم) وبتتبع الثيم المستخدم */
+    /* v1.9: أزرار الحاسبة دائرية — نفس ألوان أيقونات الرئيسية (خلفية الكارت + لون هوية الثيم) وبتتبع الثيم المستخدم
+       v1.11: اتشالت الظلال السفلية الصلبة (0 4px 0) من كل الأزرار — شكل مسطّح ناعم */
     .calc-btn { width: min(100%, 54px); height: auto; aspect-ratio: 1 / 1; place-self: center; min-width: 0; min-height: 0; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; border: 1.5px solid var(--border); border-radius: 50%; background: var(--card-bg); color: var(--primary); cursor: pointer; transition: transform .1s, filter .15s, background .2s, box-shadow .1s; box-shadow: var(--shadow-sm); box-sizing: border-box; }
-    .calc-btn.calc-btn-zero { grid-column: span 2; }
     .calc-btn:hover { filter: brightness(1.06); transform: scale(1.06); }
     .calc-btn:active { transform: scale(0.93); }
-    .calc-btn.calc-op { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: var(--on-primary); border-color: transparent; box-shadow: 0 4px 0 color-mix(in srgb, var(--primary) 55%, #000); font-weight: 900; }
-    .calc-btn.calc-eq { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: var(--on-primary); border-color: transparent; box-shadow: 0 4px 0 color-mix(in srgb, var(--primary) 55%, #000); font-weight: 900; }
-    .calc-btn.calc-clear { background: var(--danger); color: #fff; border-color: transparent; box-shadow: 0 4px 0 color-mix(in srgb, var(--danger) 62%, #000); }
+    .calc-btn.calc-op { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: var(--on-primary); border-color: transparent; box-shadow: var(--shadow-sm); font-weight: 900; }
+    .calc-btn.calc-eq { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: var(--on-primary); border-color: transparent; box-shadow: var(--shadow-sm); font-weight: 900; }
+    .calc-btn.calc-clear { background: var(--danger); color: #fff; border-color: transparent; box-shadow: var(--shadow-sm); }
 
     /* Modal Calculator - Matches External Calculator Style */
     .calc-modal { display: none; position: fixed; inset: 0; z-index: 9000; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 16px; box-sizing: border-box; }
@@ -1630,7 +1630,6 @@
     .calc-modal .calc-live { font-size: clamp(28px, 4.2vh, 40px); min-height: 36px; line-height: 1.15; font-weight: 900; color: var(--calc-display-text); text-align: right; width: 100%; white-space: nowrap; overflow-x: auto; }
     .calc-modal .calc-buttons { grid-template-rows: repeat(5, 54px); }
     .calc-modal .calc-btn { height: auto; width: min(100%, 54px); aspect-ratio: 1 / 1; font-size: 22px; border-radius: 50%; background: var(--card-bg); color: var(--primary); border: 1.5px solid var(--border); box-shadow: var(--shadow-sm); }
-    .calc-modal .calc-btn.calc-btn-zero { border-radius: 50%; }
     :root { --calc-shell:var(--card-bg); --calc-display:var(--card-bg-alt); --calc-display-text:var(--text); --calc-key:color-mix(in srgb,var(--primary) 12%,var(--card-bg-alt)); --calc-key-text:var(--text); --calc-key-shadow:color-mix(in srgb,var(--primary) 18%,transparent); --calc-op:var(--calc-key); --calc-op-text:var(--calc-key-text); --calc-eq:var(--calc-key); --calc-eq-text:var(--calc-key-text); --calc-clear:var(--danger); }
     :root[data-theme="dark"], :root[data-theme="amoled"] { --calc-shell:var(--card-bg); --calc-display:var(--card-bg); --calc-display-text:var(--text); --calc-key:color-mix(in srgb,var(--primary) 18%,var(--card-bg-alt)); --calc-key-text:var(--text); --calc-key-shadow:rgba(0,0,0,.35); }
 
@@ -2410,16 +2409,14 @@
     #calculatorView .calc-btn:active {
         transform: scale(0.93);
     }
-    #calculatorView .calc-btn.calc-btn-zero {
-        grid-column: span 2;
-    }
-    /* Clear All Button — بلون الخطر من الثيم الحالي (بدل الأحمر الثابت) */
+    /* v1.11: زر الصفر بقى خانة عادية — تحت 2 بالظبط (اتشالت قاعدة span 2) */
+    /* Clear All Button — بلون الخطر من الثيم الحالي (بدل الأحمر الثابت) — v1.11: بدون ظل سفلي */
     #calculatorView .calc-btn.calc-clear,
     .calc-modal .calc-btn.calc-clear,
     .calc-btn.calc-clear {
         background: var(--danger) !important;
         color: #ffffff !important;
-        box-shadow: 0 4px 0 color-mix(in srgb, var(--danger) 62%, #000) !important;
+        box-shadow: var(--shadow-sm) !important;
     }
     #calculatorView .calc-btn.calc-clear:hover,
     .calc-modal .calc-btn.calc-clear:hover,
@@ -2431,16 +2428,15 @@
     #calculatorView .calc-btn.calc-clear:active,
     .calc-modal .calc-btn.calc-clear:active,
     .calc-btn.calc-clear:active {
-        transform: translateY(2px) scale(0.96);
-        box-shadow: 0 1px 0 color-mix(in srgb, var(--danger) 62%, #000) !important;
+        transform: scale(0.94);
     }
-    /* History Button — بلون هوية الثيم الحالي (بدل الأزرق الثابت) */
+    /* History Button — بلون هوية الثيم الحالي (بدل الأزرق الثابت) — v1.11: بدون ظل سفلي */
     #calculatorView .calc-btn.calc-history-btn,
     .calc-modal .calc-btn.calc-history-btn,
     .calc-btn.calc-history-btn {
         background: color-mix(in srgb, var(--primary) 82%, var(--secondary)) !important;
         color: var(--on-primary) !important;
-        box-shadow: 0 4px 0 color-mix(in srgb, var(--primary) 58%, #000) !important;
+        box-shadow: var(--shadow-sm) !important;
     }
     #calculatorView .calc-btn.calc-history-btn:hover,
     .calc-modal .calc-btn.calc-history-btn:hover,
@@ -2452,8 +2448,7 @@
     #calculatorView .calc-btn.calc-history-btn:active,
     .calc-modal .calc-btn.calc-history-btn:active,
     .calc-btn.calc-history-btn:active {
-        transform: translateY(2px) scale(0.96);
-        box-shadow: 0 1px 0 color-mix(in srgb, var(--primary) 58%, #000) !important;
+        transform: scale(0.94);
     }
     #calculatorView .calc-btn.calc-history-btn svg,
     .calc-modal .calc-btn.calc-history-btn svg,
@@ -2461,14 +2456,14 @@
         stroke: var(--on-primary) !important;
         color: var(--on-primary) !important;
     }
-    /* Operators — بتدرج هوية الثيم زي بطاقة «إنشاء فاتورة» في الرئيسية (v1.9) */
+    /* Operators — بتدرج هوية الثيم زي بطاقة «إنشاء فاتورة» في الرئيسية (v1.9) — v1.11: بدون ظلال سفلية */
     #calculatorView .calc-btn.calc-op,
     .calc-modal .calc-btn.calc-op,
     .calc-btn.calc-op {
         background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
         color: var(--on-primary) !important;
         border-color: transparent !important;
-        box-shadow: 0 4px 0 color-mix(in srgb, var(--primary) 55%, #000) !important;
+        box-shadow: var(--shadow-sm) !important;
         font-weight: 900;
     }
     #calculatorView .calc-btn.calc-eq,
@@ -2476,7 +2471,7 @@
     .calc-btn.calc-eq {
         background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
         color: var(--on-primary) !important;
-        box-shadow: 0 4px 0 color-mix(in srgb, var(--primary) 55%, #000) !important;
+        box-shadow: var(--shadow-sm) !important;
         font-weight: 900;
     }
     #calculatorView .calc-btn.calc-op:hover,
@@ -2495,7 +2490,32 @@
     .calc-btn.calc-op:active,
     .calc-btn.calc-eq:active {
         transform: scale(0.93);
-        box-shadow: 0 1px 0 color-mix(in srgb, var(--primary) 40%, transparent) !important;
+    }
+    /* ===== v1.11: زر محول الوحدات (المسطرة) — نفس هوية زر السجل، وبدون ظل سفلي ===== */
+    #calculatorView .calc-btn.calc-conv,
+    .calc-modal .calc-btn.calc-conv,
+    .calc-btn.calc-conv {
+        background: color-mix(in srgb, var(--primary) 82%, var(--secondary)) !important;
+        color: var(--on-primary) !important;
+        border-color: transparent !important;
+        box-shadow: var(--shadow-sm) !important;
+    }
+    #calculatorView .calc-btn.calc-conv svg,
+    .calc-modal .calc-btn.calc-conv svg,
+    .calc-btn.calc-conv svg {
+        stroke: var(--on-primary) !important;
+        color: var(--on-primary) !important;
+    }
+    #calculatorView .calc-btn.calc-conv:hover,
+    .calc-modal .calc-btn.calc-conv:hover,
+    .calc-btn.calc-conv:hover {
+        filter: brightness(1.08);
+        transform: scale(1.06);
+    }
+    #calculatorView .calc-btn.calc-conv:active,
+    .calc-modal .calc-btn.calc-conv:active,
+    .calc-btn.calc-conv:active {
+        transform: scale(0.93);
     }
     /* ===== v1.9: الأزرار الدائرية موحدة في كل الثيمات — الألوان جاية من متغيرات الثيم المُستخدم
        (نفس ألوان أيقونات الرئيسية) — اتشالت الهويات الثابتة القديمة لكل ثيم ===== */
@@ -2550,14 +2570,15 @@
         margin: 0 auto !important;
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 12px;
         justify-content: flex-start;
-        /* v1.5: ارتفاع الشاشة ناقص الشريط السفلي — آخر عنصر (توقيع المطور) يقف فوق الشريط مباشرة بمسافة ضئيلة بدل ما يتغطى */
+        /* v1.5: ارتفاع الشاشة ناقص الشريط السفلي — آخر عنصر يقف فوق الشريط مباشرة بمسافة ضئيلة بدل ما يتغطى */
         height: calc(100dvh - 76px - env(safe-area-inset-bottom));
         max-height: calc(100dvh - 76px - env(safe-area-inset-bottom));
         background-color: var(--bg);
         box-sizing: border-box;
-        overflow-y: auto;
+        /* v1.11: الرئيسية من غير سكرول — الهيدر وأيقونات الستة موزعين على ارتفاع الشاشة كله */
+        overflow: hidden;
     }
     .dash-header-card {
         background-color: transparent;
@@ -4708,6 +4729,8 @@
   --shadow-lg:0 16px 30px -6px rgba(124,58,237,.20);
   --shadow-xl:0 26px 44px -8px rgba(124,58,237,.26);
   --glass-blur: blur(18px) saturate(160%);
+  /* v1.11: أساس مصمت للبوب أب عشان الزجاجي مايبقاش شفاف */
+  --pop-solid: #eef0fb;
 }
 :root[data-skin="glass"] body {
   background: linear-gradient(135deg, #e0e7ff 0%, #fce7f3 45%, #dbeafe 100%) fixed;
@@ -4728,6 +4751,8 @@
   --grand-final-bg:#a78bfa; --grand-final-text:#231a3d;
   --shadow-sm:0 2px 10px rgba(0,0,0,.35); --shadow-md:0 8px 20px rgba(0,0,0,.45);
   --shadow-lg:0 16px 32px rgba(0,0,0,.55); --shadow-xl:0 26px 46px rgba(0,0,0,.65);
+  /* v1.11: أساس مصمت للبوب أب في الزجاجي المظلم */
+  --pop-solid: #241e4e;
 }
 :root[data-skin="glass"][data-theme="dark"] body,
 :root[data-skin="glass"][data-theme="amoled"] body {
@@ -4839,7 +4864,10 @@
 .ws-pop-card {
   position: fixed; top: 150px; right: 12px;
   width: min(318px, calc(100vw - 24px)); box-sizing: border-box;
-  background: linear-gradient(160deg, var(--card-bg), var(--card-bg-alt));
+  /* v1.11: خلفية مصمتة تحت التدرج — الثيم الزجاجي كان شفاف والكلام مش واضح.
+     --pop-solid بيتحدد لكل ثيم (الزجاجي فاتح/مظلم) والباقي متماثل مع --card-bg */
+  background-color: var(--pop-solid, var(--card-bg));
+  background-image: linear-gradient(160deg, var(--card-bg), var(--card-bg-alt));
   border: 1.5px solid color-mix(in srgb, var(--primary) 38%, var(--border));
   border-radius: var(--radius-phi-xl);
   padding: var(--sp-4) var(--sp-3) var(--sp-3);
@@ -4853,7 +4881,7 @@
 .ws-pop-card::before {
   content: ''; position: absolute; top: -7.5px; right: 30px;
   width: 14px; height: 14px; transform: rotate(45deg);
-  background: var(--card-bg);
+  background: var(--pop-solid, var(--card-bg)); /* v1.11: نفس الأساس المصمت للكارت */
   border-top: 1.5px solid color-mix(in srgb, var(--primary) 38%, var(--border));
   border-right: 1.5px solid color-mix(in srgb, var(--primary) 38%, var(--border));
   border-radius: 3px 0 0 0;
@@ -4962,9 +4990,10 @@ td { padding: 7px 5px; font-size: 11.5px; }
 :root[data-skin="modern"] .dash-grid-item.create-invoice .icon-svg { padding: 6px; }
 .lux-nav-fab { width: 52px; height: 52px; flex: 0 0 52px; margin-top: -19px; }
 .lux-nav-fab svg { width: 24px; height: 24px; }
-/* شبكة الرئيسية: ارتفاع طبيعي مضبوط بدل التمدد المفرط (كان بيدي إحساس الزوم) */
-#mainDashboardGrid { flex: 0 0 auto; grid-auto-rows: minmax(128px, auto); }
-#mainDashboardGrid .dash-grid-item { padding: 10px 8px; }
+/* شبكة الرئيسية — v1.11: صفوف مرنة بتاخد المساحة المتبقية بالظبط عشان الستة أيقونات
+   والهيدر يتوزعوا على الشاشة كلها بدون سكرول، وبمسافة موحدة بين الكارت والأيقونات */
+#mainDashboardGrid { flex: 1 1 auto; min-height: 0; grid-auto-rows: 1fr; gap: 12px; margin-top: 2px; }
+#mainDashboardGrid .dash-grid-item { padding: 10px 8px; min-height: 0; }
 
 /* ---------- ⑫ الشريط السفلي: أيقونات أنحف + أرقام tabular ---------- */
 .lux-nav-btn { min-height: 46px; gap: 2px; }
@@ -5113,9 +5142,10 @@ td { padding: 7px 5px; font-size: 11.5px; }
 #dashThemeToggleBtn .icon-svg.swap { animation: themeIconSwap .28s ease both; }
 
 /* ---------- ⑯ هيدر الرئيسية: حماية العنوان من الأيقونات العائمة + ألوان واضحة في كل الثيمات ---------- */
-/* v1.10: هيدر أضخم — شعار/رقم/وصف الشركة أكبر + الأيقونات الأربعة عمود رأسي على يمين الكارت في منتصفه
-   (padding-inline-start أكبر عشان المحتوى مايتلخبطش مع عمود الأيقونات في RTL و LTR) */
-.dash-header-card { padding-inline: 78px 30px; gap: 10px; min-height: 330px; flex: 1 0 auto; justify-content: center; padding-block: 28px; }
+/* v1.11: الشعار واسم الشركة في نص الكارت بالظبط — padding متماثل على الجانبين عشان المحتوى
+   يتوسّط في وسط الكارت نفسه مش وسط المساحة المتبقية، والارتفاع مرن (min-height 0) عشان
+   الرئيسية تفضل متمددة على الشاشة كلها من غير سكرول مع أيقونات الستة تحته */
+.dash-header-card { padding-inline: 62px; gap: 10px; min-height: 0; flex: 1 1 auto; justify-content: center; padding-block: 20px; }
 .dash-header-card .dash-title { font-size: 30px !important; line-height: 1.35; }
 .dash-header-card .dash-subtitle { font-size: 18px; line-height: 1.6; }
 .dash-header-card .dash-subtitle > div:first-child { font-weight: 700; }
@@ -5184,6 +5214,49 @@ input *, textarea *,
   user-select: text;
   -webkit-touch-callout: default;
 }
+
+/* ===== v1.11: محول الوحدات (صفحة زر المسطرة في الحاسبة) ===== */
+.units-back-btn {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  border: 1.5px solid var(--border); background: var(--card-bg-alt); color: var(--text);
+  display: flex; align-items: center; justify-content: center; cursor: pointer; transition: .15s ease; padding: 0;
+}
+.units-back-btn svg { width: 18px; height: 18px; stroke: currentColor; }
+.units-back-btn:hover { background: var(--primary); color: var(--on-primary); border-color: var(--primary); }
+.units-back-btn:active { transform: scale(0.92); }
+html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
+.units-cats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+.units-cat {
+  display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 6px;
+  border-radius: 16px; border: 1.5px solid var(--border); background: var(--card-bg-alt);
+  color: var(--text); font-family: inherit; font-weight: 800; font-size: 13px; cursor: pointer;
+  transition: .15s ease;
+}
+.units-cat svg { width: 22px; height: 22px; color: var(--primary); }
+.units-cat:active { transform: scale(0.96); }
+.units-cat.active {
+  background: linear-gradient(135deg, var(--primary), var(--secondary)); color: var(--on-primary);
+  border-color: transparent;
+  box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--primary) 55%, transparent);
+}
+.units-cat.active svg { color: var(--on-primary); }
+.units-input-row { display: grid; grid-template-columns: 1.2fr 1fr; gap: 10px; margin-bottom: 16px; }
+.units-input-row input, .units-input-row select {
+  width: 100%; box-sizing: border-box; padding: 12px 14px; border-radius: 14px;
+  border: 1.5px solid color-mix(in srgb, var(--primary) 35%, var(--border));
+  background: var(--input-bg); color: var(--input-text);
+  font-family: inherit; font-size: 15px; font-weight: 800; outline: none;
+}
+.units-input-row input { direction: ltr; text-align: center; font-size: 17px; }
+.units-input-row input:focus, .units-input-row select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 15%, transparent);
+}
+.units-results { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.units-result-card { background: var(--card-bg-alt); border: 1.5px solid var(--border); border-radius: 14px; padding: 10px 12px; text-align: center; }
+.units-result-unit { font-size: 11px; font-weight: 800; color: var(--text-muted); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.units-result-val { font-size: 16px; font-weight: 900; color: var(--primary); direction: ltr; unicode-bidi: embed; word-break: break-all; line-height: 1.3; }
+.units-empty-hint { grid-column: 1 / -1; text-align: center; color: var(--text-muted); font-size: 12.5px; font-weight: 700; padding: 18px 8px; line-height: 1.8; }
 </style>
   <meta property="og:image" content="https://bolt.new/static/og_default.png">
     <meta name="twitter:card" content="summary_large_image">
@@ -7077,7 +7150,8 @@ input *, textarea *,
           <button type="button" class="calc-btn" onclick="calcInput('2')">2</button>
           <button type="button" class="calc-btn" onclick="calcInput('3')">3</button>
           <button type="button" class="calc-btn calc-op" onclick="calcSetOp('+')">+</button>
-          <button type="button" class="calc-btn calc-btn-zero" onclick="calcInput('0')">0</button>
+          <button type="button" class="calc-btn calc-conv" onclick="openUnitsConverter()" title="محول الوحدات" aria-label="محول الوحدات"><svg class="icon-svg" style="margin:0; width:22px; height:22px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1.8" y="8.2" width="20.4" height="7.6" rx="1.8"/><line x1="6.2" y1="8.2" x2="6.2" y2="11.2"/><line x1="10.2" y1="8.2" x2="10.2" y2="12.4"/><line x1="14.2" y1="8.2" x2="14.2" y2="11.2"/><line x1="18.2" y1="8.2" x2="18.2" y2="12.4"/></svg></button>
+          <button type="button" class="calc-btn" onclick="calcInput('0')">0</button>
           <button type="button" class="calc-btn" onclick="calcInput('.')">.</button>
           <button type="button" class="calc-btn calc-eq" onclick="calcEquals()">=</button>
         </div>
@@ -7085,7 +7159,45 @@ input *, textarea *,
     </div>
   </div>
 
-  <!-- Invoice Editor -->
+  <!-- v1.11: محول الوحدات — صفحة جديدة بتتفتح من زر المسطرة في الحاسبة -->
+  <div id="unitsView" class="view-container">
+    <div class="card-panel">
+      <div class="calc-head-bar">
+        <span class="page-title-neon">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1.8" y="8.2" width="20.4" height="7.6" rx="1.8"/><line x1="6.2" y1="8.2" x2="6.2" y2="11.2"/><line x1="10.2" y1="8.2" x2="10.2" y2="12.4"/><line x1="14.2" y1="8.2" x2="14.2" y2="11.2"/><line x1="18.2" y1="8.2" x2="18.2" y2="12.4"/></svg>
+          محول الوحدات
+        </span>
+        <button type="button" class="units-back-btn no-print" onclick="closeUnitsConverter()" title="رجوع" aria-label="رجوع">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+
+      <div class="units-cats" role="tablist">
+        <button type="button" class="units-cat active" data-cat="length" onclick="setUnitsCat('length')">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20M4 9l2 3-2 3M8 9l2 3-2 3M12 9l2 3-2 3M16 9l2 3-2 3"/></svg>
+          الطول
+        </button>
+        <button type="button" class="units-cat" data-cat="area" onclick="setUnitsCat('area')">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+          المساحة
+        </button>
+        <button type="button" class="units-cat" data-cat="weight" onclick="setUnitsCat('weight')">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l4 14H2L6 7z"/><circle cx="12" cy="4" r="2.4"/></svg>
+          الوزن
+        </button>
+      </div>
+
+      <div class="units-input-row">
+        <div class="units-value-wrap">
+          <input type="text" id="unitsValue" inputmode="decimal" autocomplete="off" placeholder="اكتب القيمة" oninput="renderUnitsResults()">
+        </div>
+        <select id="unitsFrom" onchange="renderUnitsResults()" aria-label="الوحدة الأصلية"></select>
+      </div>
+
+      <div class="units-results" id="unitsResults"></div>
+    </div>
+  </div>
+
   <div id="appView" class="view-container">
     
       <div class="invoice-card" id="invoiceCardContent">
@@ -7292,7 +7404,8 @@ input *, textarea *,
           <button type="button" class="calc-btn" onclick="calcInput('2')">2</button>
           <button type="button" class="calc-btn" onclick="calcInput('3')">3</button>
           <button type="button" class="calc-btn calc-op" onclick="calcSetOp('+')">+</button>
-          <button type="button" class="calc-btn calc-btn-zero" onclick="calcInput('0')">0</button>
+          <button type="button" class="calc-btn calc-conv" onclick="openUnitsConverter()" title="محول الوحدات" aria-label="محول الوحدات"><svg class="icon-svg" style="margin:0; width:22px; height:22px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1.8" y="8.2" width="20.4" height="7.6" rx="1.8"/><line x1="6.2" y1="8.2" x2="6.2" y2="11.2"/><line x1="10.2" y1="8.2" x2="10.2" y2="12.4"/><line x1="14.2" y1="8.2" x2="14.2" y2="11.2"/><line x1="18.2" y1="8.2" x2="18.2" y2="12.4"/></svg></button>
+          <button type="button" class="calc-btn" onclick="calcInput('0')">0</button>
           <button type="button" class="calc-btn" onclick="calcInput('.')">.</button>
           <button type="button" class="calc-btn calc-eq" onclick="calcEquals()">=</button>
         </div>
@@ -16543,6 +16656,107 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
       localStorage.removeItem('invoiceDraft');
     }
 
+    /* ===== v1.11: محول الوحدات — صفحة بتتفتح من زر المسطرة في الحاسبة =====
+       3 تصنيفات (طول / مساحة / وزن) — بتكتب قيمة وتختار الوحدة والتحويل يظهر
+       لكل وحدات التصنيف مرة واحدة (تحويل وحدات متعددة). آخر اختيار بيتفتكر. */
+    var SB_UNITS_DATA = {
+      length: {
+        label: 'الطول', def: 'm',
+        units: [
+          { id: 'mm', name: 'مليمتر (مم)', f: 0.001 },
+          { id: 'cm', name: 'سنتيمتر (سم)', f: 0.01 },
+          { id: 'm', name: 'متر (م)', f: 1 },
+          { id: 'km', name: 'كيلومتر (كم)', f: 1000 },
+          { id: 'in', name: 'بوصة (إنش)', f: 0.0254 },
+          { id: 'ft', name: 'قدم', f: 0.3048 },
+          { id: 'yd', name: 'ياردة', f: 0.9144 }
+        ]
+      },
+      area: {
+        label: 'المساحة', def: 'm2',
+        units: [
+          { id: 'cm2', name: 'سنتيمتر مربع (سم²)', f: 0.0001 },
+          { id: 'm2', name: 'متر مربع (م²)', f: 1 },
+          { id: 'km2', name: 'كيلومتر مربع (كم²)', f: 1000000 },
+          { id: 'in2', name: 'بوصة مربعة', f: 0.00064516 },
+          { id: 'ft2', name: 'قدم مربع (قدم²)', f: 0.09290304 },
+          { id: 'yd2', name: 'ياردة مربعة', f: 0.83612736 }
+        ]
+      },
+      weight: {
+        label: 'الوزن', def: 'kg',
+        units: [
+          { id: 'g', name: 'جرام', f: 0.001 },
+          { id: 'kg', name: 'كيلوجرام (كجم)', f: 1 },
+          { id: 't', name: 'طن', f: 1000 },
+          { id: 'lb', name: 'رطل (باوند)', f: 0.45359237 },
+          { id: 'oz', name: 'أونصة', f: 0.028349523125 }
+        ]
+      }
+    };
+    var __sbUnitsCat = 'length';
+    function __sbUnitsFmt(x) {
+      if (!isFinite(x)) return '—';
+      const abs = Math.abs(x);
+      if (abs !== 0 && (abs < 0.0001 || abs >= 1e9)) return x.toExponential(4);
+      return x.toLocaleString('en-US', { maximumFractionDigits: abs < 1 ? 6 : 4 });
+    }
+    function setUnitsCat(cat, keepUnit) {
+      const data = SB_UNITS_DATA[cat];
+      if (!data) return;
+      __sbUnitsCat = cat;
+      try { localStorage.setItem('sb_units_cat', cat); } catch (e) {}
+      document.querySelectorAll('.units-cat').forEach(b => b.classList.toggle('active', b.getAttribute('data-cat') === cat));
+      const sel = document.getElementById('unitsFrom');
+      if (sel) {
+        const prev = keepUnit ? sel.value : null;
+        sel.innerHTML = data.units.map(u => '<option value="' + u.id + '">' + u.name + '</option>').join('');
+        let chosen = data.units.find(u => u.id === data.def) || data.units[0];
+        if (prev && data.units.some(u => u.id === prev)) chosen = data.units.find(u => u.id === prev);
+        sel.value = chosen.id;
+      }
+      renderUnitsResults();
+    }
+    function renderUnitsResults() {
+      const cont = document.getElementById('unitsResults');
+      if (!cont) return;
+      const data = SB_UNITS_DATA[__sbUnitsCat];
+      if (!data) return;
+      const sel = document.getElementById('unitsFrom');
+      const rawVal = (document.getElementById('unitsValue').value || '').replace(/,/g, '.').replace(/[^\d.\-]/g, '');
+      const val = parseFloat(rawVal);
+      const from = data.units.find(u => u.id === (sel ? sel.value : '')) || data.units[0];
+      if (!rawVal || !isFinite(val)) {
+        cont.innerHTML = '<div class="units-empty-hint">اكتب القيمة فوق واختار الوحدة —<br>والتحويل لكل وحدات «' + data.label + '» هيظهر تحت على طول</div>';
+        return;
+      }
+      cont.innerHTML = data.units.filter(u => u.id !== from.id).map(u => {
+        const out = val * from.f / u.f;
+        return '<div class="units-result-card">' +
+          '<div class="units-result-unit">' + u.name + '</div>' +
+          '<div class="units-result-val">' + __sbUnitsFmt(out) + '</div>' +
+          '</div>';
+      }).join('');
+    }
+    function openUnitsConverter() {
+      try {
+        const cm = document.getElementById('calcModal');
+        if (cm && cm.classList.contains('open') && typeof toggleCalcModal === 'function') toggleCalcModal(false);
+      } catch (e) {}
+      const act = document.querySelector('.view-container.active-view');
+      window.__unitsReturnView = (act && act.id) || 'loginView';
+      let cat = 'length';
+      try { cat = localStorage.getItem('sb_units_cat') || 'length'; } catch (e) {}
+      if (!SB_UNITS_DATA[cat]) cat = 'length';
+      switchView('unitsView');
+      setUnitsCat(cat, true);
+    }
+    function closeUnitsConverter() {
+      const back = window.__unitsReturnView || 'loginView';
+      window.__unitsReturnView = null;
+      switchView(back === 'unitsView' ? 'loginView' : back);
+    }
+
     /* ===== v1.7: آخر الفواتير المفتوحة (ضغطة مطولة على زر +) =====
        كل ما المستخدم يكتب اسم عميل في صفحة إنشاء الفاتورة، بيتسجل سناپ شوت للفاتورة
        باسم العميل — والضغطة المطولة على + تعرض القائمة وتسترجع أي فاتورة فوراً
@@ -16611,7 +16825,9 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
         if (!draft) return;
         if (typeof isViewingArchive !== 'undefined' && isViewingArchive) return;
         const name = (draft.clientName || '').trim();
-        if (name.length < 2) return; /* أسماء مقطوعة أثناء الكتابة مش فاتورة */
+        /* v1.11: الحفظ بمجرد كتابة اسم العميل — حرف واحد يكفي، والصفحة مسموح تكون فاضية تماماً
+           (قبل كده كان بيشتغل بس لما الاسم حرفين+ فكان شكله «مش بيحفظ») */
+        if (!name) return;
         if (!__sbPageUid) __sbPageUid = __sbNewPageUid();
         let list = [];
         try { list = JSON.parse(localStorage.getItem('sbInvoiceSessions') || '[]'); } catch (e) { list = []; }
@@ -16642,9 +16858,10 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
       let list = [];
       try { list = JSON.parse(localStorage.getItem('sbInvoiceSessions') || '[]'); } catch (e) { list = []; }
       if (!Array.isArray(list)) list = [];
-      /* تنظيف: مدخلات صالحة فقط + إزالة التكرار بنفس المعرّف */
+      /* تنظيف: مدخلات صالحة فقط + إزالة التكرار بنفس المعرّف
+         v1.11: اسم بحرف واحد كفاية عشان الصفحة تظهر في القائمة */
       const seen = new Map();
-      list.filter(s => s && s.name && String(s.name).trim().length >= 2)
+      list.filter(s => s && s.name && String(s.name).trim().length >= 1)
         .sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0)).forEach(s => {
           const k = __sbEntryKey(s);
           const idKey = s.id || ('name:' + k);
