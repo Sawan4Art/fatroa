@@ -27751,6 +27751,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
 
 
 
+
 <!--SBL-START-->
 <script>
 /* ===== StoneBill v1.14 — نظام الاشتراك والترخيص (طبقة معزولة — قاعدة 1: لا يمس منطق الجداول) ===== */
@@ -28100,7 +28101,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
  *   bytes[1]      = keyVer      (إصدار مفتاح التوقيع — يسمح بتدوير المفتاح مستقبلاً)
  *   bytes[2..9]   = emailHash8  (SHA-256('SBL2-EMAIL:'+email) — أول 8 بايت)
  *   bytes[10..12] = expDays     (أيام منذ EPOCH 2026-01-01 — 3 بايت)
- *   bytes[13]     = plan        (1 شهر / 2 ربع / 3 سنة / 9 كود تجربة)
+ *   bytes[13]     = plan        (1 شهر / 2 ربع / 3 سنة / 8 المالك مدى الحياة / 9 كود تجربة)
  *   bytes[14..17] = nonce4      (عشوائي لكل كود)
  *   bytes[18..81] = sig64       (Ed25519.sign(payload18, secretKey))
  * ---------------------------------------------------------------------------
@@ -28131,8 +28132,13 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
     1: { id: 1, label: 'باقة شهرية', days: 30 },
     2: { id: 2, label: 'باقة ربع سنوية', days: 90 },
     3: { id: 3, label: 'باقة سنوية', days: 365 },
+    /* 8 = باقة المالك: مدى الحياة (100 سنة تقنية = تاريخ نظيف 2125) + أجهزة غير محدودة
+       — تُوقَّع Ed25519 مثل أي كود، وطبقة التطبيق تعاملها بلا قفل أجهزة (بطلب المالك 2026-10-02) */
+    8: { id: 8, label: 'باقة المالك (مدى الحياة)', days: 36500, owner: true },
     9: { id: 9, label: 'كود تجربة', days: 3 }
   };
+  var OWNER_PLAN = 8;
+  function isOwnerPlan(p) { return p === OWNER_PLAN; }
   var CODE_BYTES = 82;   /* 18 حمولة + 64 توقيع */
   var CODE_B32_LEN = 132;
 
@@ -28372,6 +28378,8 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
   return {
     VER: VER,
     PLANS: PLANS,
+    OWNER_PLAN: OWNER_PLAN,
+    isOwnerPlan: isOwnerPlan,
     EPOCH: EPOCH,
     PUBKEYS: PUBKEYS,
     normalizeCode: normalizeCode,
@@ -28431,6 +28439,12 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
     ]
   };
   var LS = { lic: 'sb_license', trial: 'sb_trial', clock: 'sb_clock_last', transfer: 'sb_license_transfer' };
+
+  /* باقة المالك (8): مدى الحياة + أجهزة غير محدودة — تتجاوز قفل البريد→الجهاز نهائياً
+     (بطلب المالك 2026-10-02: «كود تفعيل مدى الحياة خاص بي افتح به أجهزة غير محدودة»)
+     الإيقاف السحابي (revoked) ما زال يعمل على باقة المالك لو تسرّب الكود */
+  var OWNER_PLAN = 8;
+  function isOwnerPlan(p) { return p === OWNER_PLAN; }
 
   /* ============================ أدوات عامة ============================ */
   function jget(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } }
@@ -28530,10 +28544,10 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       var expMs = Date.parse(lic.exp + 'T23:59:59Z');
       var daysLeft = Math.ceil((expMs - t) / 86400000);
       if (!lic.pendingCloud && daysLeft >= 0) {
-        return { mode: 'licensed', daysLeft: daysLeft, expiry: lic.exp, email: lic.email, plan: lic.plan };
+        return { mode: 'licensed', daysLeft: daysLeft, expiry: lic.exp, email: lic.email, plan: lic.plan, owner: isOwnerPlan(lic.plan) };
       }
       if (lic.pendingCloud && daysLeft >= 0) {
-        return { mode: 'licensed', daysLeft: daysLeft, expiry: lic.exp, email: lic.email, plan: lic.plan, pending: true };
+        return { mode: 'licensed', daysLeft: daysLeft, expiry: lic.exp, email: lic.email, plan: lic.plan, pending: true, owner: isOwnerPlan(lic.plan) };
       }
       return { mode: 'expired', reason: 'انتهى اشتراكك في ' + lic.exp, email: lic.email, expiry: lic.exp };
     }
@@ -28550,7 +28564,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
     return { mode: 'fresh' }; /* لم تبدأ تجربة بعد — بوابة الترحيب تطلب البريد */
   }
   function isLicensed() { return state().mode === 'licensed'; }
-  function planLabel(id) { var p = null; for (var i = 0; i < CFG.plans.length; i++) if (CFG.plans[i].id === id) p = CFG.plans[i]; return p ? p.label : 'باقة'; }
+  function planLabel(id) { if (isOwnerPlan(id)) return 'باقة المالك — مدى الحياة'; var p = null; for (var i = 0; i < CFG.plans.length; i++) if (CFG.plans[i].id === id) p = CFG.plans[i]; return p ? p.label : 'باقة'; }
 
   /* سباق زمني — لا يجوز أن يحجب السحابة التفعيل أكثر من مهلة قصوى (أوفلاين-أولاً) */
   function withTimeout(p, ms, fallbackVal) {
@@ -28662,6 +28676,8 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
   /* ================== قفل البريد→الجهاز (بريد واحد = جهاز واحد) ================== */
   function emailRef(db, email) { return db.collection('sb_emails').doc(emailDocIdSafe(email)); }
   function emailClaim(lic) {
+    /* المالك: أجهزة غير محدودة — لا يُسجل قفل بريد إطلاقاً */
+    if (isOwnerPlan(lic.plan)) return Promise.resolve({ ok: true });
     var attempt = getDb().then(function (db) {
       var ref = emailRef(db, lic.email);
       return ref.get().then(function (snap) {
@@ -28683,7 +28699,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
     return withTimeout(attempt, CLOUD_TIMEOUT, { ok: false, reason: 'network' });
   }
   function emailBoundCheck(lic) { /* فحص صامت عند الإقلاع — لا يحجب أوفلاين */
-    if (!C2 || !lic || !lic.email) return;
+    if (!C2 || !lic || !lic.email || isOwnerPlan(lic.plan)) return;
     emailClaim(lic).then(function (r) {
       if (r && r.reason === 'bound') {
         lic.emailBound = true; saveLicense(lic);
@@ -28696,6 +28712,8 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
   function judge(snap, lic) {
     var d = snap.data() || {};
     if (d.revoked === true) return Promise.resolve({ ok: false, reason: 'revoked' });
+    /* المالك (8): بلا قفل أجهزة — أي عدد من الأجهزة يتفعل بنفس الكود (الإيقاف ما زال يعمل) */
+    if (isOwnerPlan(lic.plan) || d.plan === 8) return Promise.resolve({ ok: true });
     if (d.exp && d.exp !== lic.exp) return Promise.resolve({ ok: false, reason: 'mismatch' });
     var my = deviceCode();
     if (!d.device || d.device === my) {
@@ -28719,7 +28737,10 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
           return ref.set({
             email: lic.email, exp: lic.exp, plan: lic.plan,
             device: '', revoked: false, issuedAt: new Date().toISOString(), claimedAt: ''
-          }).then(function () { return ref.update({ device: deviceCode(), claimedAt: new Date().toISOString() }); })
+          }).then(function () {
+            if (isOwnerPlan(lic.plan)) return { ok: true }; /* المالك: لا يُقيَّد بجهاز */
+            return ref.update({ device: deviceCode(), claimedAt: new Date().toISOString() });
+          })
             .then(function () { return { ok: true }; })
             .catch(function () {
               return ref.get().then(function (s2) { return judge(s2, lic); }).catch(function () { return { ok: false, reason: 'network' }; });
@@ -28965,9 +28986,15 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
     } else if (s.mode === 'licensed') {
       welcome.style.display = 'none'; actBox.style.display = 'block';
       st.className = 'sbl-status sbl-st-ok';
-      st.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' +
-        'اشتراك ساري حتى <b>' + s.expiry + '</b> — متبقي ' + s.daysLeft + ' يوم (' + planLabel(s.plan) + ')' +
-        (s.pending ? ' • ينتظر التحقق السحابي' : '');
+      if (s.owner) {
+        st.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg>' +
+          'تفعيل <b>مدى الحياة</b> — باقة المالك ✓ (أجهزة غير محدودة)' +
+          (s.pending ? ' • ينتظر التحقق السحابي' : '');
+      } else {
+        st.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>' +
+          'اشتراك ساري حتى <b>' + s.expiry + '</b> — متبقي ' + s.daysLeft + ' يوم (' + planLabel(s.plan) + ')' +
+          (s.pending ? ' • ينتظر التحقق السحابي' : '');
+      }
     } else if (s.mode === 'trial') {
       welcome.style.display = 'none'; actBox.style.display = 'block';
       st.className = 'sbl-status sbl-st-warn';
@@ -29038,10 +29065,17 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       return '<span style="display:inline-block;padding:4px 13px;border-radius:20px;font-size:11.5px;font-weight:800;margin-bottom:8px;" class="' + cls + '">' + txt + '</span>';
     };
     if (s.mode === 'licensed') {
-      el.innerHTML = chip('sbl-st-ok', s.pending ? 'ساري — ينتظر التحقق السحابي' : 'اشتراك ساري ✓') +
-        '<div style="font-size:13.5px;color:var(--text);font-weight:800;">' + planLabel(s.plan) + ' — ينتهي في <b>' + s.expiry + '</b> (متبقي ' + s.daysLeft + ' يوم)</div>' +
-        '<div style="font-size:12px;color:var(--text-muted);margin-top:4px;">البريد المسجّل: <b dir="ltr">' + (s.email || '—') + '</b></div>' +
-        (s.daysLeft <= 7 ? '<div style="font-size:12px;color:var(--warning);font-weight:800;margin-top:8px;">اشتراكك قريب من الانتهاء — جدّد الآن لتجنب توقف العمل</div>' : '');
+      if (s.owner) {
+        el.innerHTML = chip('sbl-st-ok', '👑 مالك التطبيق — تفعيل كامل') +
+          '<div style="font-size:13.5px;color:var(--text);font-weight:800;">باقة المالك — <b>مدى الحياة</b> (بلا انتهاء، أجهزة غير محدودة)</div>' +
+          '<div style="font-size:12px;color:var(--text-muted);margin-top:4px;">البريد المسجّل: <b dir="ltr">' + (s.email || '—') + '</b></div>' +
+          (s.pending ? '<div style="font-size:12px;color:var(--warning);font-weight:800;margin-top:8px;">ينتظر التحقق السحابي عند توفر الإنترنت</div>' : '');
+      } else {
+        el.innerHTML = chip('sbl-st-ok', s.pending ? 'ساري — ينتظر التحقق السحابي' : 'اشتراك ساري ✓') +
+          '<div style="font-size:13.5px;color:var(--text);font-weight:800;">' + planLabel(s.plan) + ' — ينتهي في <b>' + s.expiry + '</b> (متبقي ' + s.daysLeft + ' يوم)</div>' +
+          '<div style="font-size:12px;color:var(--text-muted);margin-top:4px;">البريد المسجّل: <b dir="ltr">' + (s.email || '—') + '</b></div>' +
+          (s.daysLeft <= 7 ? '<div style="font-size:12px;color:var(--warning);font-weight:800;margin-top:8px;">اشتراكك قريب من الانتهاء — جدّد الآن لتجنب توقف العمل</div>' : '');
+      }
     } else if (s.mode === 'trial') {
       el.innerHTML = chip('sbl-st-warn', 'تجربة مجانية') +
         '<div style="font-size:13.5px;color:var(--text);font-weight:800;">متبقي ' + s.daysLeft + ' يوم من التجربة</div>' +
