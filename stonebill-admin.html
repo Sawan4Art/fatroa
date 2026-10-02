@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StoneBill — لوحة إدارة الاشتراكات</title>
+<style>
+  :root{--p:#b8860b;--p2:#a87f0a;--bg:#f6f2ea;--card:#fffdf7;--alt:#faf6ec;--txt:#292524;--mut:#78716c;--brd:#e7e0d2;--ok:#0e9f6e;--bad:#dc2626;--warn:#d97706;--wa:#1eb95d;--r:14px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
+  header{background:linear-gradient(135deg,var(--p2),var(--p));color:#fff;padding:18px 22px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  header h1{font-size:19px;font-weight:900;flex:1}
+  header .u{font-size:12px;opacity:.9}
+  .wrap{max-width:980px;margin:0 auto;padding:18px 14px 60px}
+  .card{background:var(--card);border:1.5px solid var(--brd);border-radius:var(--r);padding:18px;margin-bottom:16px;box-shadow:0 2px 6px rgba(87,64,12,.06)}
+  .card h2{font-size:15.5px;margin-bottom:12px;color:var(--p2);display:flex;align-items:center;gap:8px}
+  label{display:block;font-size:12.5px;font-weight:800;margin:10px 0 5px}
+  input,select,textarea{width:100%;border:1.5px solid var(--brd);border-radius:10px;padding:10px 12px;font-size:14px;font-family:inherit;background:var(--card);color:var(--txt)}
+  input:focus,select:focus{outline:none;border-color:var(--p)}
+  .btn{border:none;border-radius:10px;padding:10px 18px;font-size:13.5px;font-weight:800;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px}
+  .btn-p{background:var(--p);color:#fff}.btn-wa{background:var(--wa);color:#fff}.btn-g{background:var(--card);color:var(--txt);border:1px solid var(--brd)}.btn-d{background:#fde8e8;color:var(--bad)}
+  .btn:disabled{opacity:.5;cursor:wait}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+  .tab{padding:9px 18px;border-radius:22px;border:1.5px solid var(--brd);background:var(--card);font-size:13px;font-weight:800;cursor:pointer;color:var(--mut)}
+  .tab.on{background:var(--p);border-color:var(--p);color:#fff}
+  .code-box{background:#1c1917;color:#fbbf24;border-radius:12px;padding:14px;text-align:center;font-size:17px;font-weight:900;letter-spacing:1.5px;direction:ltr;word-break:break-all;margin:12px 0;font-family:monospace}
+  .msg{border-radius:10px;padding:10px 14px;font-size:13px;font-weight:700;margin:10px 0;display:none}
+  .msg.ok{display:block;background:rgba(14,159,110,.12);color:var(--ok)}
+  .msg.err{display:block;background:rgba(220,38,38,.1);color:var(--bad)}
+  .msg.info{display:block;background:rgba(217,119,6,.1);color:var(--warn)}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{padding:9px 8px;text-align:right;border-bottom:1px solid var(--brd);vertical-align:middle}
+  th{background:var(--alt);font-size:11.5px;color:var(--mut)}
+  .chip{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10.5px;font-weight:800}
+  .c-ok{background:rgba(14,159,110,.12);color:var(--ok)}.c-bad{background:rgba(220,38,38,.1);color:var(--bad)}.c-warn{background:rgba(217,119,6,.12);color:var(--warn)}.c-mut{background:var(--alt);color:var(--mut)}
+  .dev{direction:ltr;display:inline-block;font-size:11px;color:var(--mut)}
+  pre{background:#1c1917;color:#e7e5e4;padding:14px;border-radius:12px;font-size:11.5px;overflow-x:auto;direction:ltr;text-align:left;line-height:1.6}
+  .stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+  .stat{flex:1;min-width:120px;background:var(--alt);border:1.5px solid var(--brd);border-radius:12px;padding:12px;text-align:center}
+  .stat b{display:block;font-size:21px;color:var(--p2)}
+  .stat span{font-size:11px;color:var(--mut)}
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+  <h1>StoneBill — لوحة إدارة الاشتراكات</h1>
+  <span class="u" id="userChip"></span>
+  <button class="btn btn-g" id="btnLogout" style="padding:6px 12px;font-size:11.5px;">خروج</button>
+</header>
+
+<div class="wrap">
+  <!-- تسجيل الدخول -->
+  <div class="card" id="loginCard">
+    <h2>دخول المالك</h2>
+    <p style="font-size:12.5px;color:var(--mut);line-height:1.9;margin-bottom:6px;">
+      سجّل دخولك بحساب المالك (الإيميل وكلمة السر اللذين أنشفتهما في Firebase Console → Authentication → Users).
+      هذا الحساب هو الوحيد المخوّل بإدارة الاشتراكات.
+    </p>
+    <label>البريد الإلكتروني</label>
+    <input type="email" id="loginEmail" placeholder="owner@example.com">
+    <label>كلمة السر</label>
+    <input type="password" id="loginPass">
+    <div class="row" style="margin-top:14px;">
+      <button class="btn btn-p" id="btnLogin">دخول</button>
+    </div>
+    <div class="msg" id="loginMsg"></div>
+  </div>
+
+  <!-- اللوحة -->
+  <div id="app" class="hidden">
+    <div class="tabs">
+      <button class="tab on" data-tab="gen">توليد كود تفعيل</button>
+      <button class="tab" data-tab="subs">المشتركون <span id="subsCount"></span></button>
+      <button class="tab" data-tab="rules">إعداد Firebase (مرة واحدة)</button>
+    </div>
+
+    <!-- توليد -->
+    <section id="tab-gen">
+      <div class="card">
+        <h2>توليد كود تفعيل جديد</h2>
+        <label>بريد المشترك الإلكتروني (الكود سيعمل على هذا البريد فقط)</label>
+        <input type="email" id="genEmail" placeholder="customer@example.com">
+        <div class="row" style="align-items:flex-end;">
+          <div style="flex:1;min-width:160px;">
+            <label>الباقة</label>
+            <select id="genPlan">
+              <option value="1">شهر واحد — 30 يوم</option>
+              <option value="2">3 شهور — 90 يوم</option>
+              <option value="3">سنة كاملة — 365 يوم</option>
+              <option value="c">مدة مخصصة…</option>
+            </select>
+          </div>
+          <div style="flex:1;min-width:120px;" class="hidden" id="customWrap">
+            <label>عدد الأيام</label>
+            <input type="number" id="genDays" value="30" min="1" max="1500">
+          </div>
+          <button class="btn btn-p" id="btnGen" style="height:42px;">توليد الكود</button>
+        </div>
+        <div class="msg" id="genMsg"></div>
+        <div id="genResult" class="hidden">
+          <div style="font-size:12px;color:var(--mut);margin-top:8px;">كود التفعيل — أرسله للمشترك على واتساب مع بريده:</div>
+          <div class="code-box" id="genCode"></div>
+          <div class="row">
+            <button class="btn btn-g" id="btnCopyCode">نسخ الكود</button>
+            <button class="btn btn-wa" id="btnWaCode">إرسال واتساب للمشترك</button>
+            <span style="font-size:11.5px;color:var(--mut);" id="genMeta"></span>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="font-size:12.5px;color:var(--mut);line-height:2;">
+        <b style="color:var(--txt);">دورة البيع الكاملة (دقيقتان):</b><br>
+        1) المشترك يحوّل على فودافون كاش <b dir="ltr">01090042368</b> ويبعت الإيصال واتساب.<br>
+        2) تؤكد وصول التحويل → تولّد كوداً ببريده من هنا.<br>
+        3) تبعتله الكود واتساب → هو يفعّل من داخل التطبيق (الاشتراك والترخيص) بكود + بريده.<br>
+        4) الكود يعمل على جهاز واحد فقط — لو غير موبايله يسجّل دخول جوجل بنفس بريدك المسجّل له أو تحرر جهازه من لسان «المشتركون».
+      </div>
+    </section>
+
+    <!-- المشتركون -->
+    <section id="tab-subs" class="hidden">
+      <div class="stats" id="statCards"></div>
+      <div class="card">
+        <h2 style="justify-content:space-between;">المشتركون
+          <button class="btn btn-g" id="btnRefresh" style="padding:6px 14px;font-size:11.5px;">تحديث</button>
+        </h2>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead><tr><th>البريد</th><th>الباقة</th><th>ينتهي</th><th>الحالة</th><th>الجهاز</th><th>إجراءات</th></tr></thead>
+            <tbody id="subsBody"><tr><td colspan="6" style="color:var(--mut);">اضغط «تحديث» لجلب القائمة</td></tr></tbody>
+          </table>
+        </div>
+        <div class="msg" id="subsMsg"></div>
+      </div>
+    </section>
+
+    <!-- الإعداد -->
+    <section id="tab-rules" class="hidden">
+      <div class="card" style="font-size:13px;line-height:2;">
+        <h2>إعداد Firebase — مرة واحدة فقط</h2>
+        1) افتح <b>console.firebase.google.com</b> → مشروعك.<br>
+        2) <b>Firestore Database</b> → لو مش مفعّل: «Create database» → Production → أي منطقة قريبة (europe).<br>
+        3) تبويب <b>Rules</b> → امسح الموجود والصق النص اللي تحت → <b>Publish</b>.<br>
+        4) <b>Authentication</b> → Get started → <b>Email/Password</b> → Enable.<br>
+        5) Authentication → <b>Users</b> → <b>Add user</b> → اكتب بريد المالك وكلمة سر قوية (هذا حساب دخولك هنا).<br>
+        6) ارجع هنا وسجّل دخول.
+      </div>
+      <div class="card">
+        <h2>قواعد الأمان — انسخها كاملة في Firestore → Rules</h2>
+        <pre id="rulesText">جارٍ التحميل…</pre>
+        <button class="btn btn-p" id="btnCopyRules">نسخ القواعد</button>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script>
+/* ============================================================================
+ * StoneBill — نواة الترخيص المشفّر (SB License Core) v1
+ * ---------------------------------------------------------------------------
+ * ملف المصدر الوحيد للخوارزمية — يُدمج حرفياً في:
+ *   1) fatroa/index.html        (التحقق داخل التطبيق)
+ *   2) stonebill-admin.html     (التوليد والإدارة لأداة المالك)
+ *   3) اختبارات Node            (هذا الملف مباشرة)
+ * ---------------------------------------------------------------------------
+ * خطة التشفير (مضادة للاحتيال):
+ *  - HMAC-SHA256 (WebCrypto) — نفس معيار البنوك والتوقيعات الرقمية (FIPS 198-1)
+ *  - الكود = 25 بايت: [ver|emailHash×8|expiry×3|plan×1|nonce×4|sig×8]
+ *  - emailHash: بصمة الإيميل داخل الكود — الكود لا يعمل إلا على إيميله
+ *  - sig: توقيع يمنع أي تلاعب بحرف واحد في أي جزء من الكود
+ *  - nonce: 32-bit عشوائية لكل كود — لا يمكن التوقع أو إعادة التركيب
+ *  - codeId = SHA-256 للكود → معرف المستند في Firestore (لا يخزَّن الكود نفسه أبداً سحابياً)
+ *  - قفل الجهاز سحابياً (Firestore) — كود واحد = جهاز واحد في نفس الوقت
+ *  - Base32 بأبجدية Crockford (بدون I,L,O,U) — تنسيق مقاوم لخطأ القراءة البشري
+ * ========================================================================= */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.SBLicenseCore = factory();
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  /* ---- المفتاح السري 256-bit (مُخفى بـ XOR + تجزئة نصية — لا يظهر نصاً صريحاً في الملف) ---- */
+  var SBL_K_M = [64, 20, 84, 16, 61, 252, 170, 123, 251, 155, 53, 109, 152, 248, 83, 84, 97, 133, 112, 46, 78, 210, 152, 121, 246, 139, 190, 90, 48, 67, 187, 21];
+  var SBL_K_T = 167; /* ماسك XOR */
+  function secretKey() {
+    var out = new Uint8Array(SBL_K_M.length);
+    for (var i = 0; i < SBL_K_M.length; i++) out[i] = SBL_K_M[i] ^ SBL_K_T;
+    return out;
+  }
+
+  var VER = 1;
+  var EPOCH = Date.UTC(2026, 0, 1);           /* تاريخ الأصل — صلاحية حتى 2071 */
+  var DAY = 86400000;
+  var CROCKFORD = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+  var PLANS = {
+    1: { id: 1, label: 'باقة شهرية', days: 30 },
+    2: { id: 2, label: 'باقة ربع سنوية', days: 90 },
+    3: { id: 3, label: 'باقة سنوية', days: 365 }
+  };
+
+  /* ============================ SHA-256 نقي (احتياطي لو WebCrypto غير متاح) ============================ */
+  function sha256Pure(bytes) {
+    var K = [
+      0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+      0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+      0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+      0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+      0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+      0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+      0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+      0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2];
+    function rotr(x, n) { return (x >>> n) | (x << (32 - n)); }
+    var H = [0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19];
+    var len = bytes.length;
+    var bitLen = len * 8;
+    var withOne = len + 1;
+    var pad = (56 - (withOne % 64) + 64) % 64;
+    var total = withOne + pad + 8;
+    var m = new Uint8Array(total);
+    m.set(bytes);
+    m[len] = 0x80;
+    var hv = total - 8;
+    /* 64-bit big-endian length — 8 بايتات بالترتيب الصحيح */
+    m[hv] = Math.floor(bitLen / 36028797018963968) & 0xff;   /* bits 56-63 */
+    m[hv + 1] = Math.floor(bitLen / 281474976710656) & 0xff; /* bits 48-55 */
+    m[hv + 2] = Math.floor(bitLen / 1099511627776) & 0xff;   /* bits 40-47 */
+    m[hv + 3] = Math.floor(bitLen / 4294967296) & 0xff;      /* bits 32-39 */
+    m[hv + 4] = (bitLen >>> 24) & 0xff;
+    m[hv + 5] = (bitLen >>> 16) & 0xff;
+    m[hv + 6] = (bitLen >>> 8) & 0xff;
+    m[hv + 7] = bitLen & 0xff;
+    var w = new Int32Array(64);
+    for (var i = 0; i < total; i += 64) {
+      for (var t = 0; t < 16; t++) {
+        var j = i + t * 4;
+        w[t] = (m[j] << 24) | (m[j + 1] << 16) | (m[j + 2] << 8) | m[j + 3];
+      }
+      for (t = 16; t < 64; t++) {
+        var s0 = rotr(w[t - 15], 7) ^ rotr(w[t - 15], 18) ^ (w[t - 15] >>> 3);
+        var s1 = rotr(w[t - 2], 17) ^ rotr(w[t - 2], 19) ^ (w[t - 2] >>> 10);
+        w[t] = (w[t - 16] + s0 + w[t - 7] + s1) | 0;
+      }
+      var a = H[0], b = H[1], c = H[2], d = H[3], e = H[4], f = H[5], g = H[6], h = H[7];
+      for (t = 0; t < 64; t++) {
+        var S1 = rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25);
+        var ch = (e & f) ^ (~e & g);
+        var temp1 = (h + S1 + ch + K[t] + w[t]) | 0;
+        var S0 = rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22);
+        var maj = (a & b) ^ (a & c) ^ (b & c);
+        var temp2 = (S0 + maj) | 0;
+        h = g; g = f; f = e; e = (d + temp1) | 0; d = c; c = b; b = a; a = (temp1 + temp2) | 0;
+      }
+      H[0] = (H[0] + a) | 0; H[1] = (H[1] + b) | 0; H[2] = (H[2] + c) | 0; H[3] = (H[3] + d) | 0;
+      H[4] = (H[4] + e) | 0; H[5] = (H[5] + f) | 0; H[6] = (H[6] + g) | 0; H[7] = (H[7] + h) | 0;
+    }
+    var out = new Uint8Array(32);
+    for (i = 0; i < 8; i++) {
+      out[i * 4] = (H[i] >>> 24) & 0xff; out[i * 4 + 1] = (H[i] >>> 16) & 0xff;
+      out[i * 4 + 2] = (H[i] >>> 8) & 0xff; out[i * 4 + 3] = H[i] & 0xff;
+    }
+    return out;
+  }
+
+  /* ============================ WebCrypto أو الاحتياطي ============================ */
+  var subtle = (typeof crypto !== 'undefined' && crypto.subtle) ? crypto.subtle : null;
+  function hmacSyncFallback(data, keyBytes) {
+    /* HMAC-SHA256 يدوياً (RFC 2104) — مسار احتياطي فقط */
+    var block = 64;
+    var k = keyBytes.length > block ? sha256Pure(keyBytes) : keyBytes;
+    var ipad = new Uint8Array(block + data.length);
+    var opad = new Uint8Array(block + 32);
+    var i;
+    for (i = 0; i < block; i++) {
+      var kb = i < k.length ? k[i] : 0;
+      ipad[i] = kb ^ 0x36;
+      opad[i] = kb ^ 0x5c;
+    }
+    ipad.set(data, block);
+    var inner = sha256Pure(ipad);
+    opad.set(inner, block);
+    return sha256Pure(opad);
+  }
+  function sha256Hex(bytes) {
+    var h = sha256Pure(bytes), s = '';
+    for (var i = 0; i < h.length; i++) s += (h[i] < 16 ? '0' : '') + h[i].toString(16);
+    return s;
+  }
+  function utf8(str) {
+    if (typeof TextEncoder !== 'undefined') return new TextEncoder().encode(str);
+    var out = [], c;
+    for (var i = 0; i < str.length; i++) {
+      c = str.codePointAt(i);
+      if (c > 0xffff) i++;
+      if (c < 0x80) out.push(c);
+      else if (c < 0x800) out.push(0xc0 | (c >> 6), 0x80 | (c & 63));
+      else if (c < 0x10000) out.push(0xe0 | (c >> 12), 0x80 | ((c >> 6) & 63), 0x80 | (c & 63));
+      else out.push(0xf0 | (c >> 18), 0x80 | ((c >> 12) & 63), 0x80 | ((c >> 6) & 63), 0x80 | (c & 63));
+    }
+    return new Uint8Array(out);
+  }
+
+  /* HMAC-SHA256 غير متزامن — WebCrypto عند التوفر وإلا الاحتياطي النقي
+     البيانات الموقعة = domain || bytes (فصل نطاقات يمنع إعادة استخدام التوقيع بين السياقات) */
+  function hmacSha256(domain, bytes) {
+    var keyBytes = secretKey();
+    var data = concat(utf8(domain), bytes);
+    if (subtle) {
+      return subtle.importKey('raw', keyBytes, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']).then(function (key) {
+        return subtle.sign('HMAC', key, data).then(function (sig) {
+          return new Uint8Array(sig).slice(0, 8);
+        });
+      }).catch(function () {
+        return hmacSyncFallback(data, keyBytes).slice(0, 8);
+      });
+    }
+    return Promise.resolve(hmacSyncFallback(data, keyBytes).slice(0, 8));
+  }
+  function concat(a, b) {
+    var out = new Uint8Array(a.length + b.length);
+    out.set(a); out.set(b, a.length);
+    return out;
+  }
+  /* ملحوظة: domain يُسبق البيانات كنطاق فصل (domain separation) — يمنع إعادة استخدام التوقيع بين السياقات */
+
+  /* ============================ Base32 (Crockford) ============================ */
+  function b32encode(bytes) {
+    var bits = 0, value = 0, out = '';
+    for (var i = 0; i < bytes.length; i++) {
+      value = (value << 8) | bytes[i];
+      bits += 8;
+      while (bits >= 5) { out += CROCKFORD[(value >>> (bits - 5)) & 31]; bits -= 5; }
+    }
+    if (bits > 0) out += CROCKFORD[(value << (5 - bits)) & 31];
+    return out;
+  }
+  function b32decode(str) {
+    str = normalizeCode(str);
+    var bits = 0, value = 0, out = [];
+    for (var i = 0; i < str.length; i++) {
+      var idx = CROCKFORD.indexOf(str[i]);
+      if (idx < 0) return null;
+      value = (value << 5) | idx;
+      bits += 5;
+      if (bits >= 8) { out.push((value >>> (bits - 8)) & 0xff); bits -= 8; }
+    }
+    return new Uint8Array(out);
+  }
+  /* تطبيع الكود: إزالة أي شيء ليس رقماً/حرفاً + تصحيح أخطاء القراءة الشائعة */
+  function normalizeCode(s) {
+    return String(s || '').toUpperCase()
+      .replace(/[İIILl|]/g, '1')
+      .replace(/[Oo°]/g, '0')
+      .replace(/[Uu]/g, 'V')
+      .replace(/[^0-9A-HJ-NP-TV-Z]/g, '');
+  }
+  function normalizeEmail(s) {
+    return String(s || '').trim().toLowerCase().replace(/\s+/g, '');
+  }
+
+  /* ============================ بناء الكود ============================ */
+  function dateToExpDays(d) {
+    var t = (typeof d === 'number') ? d : Date.parse(d + 'T00:00:00Z');
+    return Math.floor((t - EPOCH) / DAY);
+  }
+  function expDaysToDate(days) {
+    return new Date(EPOCH + days * DAY).toISOString().slice(0, 10);
+  }
+  function randomBytes4() {
+    if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+      var a = new Uint8Array(4); crypto.getRandomValues(a); return a;
+    }
+    return new Uint8Array([Math.random() * 256, Math.random() * 256, Math.random() * 256, Math.random() * 256].map(Math.floor));
+  }
+  function payloadBytes(email, expDays, plan, nonce) {
+    var emailNorm = normalizeEmail(email);
+    var p = new Uint8Array(17);
+    p[0] = VER;
+    /* emailHash يُحسب في Promise خارجياً — هنا نملأ مبدئياً */
+    if (nonce) p.set(nonce, 13);
+    p[9] = (expDays >> 16) & 0xff; p[10] = (expDays >> 8) & 0xff; p[11] = expDays & 0xff;
+    p[12] = plan & 0xff;
+    return { p: p, emailNorm: emailNorm };
+  }
+  function formatCode(b32) {
+    return b32.replace(/(.{8})(?=.)/g, '$1-');
+  }
+
+  /* توليد كود: يعيد {code, codeId, exp, plan, email} */
+  function generateCode(email, expiry, plan) {
+    var days = (typeof expiry === 'number') ? expiry : dateToExpDays(expiry);
+    if (days < 0 || days > 16777215) return Promise.reject(new Error('expiry out of range'));
+    plan = plan || 1;
+    var nonce = randomBytes4();
+    var base = payloadBytes(email, days, plan, nonce);
+    var emailBytes = utf8(base.emailNorm);
+    return hmacSha256('SBL-EMAIL', emailBytes).then(function (eh) {
+      base.p.set(eh.slice(0, 8), 1);
+      return hmacSha256('SBL-SIG', base.p);
+    }).then(function (sig) {
+      var full = new Uint8Array(25);
+      full.set(base.p); full.set(sig, 17);
+      var b32 = b32encode(full);
+      return {
+        code: formatCode(b32),
+        codeId: codeIdOf(b32),
+        email: base.emailNorm,
+        exp: expDaysToDate(days),
+        expDays: days,
+        plan: plan
+      };
+    });
+  }
+
+  /* معرف المستند السحابي: SHA-256 للكود المطبّع — لا يُخزَّن الكود نفسه */
+  function codeIdOf(normalizedOrRaw) {
+    var n = normalizeCode(normalizedOrRaw);
+    var label = utf8('SBL-ID:');
+    var body = utf8(n);
+    return 'sblic' + sha256Hex(concat(label, body)).slice(0, 40);
+  }
+
+  /* ============================ التحقق المحلي (أوفلاين 100%) ============================ */
+  /* يُعيد: {ok:true, codeId, exp, plan} أو {ok:false, reason} */
+  function verifyCodeLocally(code, email) {
+    var n = normalizeCode(code);
+    if (n.length !== 40) return Promise.resolve({ ok: false, reason: 'format' });
+    var bytes = b32decode(n);
+    if (!bytes || bytes.length < 25) return Promise.resolve({ ok: false, reason: 'format' });
+    var payload = bytes.slice(0, 17);
+    var sig = bytes.slice(17, 25);
+    if (payload[0] !== VER) return Promise.resolve({ ok: false, reason: 'version' });
+    return hmacSha256('SBL-SIG', payload).then(function (expect) {
+      if (!timingSafeEqual(sig, expect)) return { ok: false, reason: 'signature' };
+      var expDays = (payload[9] << 16) | (payload[10] << 8) | payload[11];
+      var plan = payload[12];
+      var emailNorm = normalizeEmail(email);
+      return hmacSha256('SBL-EMAIL', utf8(emailNorm)).then(function (eh) {
+        var stored = payload.slice(1, 9);
+        if (!timingSafeEqual(stored, eh.slice(0, 8))) return { ok: false, reason: 'email' };
+        var today = dateToExpDays(new Date().toISOString().slice(0, 10));
+        if (today > expDays) return { ok: false, reason: 'expired', exp: expDaysToDate(expDays), plan: plan };
+        return {
+          ok: true,
+          codeId: codeIdOf(n),
+          exp: expDaysToDate(expDays),
+          expDays: expDays,
+          plan: plan
+        };
+      });
+    });
+  }
+  /* مقارنة زمن-ثابت — ضد هجمات التوقيت */
+  function timingSafeEqual(a, b) {
+    if (!a || !b || a.length !== b.length) return false;
+    var diff = 0;
+    for (var i = 0; i < a.length; i++) diff |= a[i] ^ b[i];
+    return diff === 0;
+  }
+
+  return {
+    VER: VER,
+    PLANS: PLANS,
+    EPOCH: EPOCH,
+    normalizeCode: normalizeCode,
+    normalizeEmail: normalizeEmail,
+    generateCode: generateCode,
+    verifyCodeLocally: verifyCodeLocally,
+    codeIdOf: codeIdOf,
+    expDaysToDate: expDaysToDate,
+    dateToExpDays: dateToExpDays,
+    formatCode: formatCode,
+    /* أدوات داخلية للاختبار فقط */
+    __hmac: hmacSha256,
+    __sha256Hex: sha256Hex
+  };
+});
+</script>
+<script>
+/* ============================ منطق لوحة الإدارة ============================ */
+(function () {
+  'use strict';
+  var C = window.SBLicenseCore;
+  /* نفس مشروع التطبيق */
+  var fbConfig = {
+    apiKey: 'AIzaSyAnj-n--vNw8Iw5szO8bKVi8GhxVfLhoS8',
+    authDomain: 'gen-lang-client-0194008145.firebaseapp.com',
+    projectId: 'gen-lang-client-0194008145'
+  };
+  var PLANS = { 1: { label: 'شهر واحد', days: 30 }, 2: { label: '3 شهور', days: 90 }, 3: { label: 'سنة كاملة', days: 365 } };
+  var db = null;
+  var lastGen = null;
+
+  function $(id) { return document.getElementById(id); }
+  function msg(id, cls, text) { var el = $(id); el.className = 'msg ' + cls; el.innerHTML = text; }
+  function today() { return new Date().toISOString().slice(0, 10); }
+  function addDays(n) { return new Date(Date.now() + n * 86400000).toISOString().slice(0, 10); }
+
+  firebase.initializeApp(fbConfig);
+  db = firebase.firestore();
+
+  /* ===== تبويبات ===== */
+  document.querySelectorAll('.tab').forEach(function (t) {
+    t.onclick = function () {
+      document.querySelectorAll('.tab').forEach(function (x) { x.classList.remove('on'); });
+      t.classList.add('on');
+      ['gen', 'subs', 'rules'].forEach(function (k) { $('tab-' + k).classList.toggle('hidden', k !== t.dataset.tab); });
+      if (t.dataset.tab === 'subs') loadSubs();
+    };
+  });
+  $('genPlan').onchange = function () { $('customWrap').classList.toggle('hidden', this.value !== 'c'); };
+
+  /* ===== الدخول ===== */
+  $('btnLogin').onclick = function () {
+    msg('loginMsg', '', '');
+    firebase.auth().signInWithEmailAndPassword($('loginEmail').value.trim(), $('loginPass').value)
+      .catch(function (e) {
+        msg('loginMsg', 'err', 'فشل الدخول: ' + (e.code === 'auth/invalid-credential' ? 'بريد أو كلمة سر خطأ' : e.message) +
+          '<br>لو ما عندكش حساب مالك: Firebase Console → Authentication → Users → Add user.');
+      });
+  };
+  $('btnLogout').onclick = function () { firebase.auth().signOut(); };
+  firebase.auth().onAuthStateChanged(function (user) {
+    if (user) {
+      $('loginCard').classList.add('hidden');
+      $('app').classList.remove('hidden');
+      $('userChip').textContent = user.email;
+      loadSubs();
+    } else {
+      $('loginCard').classList.remove('hidden');
+      $('app').classList.add('hidden');
+      $('userChip').textContent = '';
+    }
+  });
+
+  /* ===== توليد كود ===== */
+  $('btnGen').onclick = function () {
+    var btn = this; btn.disabled = true; msg('genMsg', '', '');
+    var email = $('genEmail').value.trim();
+    var planSel = $('genPlan').value;
+    var planId, expDate, days;
+    if (planSel === 'c') { days = parseInt($('genDays').value, 10); planId = 1; }
+    else { planId = parseInt(planSel, 10); days = PLANS[planId].days; }
+    expDate = addDays(days);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { btn.disabled = false; return msg('genMsg', 'err', 'اكتب بريد إلكتروني صحيح'); }
+    if (!days || days < 1 || days > 1500) { btn.disabled = false; return msg('genMsg', 'err', 'عدد أيام غير صحيح'); }
+    C.generateCode(email, expDate, planId).then(function (g) {
+      return db.collection('sb_licenses').doc(g.codeId).set({
+        email: g.email, exp: g.exp, plan: g.plan, device: '', revoked: false,
+        issuedAt: new Date().toISOString(), claimedAt: ''
+      }).then(function () { return g; });
+    }).then(function (g) {
+      lastGen = g;
+      $('genResult').classList.remove('hidden');
+      $('genCode').textContent = g.code;
+      $('genMeta').textContent = '— ' + (PLANS[g.plan] ? PLANS[g.plan].label : days + ' يوم') + ' • ينتهي ' + g.exp;
+      msg('genMsg', 'ok', 'تم توليد الكود وتسجيله في السحابة ✓');
+      btn.disabled = false;
+    }).catch(function (e) {
+      msg('genMsg', 'err', 'خطأ: ' + e.message + ' — لو مشكلة اتصال/صلاحيات، الكود مش اتحفظ سحابياً. جرب تاني بعد التأكد من الدخول.');
+      btn.disabled = false;
+    });
+  };
+  $('btnCopyCode').onclick = function () {
+    if (!lastGen) return;
+    var self = this, o = self.textContent;
+    try {
+      (navigator.clipboard ? navigator.clipboard.writeText(lastGen.code) : Promise.reject())
+        .catch(function () {}).then(function () { self.textContent = '✓ تم النسخ'; setTimeout(function () { self.textContent = o; }, 1600); });
+    } catch (e) {}
+  };
+  $('btnWaCode').onclick = function () {
+    if (!lastGen) return;
+    var text = 'أهلاً 👋\nده كود تفعيل اشتراك StoneBill بتاعك:\n\n' + lastGen.code +
+      '\n\nطريقة التفعيل:\n1) افتح التطبيق → الإعدادات → «الاشتراك والترخيص» أو هتظهر لك شاشة الاشتراك.\n2) اكتب الكود + نفس البريد ده: ' + lastGen.email +
+      '\n\nملحوظة: الكود شغال على جهاز واحد — لو غيرت موبايلك سجّل دخول جوجل بنفس البريد هيتنقل لوحده.\nلأي دعم: رد على الرسالة دي.';
+    window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+  };
+
+  /* ===== المشتركون ===== */
+  function shortDev(d) { if (!d) return '—'; return d.length > 14 ? d.slice(0, 9) + '…' + d.slice(-4) : d; }
+  function statusOf(d) {
+    if (d.revoked === true) return '<span class="chip c-bad">موقوف</span>';
+    if (!d.exp || d.exp < today()) return '<span class="chip c-warn">منتهي</span>';
+    if (!d.device) return '<span class="chip c-mut">بانتظار التفعيل</span>';
+    return '<span class="chip c-ok">ساري</span>';
+  }
+  function loadSubs() {
+    var body = $('subsBody');
+    body.innerHTML = '<tr><td colspan="6" style="color:var(--mut);">جارٍ الجلب…</td></tr>';
+    db.collection('sb_licenses').orderBy('issuedAt', 'desc').limit(200).get().then(function (snap) {
+      if (snap.empty) { body.innerHTML = '<tr><td colspan="6" style="color:var(--mut);">لا يوجد مشتركون بعد</td></tr>'; $('statCards').innerHTML = ''; return; }
+      var rows = '', n = 0, active = 0, expired = 0, waiting = 0;
+      snap.forEach(function (doc) {
+        var d = doc.data(); n++;
+        var st = statusOf(d);
+        if (st.includes('ساري')) active++; else if (st.includes('منتهي')) expired++; else if (st.includes('بانتظار')) waiting++;
+        rows += '<tr>' +
+          '<td style="direction:ltr;text-align:right;">' + (d.email || '—') + '</td>' +
+          '<td>' + (PLANS[d.plan] ? PLANS[d.plan].label : (d.plan || '—')) + '</td>' +
+          '<td>' + (d.exp || '—') + '</td>' +
+          '<td>' + st + '</td>' +
+          '<td><span class="dev">' + shortDev(d.device) + '</span></td>' +
+          '<td><div class="row" style="gap:5px;">' +
+          '<button class="btn btn-g" style="padding:4px 10px;font-size:11px;" onclick="window.__sbAdmin.free(\'' + doc.id + '\')">تحرير الجهاز</button>' +
+          (d.revoked === true
+            ? '<button class="btn btn-p" style="padding:4px 10px;font-size:11px;" onclick="window.__sbAdmin.unrevoke(\'' + doc.id + '\')">تشغيل</button>'
+            : '<button class="btn btn-d" style="padding:4px 10px;font-size:11px;" onclick="window.__sbAdmin.revoke(\'' + doc.id + '\')">إيقاف</button>') +
+          '</div></td></tr>';
+      });
+      body.innerHTML = rows;
+      $('subsCount').textContent = '(' + n + ')';
+      $('statCards').innerHTML =
+        '<div class="stat"><b>' + n + '</b><span>إجمالي الأكواد</span></div>' +
+        '<div class="stat"><b>' + active + '</b><span>سارية</span></div>' +
+        '<div class="stat"><b>' + waiting + '</b><span>بانتظار التفعيل</span></div>' +
+        '<div class="stat"><b>' + expired + '</b><span>منتهية</span></div>';
+    }).catch(function (e) {
+      body.innerHTML = '<tr><td colspan="6" style="color:var(--bad);">خطأ: ' + e.message + '</td></tr>';
+    });
+  }
+  $('btnRefresh').onclick = loadSubs;
+  window.__sbAdmin = {
+    free: function (id) {
+      db.collection('sb_licenses').doc(id).update({ device: '', claimedAt: '' })
+        .then(function () { msg('subsMsg', 'ok', 'تم تحرير الجهاز — المشترك يقدر يفعّل على جهازه الجديد فوراً ✓'); loadSubs(); })
+        .catch(function (e) { msg('subsMsg', 'err', e.message); });
+    },
+    revoke: function (id) {
+      db.collection('sb_licenses').doc(id).update({ revoked: true })
+        .then(function () { msg('subsMsg', 'ok', 'تم إيقاف الكود — لن يعمل عند أي تفعيل جديد ✓'); loadSubs(); })
+        .catch(function (e) { msg('subsMsg', 'err', e.message); });
+    },
+    unrevoke: function (id) {
+      db.collection('sb_licenses').doc(id).update({ revoked: false })
+        .then(function () { msg('subsMsg', 'ok', 'تم تشغيل الكود من جديد ✓'); loadSubs(); })
+        .catch(function (e) { msg('subsMsg', 'err', e.message); });
+    }
+  };
+
+  /* ===== القواعد ===== */
+  fetch('./firestore.rules').then(function (r) { return r.ok ? r.text() : Promise.reject(); })
+    .then(function (t) { $('rulesText').textContent = t; })
+    .catch(function () { $('rulesText').textContent = 'افتح ملف firestore.rules من المستودع وانسخه كاملاً في Firebase Console → Firestore → Rules.'; });
+  $('btnCopyRules').onclick = function () {
+    var self = this, o = self.textContent;
+    try {
+      (navigator.clipboard ? navigator.clipboard.writeText($('rulesText').textContent) : Promise.reject())
+        .catch(function () {}).then(function () { self.textContent = '✓ تم النسخ'; setTimeout(function () { self.textContent = o; }, 1600); });
+    } catch (e) {}
+  };
+})();
+</script>
+</body>
+</html>

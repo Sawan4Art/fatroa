@@ -45,5 +45,48 @@ service cloud.firestore {
         allow delete: if isSignedIn() && isValidId(workshopId) && isValidId(invoiceId);
       }
     }
+
+    /* =====================================================================
+       v1.13 — نظام الاشتراك والترخيص (sb_licenses)
+       - المستندات معرّفة ببصمة SHA-256 للكود (غير قابلة للتخمين)
+       - أي جهاز يقرأ مستند كودٍّ ويُنشئ مستنداً بجهاز فارغ (المطالبة الأولى)
+       - المطالبة/النقل: تغيير حقل الجهاز فقط؛ سرقة جهاز آخر ممنوعة بالقواعد
+       - النقل الذاتي: صاحب البريد المسجّل (تحقق جوجل) ينقل الجهاز بنفسه
+       - إدارة كاملة (إيقاف/تحرير/حذف/عرض القائمة): حساب المالك فقط
+         (حساب Email/Password — تستخدمه أداة الإدارة stonebill-admin.html)
+       ===================================================================== */
+    function isOwnerAcct() {
+      return request.auth != null
+        && request.auth.token.firebase.sign_in_provider == 'password';
+    }
+    function licenseTouchDeviceOnly(keys) {
+      return keys.hasOnly(['device', 'claimedAt']) || keys.hasOnly(['device', 'claimedAt', 'transferredAt']);
+    }
+    match /sb_licenses/{licenseId} {
+      allow get: if true;
+      allow list: if isOwnerAcct();
+      allow create: if incoming().device == ''
+        && incoming().email is string && incoming().email.size() <= 254
+        && incoming().exp is string && incoming().exp.size() <= 10
+        && incoming().plan is int && incoming().revoked == false;
+      allow update: if isOwnerAcct()
+        || (
+          // المطالبة الأولى: الجهاز فارغ → أي جهاز يسجّل نفسه (حقل الجهاز فقط)
+          existing().device == ''
+          && incoming().device != ''
+          && licenseTouchDeviceOnly(incoming().diff(existing()).affectedKeys())
+        ) || (
+          // إعادة المطالبة لنفس الجهاز (idempotent)
+          incoming().device == existing().device
+          && licenseTouchDeviceOnly(incoming().diff(existing()).affectedKeys())
+        ) || (
+          // النقل الذاتي: صاحب البريد المسجّل في الاشتراك
+          request.auth != null
+          && request.auth.token.email == existing().email
+          && incoming().device != ''
+          && licenseTouchDeviceOnly(incoming().diff(existing()).affectedKeys())
+        );
+      allow delete: if isOwnerAcct();
+    }
   }
 }

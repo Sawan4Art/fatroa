@@ -103,5 +103,34 @@ public class MainActivity extends BridgeActivity {
                 }
             });
         }
+
+        /**
+         * v1.13 — معرّف الجهاز المستقر لنظام الاشتراك/الترخيص.
+         * ANDROID_ID يصمد بعد إزالة التثبيت وإعادته (نفس مفتاح التوقيع، أندرويد 8+)
+         * ويتغير فقط عند factory reset. لو فشل: ملف محلي داخل مجلد التطبيق.
+         */
+        @JavascriptInterface
+        public String getDeviceId() {
+            try {
+                String id = android.provider.Settings.Secure.getString(
+                        ctx.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+                if (id != null && !id.isEmpty() && !"9774d56d682e549c".equals(id)) return id;
+            } catch (Throwable ignored) {}
+            try {
+                File f = new File(ctx.getFilesDir(), "sb_device_id.txt");
+                if (f.exists()) {
+                    java.io.FileInputStream fis = new java.io.FileInputStream(f);
+                    byte[] buf = new byte[(int) f.length()];
+                    fis.read(buf); fis.close();
+                    return new String(buf, "UTF-8").trim();
+                }
+                String uuid = java.util.UUID.randomUUID().toString().replace("-", "");
+                FileOutputStream fos = new FileOutputStream(f);
+                fos.write(uuid.getBytes("UTF-8")); fos.close();
+                return uuid;
+            } catch (Throwable t) {
+                return java.util.UUID.randomUUID().toString().replace("-", "");
+            }
+        }
     }
 }

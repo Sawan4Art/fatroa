@@ -2,7 +2,7 @@
 
 > **ملف مرجعي دائم (القاعدة ٩)** — يقرأ في بداية كل جلسة جديدة قبل لمس أي سطر كود.
 > الهدف: لو اتمسحت المحادثة، أي جلسة جديدة تكمل من نفس النقطة بدون فقدان أي سياق.
-> **آخر تحديث: 2026-10-01 — النسخة الحالية v1.12**
+> **آخر تحديث: 2026-10-02 — النسخة الحالية v1.13**
 
 ---
 
@@ -63,14 +63,16 @@ python3 /home/z/my-project/scripts/check_js.py
 # 2) بناء حزمة الويب + المزامنة
 node build-www.js && npx cap sync android
 
-# 3) بناء الـ APK (Gradle بيتعلق وهمياً أحياناً — الحل nohup خلفية + مراقبة)
+# 3) بناء الـ APK (v1.13+: Release موقّع Keystore — see android/keystore.properties)
+#    Gradle بيتعلق وهمياً أحياناً — الحل nohup خلفية + مراقبة
 cd android
 export JAVA_HOME=/home/z/jdk-17 ANDROID_HOME=/home/z/android-sdk
-nohup ./gradlew assembleDebug > /tmp/gradle.log 2>&1 &
-# راقب: ls -la app/build/outputs/apk/debug/app-debug.apk (يظهر خلال ~16-60 ثانية عند النجاح)
+nohup ./gradlew assembleRelease > /tmp/gradle.log 2>&1 &
+# راقب: ls -la app/build/outputs/apk/release/app-release.apk (يظهر خلال ~16-60 ثانية عند النجاح)
+# ملاحظة: من غير keystore.properties البناء ينجح غير موقّع — مفتاح النسخة الاحتياطية لدى المالك
 
 # 4) انسخ المنتج
-cp app/build/outputs/apk/debug/app-debug.apk /home/z/my-project/download/StoneBill-vX.X.apk
+cp app/build/outputs/apk/release/app-release.apk /home/z/my-project/download/StoneBill-vX.X.apk
 ```
 
 **نقاط حرجة في البناء:**
@@ -102,6 +104,8 @@ scripts/github_release.sh  # target = الـ SHA الكامل للكوميت (م
 | الصفحات المتعددة (~16900) | `sbInvoiceSessions` — الحفظ من **أول أي محتوى** (مش اسم العميل بس) + uid ثابت لكل صفحة |
 | جداول المعادلة/الدمج | بلوك `<script>` أخير قبل `</body>` — طبقة مستقلة فوق المحرك المحصّن (تغليف `calculateAll` من الخارج) |
 | الصلاحيات/PIN (~14930) | `getStoredAdminPin` بلا رمز افتراضي — أول تبديل وضع يتطلب إنشاء رمز |
+| الاشتراك/الترخيص (نهاية الملف) | بلوك `<!--SBL-START-->` — نواة HMAC موقّعة (`/*SBL-CORE-START*/`) + طبقة `SB.License` (بوابة/تفعيل/نقل) + صفحة إعدادات محقونة |
+| أداة المالك | `stonebill-admin.html` (جذر المستودع + نسخة في download) — توليد أكواد + إدارة المشتركين (تدخل بحساب Email/Password) |
 
 ## 7) مفاتيح localStorage المهمة
 
@@ -120,6 +124,11 @@ scripts/github_release.sh  # target = الـ SHA الكامل للكوميت (م
 | `sb_cutting_sheets` | سجل جداول التقطيع (v1.12) |
 | `sb_fb_last_sync` | آخر مزامنة Firebase |
 | `sb_layout_v17` / `sb_layout_v12` | أعلام ترحيل تخطيط الأزرار |
+| `sb_license` | الترخيص: `{codeId, code, email, exp, plan, device, pendingCloud}` (v1.13) |
+| `sb_trial` | بداية التجربة المجانية 14 يوم (v1.13) |
+| `sb_clock_last` | ساعة أحادية الاتجاه ضد تلاعب تاريخ الجهاز (v1.13) |
+| `sb_license_transfer` | طلب نقل ترخيص معلق حتى اكتمال دخول جوجل (v1.13) |
+| `sb_layout_sub` | علم ترحيل زر الاشتراك في قائمة الإعدادات (v1.13) |
 
 ## 8) حلول المشاكل المتكررة (الدروس المستفادة)
 
@@ -132,29 +141,26 @@ scripts/github_release.sh  # target = الـ SHA الكامل للكوميت (م
 7. **تعليق Gradle الوهمي** → nohup + polling.
 8. **السبلاش المزدوج** → سبلاش واحد فقط `#splashScreen` (dismiss: `lux-hide`).
 9. **زر الإعدادات السفلي** → `sbNavSettings()` دايماً بيرجع للقائمة الرئيسية (بعد إزالة زرّي الرجوع الداخليين).
+10. **Firestore get() معلّق للأبد عند تعطل الشبكة** → كل عمليات السحابة في الترخيص ملفوفة بـ `withTimeout(8s)` — السحابة لا تحجب التفعيل أبداً (مسار مؤقت + `pendingCloud`).
+11. **إعادة البناء بعد تعديل نواة/طبقة الترخيص** → عدّل `scripts/sb_license_core.js` أو `sb_license_app.js` ثم `node scripts/embed_license.js` + `node scripts/build_admin.js` — ممنوع تحرير البلوك داخل index.html يدوياً.
 
 ## 9) Firebase — خطوات التفعيل (للمالك)
 
-الكود جاهز (Auth + Firestore) ويعمل فور توفر إعدادات المشروع. الإعدادات الحالية موجودة في `firebase-applet-config.json` (مشروع AI Studio `gen-lang-client-0194008145`). للتفعيل الكامل بحسابك:
+الإعدادات الحالية موجودة في `firebase-applet-config.json` (المشروع `gen-lang-client-0194008145`). للتفعيل الكامل:
 
-1. ادخل [console.firebase.google.com](https://console.firebase.google.com) → **إضافة مشروع** (أو استخدم المشروع الحالي).
-2. **Authentication** → ابدأ → مزوّد **Google** → فعّله → احفظ.
-3. **Firestore Database** → إنشاء قاعدة بيانات → **وضع الإنتاج** → الموقع: `europe-west` (أقرب لمصر) → إنشاء.
-4. Authentication → Settings → **Authorized domains** → أضف `localhost`.
-5. Project Settings → **Web App** (`</>`) → انسخ قيم `apiKey / authDomain / projectId / appId`.
-6. حدّث `firebase-applet-config.json` بنفس القيم → `node build-www.js` → بناء APK جديد.
-7. (اختياري لتقييد الاستخدام) قواعد Firestore المقترحة: اقرأ/اكتب `sb_backups/{uid}` فقط لصاحب الحساب:
-```
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /sb_backups/{uid}/{document=**} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
-    }
-  }
-}
-```
-8. بعد التفعيل: الإعدادات → النظام والنسخ → «قاعدة البيانات السحابية (Firebase)» → سجّل دخول جوجل → رفع/استرجاع.
+1. **Firestore Database** → لو مش مفعّل: Create database → Production → `europe-west`.
+2. **Firestore → Rules** → الصق محتوى `firestore.rules` (يشمل قواعد `sb_licenses` للترخيص) → Publish.
+3. **Authentication** → مزوّد **Google** (للنسخ الاحتياطي) + **Email/Password** (لأداة الإدارة) → تفعيل الاثنين.
+4. **Authentication → Users → Add user** → بريد المالك + كلمة سر قوية → هذا حساب دخول `stonebill-admin.html`.
+5. بعد الخطوات السابقة: النسخ السحابي + نظام الاشتراك يشتغلوا فوراً بدون إعادة بناء (نفس المشروع).
+
+### كيف يعمل نظام الاشتراك (v1.13)
+- **التجربة**: 14 يوم من أول تشغيل (تُعدّل في `CFG.trialDays`).
+- **البيع**: المشترك يحوّل فودافون كاش `01090042368` → المالك يولّد كوداً من `stonebill-admin.html` مربوط ببريد المشترك → يبعته واتساب.
+- **التفعيل**: التطبيق ← الإعدادات ← «الاشتراك والترخيص» أو البوابة التلقائية: كود + بريد. تحقق HMAC أوفلاين + مطالبة سحابية تربط الكود بجهاز واحد.
+- **النقل لجهاز جديد**: نفس الكود على الجهاز الجديد مرفوض تلقائياً → المشترك يسجل دخول جوجل بنفس البريد فينتقل تلقائياً، أو المالك يضغط «تحرير الجهاز» من الأداة.
+- **الحماية**: الكود موقّع HMAC-SHA256 (تزوير يتطلب المفتاح)، بصمة البريد داخله (لا يعمل على غيره)، قفل جهاز سحابي، إيقاف فوري لأي كود مسرّب من الأداة، ساعة أحادية ضد تلاعب التاريخ.
+- **الأسعار معروضة من `CFG.plans` في بلوك الترخيص** (شهري 100ج / ربع 250ج / سنوي 900ج — قابلة للتعديل سطر واحد).
 
 ## 10) سجل الإصدارات المختصر
 
@@ -166,6 +172,7 @@ service cloud.firestore {
 | v1.10 | هيدر أضخم + أيقونات عمودية + إصلاح حفظ الصفحات |
 | v1.11 | شعار بالمنتصف + صفر سكرول + محول وحدات + أيقونة SB على الرخام |
 | **v1.12** | **حفظ الصفحات من أي محتوى + أيقونة + صفحات متراكبة + أقواس حاسبة بدل المسطرة + إصلاح ظل/زوايا الثيمات + نوافذ موحدة + طباعة أصلية printPage + مقاس ورق/ترتيب/ألوان الطباعة + تنظيم الإعدادات (اللغة داخل النظام + صلاحيات مستقلة) + قسم جداول التقطيع للصنايعي + PIN بلا افتراضي + تبويب مصروفات (كهرباء/مياه/صيانة) + جداول بمعادلة ودمج + تسجيل جوجل redirect + Firestore sync + أيقونة رخام محفور + القاعدة ٩** |
+| **v1.13** | **نظام اشتراك مدفوع كامل: تجربة 14 يوم + بوابة اشتراك (فودافون كاش 01090042368 + واتساب) + تفعيل بكود+بريد مربوطين HMAC-SHA256 + قفل جهاز سحابي Firestore (كود واحد = جهاز واحد) + نقل ذاتي بجوجل بنفس البريد + صفحة «الاشتراك والترخيص» في الإعدادات + أداة المالك stonebill-admin.html (توليد أكواد + إدارة مشتركين + تحرير أجهزة + إيقاف أكواد) + أول بناء Release موقّع Keystore دائم (حل Play Protect) + جسر getDeviceId (ANDROID_ID يصمد بعد الحذف)** |
 
 ## 11) اختبار سريع بعد أي جلسة (قاعدة ٤)
 
