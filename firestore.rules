@@ -88,5 +88,60 @@ service cloud.firestore {
         );
       allow delete: if isOwnerAcct();
     }
+
+    /* =====================================================================
+       v1.14 — التجربة مرة واحدة فقط (بطلب المالك):
+       - sb_trials/{deviceCode}: علم لكل جهاز (ANDROID_ID يصمد بعد حذف التطبيق)
+       - sb_trialemails/{tme..}: علم لكل بريد (يحمي آيفون/ويب حيث لا هوية جهاز ثابتة)
+       إنشاء فقط — لا تحديث ولا حذف: لا يمكن لمستخدم مسح علم تجربته
+       ===================================================================== */
+    function trialCreateOk() {
+      return request.resource.data.device is string
+        && request.resource.data.device.size() <= 64
+        && request.resource.data.email is string
+        && request.resource.data.email.size() <= 254
+        && request.resource.data.at is string;
+    }
+    match /sb_trials/{trialId} {
+      allow get, list: if true;
+      allow create: if trialCreateOk();
+      allow update, delete: if false;
+    }
+    match /sb_trialemails/{trialEmailId} {
+      allow get, list: if true;
+      allow create: if trialCreateOk();
+      allow update, delete: if false;
+    }
+
+    /* =====================================================================
+       v1.14 — قفل البريد→الجهاز: بريد إلكتروني واحد = جهاز واحد فقط
+       (وضع المدير كله على الجهاز المفعل الوحيد — مهما كان نوع الجهاز)
+       - المطالبة الأولى أو نفس الجهاز: مسموح
+       - النقل الذاتي: صاحب البريد (تحقق جوجل) أو المالك (Email/Password)
+       ===================================================================== */
+    function emailTouchDeviceOnly(keys) {
+      return keys.hasOnly(['device', 'claimedAt']) || keys.hasOnly(['device', 'claimedAt', 'transferredAt']);
+    }
+    match /sb_emails/{emailDocId} {
+      allow get: if true;
+      allow list: if isOwnerAcct();
+      allow create: if incoming().email is string && incoming().email.size() <= 254
+        && incoming().device is string && incoming().device.size() >= 4 && incoming().device.size() <= 64;
+      allow update: if isOwnerAcct()
+        || (
+          existing().device == ''
+          && incoming().device != ''
+          && emailTouchDeviceOnly(incoming().diff(existing()).affectedKeys())
+        ) || (
+          incoming().device == existing().device
+          && emailTouchDeviceOnly(incoming().diff(existing()).affectedKeys())
+        ) || (
+          request.auth != null
+          && request.auth.token.email == existing().email
+          && incoming().device != ''
+          && emailTouchDeviceOnly(incoming().diff(existing()).affectedKeys())
+        );
+      allow delete: if isOwnerAcct();
+    }
   }
 }
