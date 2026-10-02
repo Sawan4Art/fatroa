@@ -11,6 +11,7 @@ android/.gradle/
 android/app/build/
 android/build/
 android/local.properties
+android/keystore.properties
 android/.idea/
 ios/App/Pods/
 ios/App/Podfile.lock
