@@ -14790,6 +14790,17 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
     }
     function closeRoleBurst() { const o = document.getElementById('roleBurstModal'); if (o) o.remove(); }
     function roleBurstPickCraftsman() {
+      /* v1.16: بوابة الباقات — باقة «المدير فقط» لا تفتح وضع الصنايعي (نفس قاعدة النافذة الرئيسية) */
+      try {
+        if (window.SBLicense && typeof window.SBLicense.craftsmanAllowed === 'function' &&
+            !window.SBLicense.craftsmanAllowed()) {
+          if (typeof showToast === 'function') {
+            showToast('باقة المدير (299ج/شهر) لا تشمل وضع الصنايعي — رقِّ لباقة المدير والصنايعية (499ج/شهر) — واتساب 01090042368', 'warning');
+          }
+          closeRoleBurst();
+          return;
+        }
+      } catch (e) { /* طبقة الترخيص غير جاهزة → لا منع */ }
       if (typeof applyAppRole === 'function') applyAppRole('craftsman');
       closeRoleBurst();
       if (typeof showToast === 'function') showToast('تم التبديل لوضع الصنايعي (الفواتير والمظهر)', 'success');
@@ -15572,6 +15583,18 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
     }
 
     function confirmRoleSelection() {
+      /* v1.16: بوابة الباقات — باقة «المدير فقط» (299ج) لا تفتح وضع الصنايعي.
+         التجربة تفتح كل الوضعين ليجرّها المشترك قبل الشراء؛ الترقية = باقة المدير والصنايعية */
+      try {
+        if (modalSelectedRole === 'craftsman' && window.SBLicense &&
+            typeof window.SBLicense.craftsmanAllowed === 'function' &&
+            !window.SBLicense.craftsmanAllowed()) {
+          if (typeof showToast === 'function') {
+            showToast('باقة المدير (299ج/شهر) لا تشمل وضع الصنايعي — رقِّ لباقة المدير والصنايعية (499ج/شهر) — واتساب 01090042368', 'warning');
+          }
+          return;
+        }
+      } catch (e) { /* لو طبقة الترخيص غير جاهزة لا نمنع الاستخدام */ }
       const storedPin = getStoredAdminPin();
       const pinInput = document.getElementById('adminPinInput');
       const pinBox = document.getElementById('adminPinProtectionBox');
@@ -27752,6 +27775,8 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
 
 
 
+
+
 <!--SBL-START-->
 <script>
 /* ===== StoneBill v1.14 — نظام الاشتراك والترخيص (طبقة معزولة — قاعدة 1: لا يمس منطق الجداول) ===== */
@@ -28128,14 +28153,20 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
   var EPOCH = Date.UTC(2026, 0, 1);
   var DAY = 86400000;
   var CROCKFORD = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+  /* v1.16 التسعير المعتمد من المالك (يوسف) — مفهوم ٩٩:
+     المدير 299/شهر — المدير والصنايعية 499/شهر — الصنايعي الإضافي 49/فرد
+     الربع سنوي والسنوي بخصم (الأكواد تحمل plan + تاريخ الانتهاء فقط) */
   var PLANS = {
-    1: { id: 1, label: 'باقة شهرية', days: 30 },
-    2: { id: 2, label: 'باقة ربع سنوية', days: 90 },
-    3: { id: 3, label: 'باقة سنوية', days: 365 },
+    1: { id: 1, label: 'المدير فقط — شهر', days: 30 },
+    2: { id: 2, label: 'المدير والصنايعية — شهر', days: 30 },
+    3: { id: 3, label: 'المدير فقط — 3 شهور', days: 90 },
+    4: { id: 4, label: 'المدير والصنايعية — 3 شهور', days: 90 },
+    5: { id: 5, label: 'المدير فقط — سنة', days: 365 },
+    6: { id: 6, label: 'المدير والصنايعية — سنة', days: 365 },
     /* 8 = باقة المالك: مدى الحياة (100 سنة تقنية = تاريخ نظيف 2125) + أجهزة غير محدودة
        — تُوقَّع Ed25519 مثل أي كود، وطبقة التطبيق تعاملها بلا قفل أجهزة (بطلب المالك 2026-10-02) */
     8: { id: 8, label: 'باقة المالك (مدى الحياة)', days: 36500, owner: true },
-    9: { id: 9, label: 'كود تجربة', days: 3 }
+    9: { id: 9, label: 'كود تجربة', days: 7 }
   };
   var OWNER_PLAN = 8;
   function isOwnerPlan(p) { return p === OWNER_PLAN; }
@@ -28253,6 +28284,9 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       bits += 5;
       if (bits >= 8) { out.push((value >>> (bits - 8)) & 0xff); bits -= 8; }
     }
+    /* v1.16: الترميز القانوني — بقيّات آخر رمز يجب أن تكون أصفاراً (b32encode يملّي أصفاراً)،
+       وأي غير ذلك = كود غير قانوني يُرفض؛ يمنع «أكواد مكافئة» تختلف في آخر رمز فقط */
+    if (bits > 0 && (value & ((1 << bits) - 1)) !== 0) return null;
     return new Uint8Array(out);
   }
   function normalizeEmail(s) {
@@ -28406,15 +28440,19 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
 /*SBL-CORE2-END*/
 (function(){
 /* ============================================================================
- * StoneBill — طبقة الترخيص والاشتراك (v1.14)
+ * StoneBill — طبقة الترخيص والاشتراك (v1.16)
  * ---------------------------------------------------------------------------
- * - اشتراك شهري مدفوع (فودافون كاش + واتساب: 01090042368)
+ * - اشتراك مدفوع (فودافون كاش + واتساب: 01090042368)
  * - التفعيل: كود Ed25519 v2 (التطبيق يحمل المفتاح العام فقط — لا تزوير حتى بفك APK)
  *   مع توافق كامل مع أكواد HMAC v1 القديمة
- * - التجربة: 3 أيام مرة واحدة فقط — تُعلّم سحابياً بهوية الجهاز الثابتة (تصمد بعد حذف
- *   التطبيق على أندرويد) وبالبريد الإلكتروني معاً؛ إعادة التثبيت لا تمنح تجربة جديدة
- * - بريد إلكتروني واحد = جهاز واحد فقط (قفل سحابي مزدوج: كود + بريد) — وأوضاع المدير
- *   والصنايعية كلها على الجهاز المفعل الوحيد. النقل: جوجل بنفس البريد أو المالك
+ * - v1.16 بطلب المالك (يوسف):
+ *   • التجربة 7 أيام (كانت 3) مرة واحدة فقط — سحابياً بالجهاز والبريد معاً
+ *   • التسعير الجديد بمفهوم ٩٩: المدير 299ج/شهر — المدير والصنايعية 499ج/شهر
+ *     الصنايعي الإضافي 49ج/فرد — ربع سنوي وسنوي بخصومات (799/1299/2899/4999)
+ *   • صفحة الاشتراك تظهر عند فتح التطبيق طالما فيه اشتراك ساري (زي التطبيقات الطبيعية)
+ *     مع زر «الدخول للتطبيق» أثناء سريان التجربة، والقفل الكامل بعد الانتهاء
+ *   • باقة «المدير فقط» لا تفتح وضع الصنايعي — يتطلب باقة تشمل الصنايعية (2/4/6/8)
+ * - بريد إلكتروني واحد = جهاز واحد فقط (قفل سحابي مزدوج: كود + بريد)
  * - جداول التسعة وكل منطق التطبيق غير متأثر — طبقة معزولة فوق التطبيق فقط
  * ========================================================================= */
 
@@ -28427,15 +28465,22 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
   function trialEmailDocIdSafe(email) { return C2 ? C2.trialEmailDocId(email) : 'tme' + C.normalizeEmail(email).replace(/[^a-z0-9]/g, '').slice(0, 40); }
 
   /* ============================ الإعدادات (عدّل الأسعار هنا فقط) ============================ */
+  /* v1.16 — التسعير النهائي المعتمد من المالك (يوسف) بمفهوم ٩٩:
+     المدير 299 — الاثنين (مدير + صنايعية) 499 — الصنايعي الإضافي 49 للفرد
+     الربع سنوي: وفر باقة شهر تقريباً — السنوي: وفر شهرين تقريباً — كل الأسعار تنتهي بـ 9 */
   var CFG = {
-    trialDays: 3,                        /* مدة التجربة المجانية (بطلب المالك 2026-10-02) */
+    trialDays: 7,                        /* مدة التجربة المجانية (بطلب المالك 2026-10-02) */
     legacyTrialDays: 14,                 /* تجارب v1.13 القديمة بدون بريد — تحتفظ بنافذتها الكاملة */
     cashNumber: '01090042368',           /* فودافون كاش */
     whatsapp: '201090042368',            /* واتساب بصيغة دولية */
+    extraWorker: 49,                     /* سعر الصنايعي الإضافي ج/شهر للفرد */
     plans: [
-      { id: 1, label: 'شهر واحد', days: 30, price: 100 },
-      { id: 2, label: '3 شهور', days: 90, price: 250 },
-      { id: 3, label: 'سنة كاملة', days: 365, price: 900 }
+      { id: 1, name: 'المدير فقط — شهر',        tier: 1, label: 'شهري',    days: 30,  price: 299 },
+      { id: 2, name: 'المدير والصنايعية — شهر', tier: 2, label: 'شهري',    days: 30,  price: 499 },
+      { id: 3, name: 'المدير فقط — 3 شهور',     tier: 1, label: 'ربع سنوي', days: 90,  price: 799,  save: 98 },
+      { id: 4, name: 'المدير والصنايعية — 3 شهور', tier: 2, label: 'ربع سنوي', days: 90, price: 1299, save: 198 },
+      { id: 5, name: 'المدير فقط — سنة',        tier: 1, label: 'سنوي',    days: 365, price: 2899, save: 689, best: true },
+      { id: 6, name: 'المدير والصنايعية — سنة', tier: 2, label: 'سنوي',    days: 365, price: 4999, save: 989, best: true }
     ]
   };
   var LS = { lic: 'sb_license', trial: 'sb_trial', clock: 'sb_clock_last', transfer: 'sb_license_transfer' };
@@ -28497,7 +28542,24 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
   }
   function deviceShort() { var d = deviceCode(); return d.slice(0, 9) + '…' + d.slice(-4); }
 
-  /* ============================ Firestore ============================ */
+  /* ============================ Firestore — مشروع الترخيص المستقل ============================ */
+  /* v1.16: مشروع المالك (stonebill-3455c) كتطبيق فايربيس منفصل باسم sblicense —
+     حتى لا يتأثر نظام النسخ الاحتياطي لجوجل درايف (تطبيق افتراضي بمشروع قديم) إطلاقاً.
+     كل مجموعات الترخيص sb_* تعيش في مشروع المالك وفق قواعد firestore.rules */
+  var SB_FB_CFG = {
+    apiKey: 'AIzaSyDqc17WkMllznL2ru7OSsqGWLFSawpNtzA',
+    authDomain: 'stonebill-3455c.firebaseapp.com',
+    projectId: 'stonebill-3455c',
+    storageBucket: 'stonebill-3455c.firebasestorage.app',
+    messagingSenderId: '398349274336',
+    appId: '1:398349274336:web:98e829192349d873a55485'
+  };
+  var SB_APP_NAME = 'sblicense';
+  function getLicenseApp() {
+    if (!window.firebase || !window.firebase.initializeApp) return null;
+    try { return window.firebase.app(SB_APP_NAME); }
+    catch (e) { try { return window.firebase.initializeApp(SB_FB_CFG, SB_APP_NAME); } catch (e2) { return null; } }
+  }
   var dbPromise = null;
   function getDb() {
     if (dbPromise) return dbPromise;
@@ -28507,22 +28569,24 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       function bad(e) { if (!settled) { settled = true; reject(e); } }
       try {
         if (!window.firebase || !window.firebase.firestore) return bad(new Error('nofb'));
-        var p = (typeof window.initFirebaseForGoogleDrive === 'function') ? window.initFirebaseForGoogleDrive() : Promise.resolve();
-        Promise.resolve(p).then(function () {
-          try { ok(window.firebase.firestore()); } catch (e) { bad(e); }
-        }).catch(bad);
+        var app = getLicenseApp();
+        if (!app) return bad(new Error('noapp'));
+        try { ok(app.firestore()); } catch (e) { bad(e); }
         setTimeout(function () { bad(new Error('timeout')); }, 12000);
       } catch (e) { bad(e); }
     });
     return dbPromise;
   }
+  function licenseAuth() { var a = getLicenseApp(); return (a && a.auth) ? a.auth() : null; }
   var authWatched = false;
   function watchAuth() {
     if (authWatched) return;
     authWatched = true;
     getDb().then(function () {
+      var auth = licenseAuth();
+      if (!auth) { authWatched = false; return; }
       try {
-        window.firebase.auth().onAuthStateChanged(function (user) {
+        auth.onAuthStateChanged(function (user) {
           if (!user) return;
           var t = jget(LS.transfer);
           if (!t || !t.lic) return;
@@ -28564,7 +28628,17 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
     return { mode: 'fresh' }; /* لم تبدأ تجربة بعد — بوابة الترحيب تطلب البريد */
   }
   function isLicensed() { return state().mode === 'licensed'; }
-  function planLabel(id) { if (isOwnerPlan(id)) return 'باقة المالك — مدى الحياة'; var p = null; for (var i = 0; i < CFG.plans.length; i++) if (CFG.plans[i].id === id) p = CFG.plans[i]; return p ? p.label : 'باقة'; }
+  function planLabel(id) { if (isOwnerPlan(id)) return 'باقة المالك — مدى الحياة'; var p = null; for (var i = 0; i < CFG.plans.length; i++) if (CFG.plans[i].id === id) p = CFG.plans[i]; return p ? p.name : 'باقة'; }
+  /* v1.16: باقة «المدير فقط» (1/3/5) لا تشمل وضع الصنايعي — يتطلب باقة تشمل الصنايعية (2/4/6/8)
+     أثناء التجربة مفتوح ليجرّ كل حاجة قبل الشراء (قرار قابل للعكس بسطر واحد) */
+  var WORKSHOP_PLANS = [2, 4, 6];
+  function craftsmanAllowed() {
+    var s = state();
+    if (s.mode === 'trial' || s.mode === 'fresh') return true;
+    if (s.mode !== 'licensed') return false;
+    if (s.owner) return true;
+    return WORKSHOP_PLANS.indexOf(s.plan) >= 0;
+  }
 
   /* سباق زمني — لا يجوز أن يحجب السحابة التفعيل أكثر من مهلة قصوى (أوفلاين-أولاً) */
   function withTimeout(p, ms, fallbackVal) {
@@ -28577,14 +28651,17 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
   }
   var CLOUD_TIMEOUT = 8000;
 
-  /* ================== التحقق المزدوج: Ed25519 v2 أولاً ثم HMAC v1 ================== */
+  /* ================== التحقق: Ed25519 v2 فقط ==================
+     v1.16: مسار HMAC v1 أُزيل أمنياً — سر v1 كان مضمّناً في index.html المنشور
+     على GitHub فيمكن تزوير أكواد v1؛ Ed25519 (مفتاح عام فقط) هو الجذر الوحيد للثقة.
+     كود v1 القديم (40 رمزاً) يُرفض برسالة «إصدار قديم» بدل «كود غير صالح» */
   function verifyAuto(code, email) {
-    var n = C.normalizeCode(code);
-    if (C2 && (n.indexOf('SB2') === 0 || n.length === 132)) return C2.verifyCode(code, email);
-    return C.verifyCodeLocally(code, email).then(function (v) {
-      if (v.ok || !C2) return v;
-      return C2.verifyCode(code, email); /* كود v2 ملصوق بدون بادئة */
-    });
+    if (C2) {
+      var n = C2.normalizeCode(code);
+      if (n.length === 40) return Promise.resolve({ ok: false, reason: 'version' });
+      return C2.verifyCode(code, email);
+    }
+    return Promise.resolve({ ok: false, reason: 'version' });
   }
 
   /* ================== التجربة: علم سحابي مرة واحدة (جهاز + بريد) ================== */
@@ -28819,13 +28896,16 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
     jset(LS.transfer, { lic: lic, at: Date.now() });
     watchAuth();
     getDb().then(function () {
+      var auth = licenseAuth();
       var cu = null;
-      try { cu = window.firebase.auth().currentUser; } catch (e) {}
+      try { cu = auth.currentUser; } catch (e) {}
       if (cu && C.normalizeEmail(cu.email || '') === lic.email) { completeTransfer(lic); return; }
-      if (typeof window.loginWithGoogleForDrive === 'function') {
-        toast('سجّل الدخول بنفس البريد: ' + lic.email, 'info');
-        window.loginWithGoogleForDrive();
-      } else toast('خدمة جوجل غير متاحة الآن — تواصل واتساب ' + CFG.cashNumber, 'warning');
+      /* v1.16: دخول جوجل على مشروع الترخيص نفسه (وليس درايف) — redirect يعمل داخل WebView */
+      try {
+        var provider = new window.firebase.auth.GoogleAuthProvider();
+        licenseAuth().signInWithRedirect(provider);
+        toast('كمّل اختيار حساب جوجل بنفس البريد: ' + lic.email, 'info');
+      } catch (e) { toast('خدمة جوجل غير متاحة الآن — تواصل واتساب ' + CFG.cashNumber, 'warning'); }
     }).catch(function () { toast('تحتاج اتصال إنترنت لنقل الترخيص', 'warning'); });
   }
   function completeTransfer(lic) {
@@ -28898,6 +28978,15 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       '#sblGate #sblEmail{direction:ltr;text-align:left}' +
       '#sblGate .sbl-err{display:none;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.3);color:var(--danger);border-radius:10px;padding:10px 13px;font-size:12.5px;font-weight:700;line-height:1.8;margin-bottom:8px}' +
       '#sblGate .sbl-note{font-size:11px;color:var(--text-muted);line-height:1.8;margin-top:10px;text-align:center}' +
+      /* v1.16: عرض الباقات بمستويين (مدير / مدير وصنايعية) × ثلاث مدد بمفهوم ٩٩ */
+      '#sblGate .sbl-tier{font-size:12px;font-weight:900;color:var(--text);margin:11px 0 6px;display:flex;align-items:center;gap:6px}' +
+      '#sblGate .sbl-tier .sbl-tier-dot{width:7px;height:7px;border-radius:50%;background:var(--primary);flex-shrink:0}' +
+      '#sblGate .sbl-tier:first-of-type{margin-top:0}' +
+      '#sblGate .sbl-plan-best{border-color:var(--primary) !important;box-shadow:0 0 0 1px var(--primary) inset}' +
+      '#sblGate .sbl-save{display:inline-block;font-size:10px;font-weight:900;color:var(--success);background:rgba(14,159,110,.1);border-radius:8px;padding:1px 7px;margin-top:3px}' +
+      '#sblGate .sbl-extraw{background:var(--card-bg-alt);border:1.5px dashed var(--border);border-radius:10px;padding:8px 13px;font-size:11.5px;color:var(--text-muted);margin-top:9px;text-align:center;line-height:1.8}' +
+      '#sblGate .sbl-extraw b{color:var(--primary)}' +
+      '#sblGate #sblContinue{display:none;width:100%;padding:12px;font-size:14px;margin-bottom:13px}' +
       '#sblGate .sbl-mini{font-size:11px;color:var(--text-muted);text-align:center;margin-top:13px;padding-top:13px;border-top:1px solid var(--border)}' +
       '@media print{#sblGate{display:none !important}}';
     document.head.appendChild(css);
@@ -28913,6 +29002,8 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       '</div>' +
       '<div class="sbl-body">' +
       '<div id="sblStatus"></div>' +
+      /* v1.16: زر الدخول أثناء سريان التجربة — البوابة تظهر عند كل فتح لكن مش قفل */
+      '<button id="sblContinue" type="button" class="sbl-btn sbl-btn-primary">الدخول للتطبيق</button>' +
       '<div id="sblWelcome" style="display:none;margin-bottom:13px;">' +
       '<div style="background:var(--card-bg-alt);border:1.5px solid var(--border);border-radius:13px;padding:13px;margin-bottom:10px;">' +
       '<div style="font-size:14.5px;font-weight:900;color:var(--text);margin-bottom:4px;">ابدأ تجربتك المجانية ' + CFG.trialDays + ' أيام</div>' +
@@ -28960,10 +29051,23 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       this.textContent = showing ? 'إخفاء خانة التفعيل — أبدأ التجربة' : 'عندي كود تفعيل من الإدارة';
     };
     document.getElementById('sblClose').onclick = function () { closeGate(); };
+    /* v1.16: الباقات بمستويين × ثلاث مدد + الصنايعي الإضافي 49ج (مفهوم ٩٩) */
+    function tierRow(tier) {
+      var cards = CFG.plans.filter(function (p) { return p.tier === tier; }).map(function (p) {
+        return '<div class="sbl-plan' + (p.best ? ' sbl-plan-best' : '') + '">' +
+          '<span>' + p.label + '</span><b>' + p.price + ' ج</b>' +
+          (p.save ? '<span class="sbl-save">وفّر ' + p.save + ' ج</span>' : '<span style="visibility:hidden">·</span>') +
+          '</div>';
+      }).join('');
+      return '<div class="sbl-plans">' + cards + '</div>';
+    }
     var plansEl = document.getElementById('sblPlans');
-    plansEl.innerHTML = CFG.plans.map(function (p) {
-      return '<div class="sbl-plan"><span>' + p.label + '</span><b>' + p.price + ' ج</b><span>' + (p.days >= 365 ? Math.round(p.days / 365 * 10) / 10 + ' سنة' : p.days + ' يوم') + '</span></div>';
-    }).join('');
+    plansEl.innerHTML =
+      '<div class="sbl-tier"><span class="sbl-tier-dot"></span>باقة المدير — تشغّل ورشتك لوحدك</div>' + tierRow(1) +
+      '<div class="sbl-tier"><span class="sbl-tier-dot"></span>باقة المدير والصنايعية — أنت وصنايعيتك</div>' + tierRow(2) +
+      '<div class="sbl-extraw">➕ صنايعي إضافي: <b>' + CFG.extraWorker + ' ج/شهر</b> للفرد — زوّد أي عدد تحبه</div>';
+    var contBtn = document.getElementById('sblContinue');
+    contBtn.onclick = function () { closeGate(); };
     return gate;
   }
   function renderGate() {
@@ -28971,8 +29075,15 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
     var s = state(), st = document.getElementById('sblStatus'), closeBtn = document.getElementById('sblClose');
     var welcome = document.getElementById('sblWelcome');
     var actBox = document.getElementById('sblActivateBox');
+    var contBtn = document.getElementById('sblContinue');
     closeBtn.style.display = 'none';
+    contBtn.style.display = 'none';
     gate.dataset.mode = s.mode;
+    /* v1.16: أثناء التجربة السارية زر الدخول ظاهر — الصفحة إعلامية مش قفل */
+    if (s.mode === 'trial' && s.daysLeft > 0) {
+      contBtn.style.display = 'flex';
+      contBtn.textContent = 'الدخول للتطبيق — متبقي ' + s.daysLeft + (s.daysLeft === 1 ? ' يوم' : ' أيام') + ' من تجربتك';
+    }
     if (s.mode === 'fresh') {
       welcome.style.display = 'block'; actBox.style.display = 'none';
       st.className = 'sbl-status sbl-st-warn';
@@ -29012,8 +29123,11 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
     gate.style.display = 'block';
     /* في وضع الإدارة (مشترك أو تجربة سارية) نسمي الإغلاق ونخفي خطوات الدفع */
     var sNow = state();
-    var licensedManage = manageMode && (sNow.mode === 'licensed' || sNow.mode === 'trial');
-    document.getElementById('sblClose').style.display = licensedManage ? 'flex' : 'none';
+    /* v1.16: === true صارمة — لأن 'soft' قيمة truthy ومش وضع إدارة */
+    var licensedManage = (manageMode === true) && (sNow.mode === 'licensed' || sNow.mode === 'trial');
+    /* v1.16: ظهور تلقائي عند فتح التطبيق أثناء التجربة = إعلامي: زر إغلاق ظاهر مع الأسعار */
+    var softTrial = (manageMode === 'soft') && sNow.mode === 'trial';
+    document.getElementById('sblClose').style.display = (licensedManage || softTrial) ? 'flex' : 'none';
     document.querySelector('#sblGate .sbl-steps').style.display = licensedManage ? 'none' : 'block';
     document.getElementById('sblCode').value = '';
     document.getElementById('sblEmail').value = '';
@@ -29048,6 +29162,9 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       '<div style="background:var(--card-bg-alt); border:1.5px solid var(--border); border-radius:16px; padding:16px 18px; font-size:12px; color:var(--text-muted); line-height:2;">' +
       '<b style="color:var(--text);">كيف يعمل الاشتراك؟</b><br>' +
       '• التجربة المجانية ' + CFG.trialDays + ' أيام — مرة واحدة فقط لكل جهاز ولكل بريد (تُسجّل في السحابة؛ حذف التطبيق لا يجددها).<br>' +
+      '• الباقات (مفهوم ٩٩): المدير <b>299ج/شهر</b> — المدير والصنايعية <b>499ج/شهر</b> — الصنايعي الإضافي <b>' + CFG.extraWorker + 'ج/فرد</b>.<br>' +
+      '• عروض: ربع سنوي <b>799ج / 1,299ج</b> — سنوي <b>2,899ج / 4,999ج</b> (الأوفر — وفر شهرين).<br>' +
+      '• باقة المدير فقط لا تشمل وضع الصنايعي — الترقية لباقة المدير والصنايعية تفتحه.<br>' +
       '• للاستمرار: حوّل على فودافون كاش <b dir="ltr">' + CFG.cashNumber + '</b> واستلم كود تفعيل على واتساب.<br>' +
       '• الاشتراك مربوط ببريدك + جهازك: بريد واحد = جهاز واحد فقط (وضع المدير والصنايعية على نفس الجهاز).<br>' +
       '• لو غيرت الموبايل: سجّل دخول جوجل بنفس البريد فينقل اشتراكك تلقائياً، أو كلمنا ونحرره في دقيقة.<br>' +
@@ -29135,10 +29252,17 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
     if (ob && ob.classList.contains('open')) { setTimeout(checkGateWhenReady, 900); return; }
     checkGateWhenReady();
   }
+  var bootGateDone = false;
   function checkGateWhenReady() {
     var s = state();
+    /* v1.16: الإقلاع الثاني الاحتياطي (6ث) لا يعيد فتح البوابة بعد ما المستخدم أغلقها/بدأ تجربة */
+    if (bootGateDone) {
+      if (s.mode === 'expired' || s.mode === 'trialused') openGate(false);
+      return;
+    }
+    bootGateDone = true;
     if (s.mode === 'fresh' || s.mode === 'trialused' || s.mode === 'expired') openGate(false);
-    else if (s.mode === 'trial') trialCloudVerify();
+    else if (s.mode === 'trial') { openGate('soft'); trialCloudVerify(); } /* v1.16: صفحة الاشتراك تظهر عند كل فتح أثناء التجربة */
     else if (s.mode === 'licensed') { emailBoundCheck(jget(LS.lic)); }
   }
   window.SBLicense = {
@@ -29147,6 +29271,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
     openGate: openGate,
     closeGate: closeGate,
     deviceCode: deviceCode,
+    craftsmanAllowed: craftsmanAllowed,
     refreshSettingsUI: refreshSettingsUI
   };
 
