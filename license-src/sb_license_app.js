@@ -170,10 +170,10 @@
       var expMs = Date.parse(lic.exp + 'T23:59:59Z');
       var daysLeft = Math.ceil((expMs - t) / 86400000);
       if (!lic.pendingCloud && daysLeft >= 0) {
-        return { mode: 'licensed', daysLeft: daysLeft, expiry: lic.exp, email: lic.email, plan: lic.plan, owner: isOwnerPlan(lic.plan) };
+        return { mode: 'licensed', daysLeft: daysLeft, expiry: lic.exp, email: lic.email, plan: lic.plan, seats: seatCount(lic), kind: lic.kind || 0, owner: isOwnerPlan(lic.plan) };
       }
       if (lic.pendingCloud && daysLeft >= 0) {
-        return { mode: 'licensed', daysLeft: daysLeft, expiry: lic.exp, email: lic.email, plan: lic.plan, pending: true, owner: isOwnerPlan(lic.plan) };
+        return { mode: 'licensed', daysLeft: daysLeft, expiry: lic.exp, email: lic.email, plan: lic.plan, seats: seatCount(lic), kind: lic.kind || 0, pending: true, owner: isOwnerPlan(lic.plan) };
       }
       return { mode: 'expired', reason: 'انتهى اشتراكك في ' + lic.exp, email: lic.email, expiry: lic.exp };
     }
@@ -190,6 +190,16 @@
     return { mode: 'fresh' }; /* لم تبدأ تجربة بعد — بوابة الترحيب تطلب البريد */
   }
   function isLicensed() { return state().mode === 'licensed'; }
+  /* v1.19: مقاعد الصنايعية — من الكود لو موجود، والافتراضي 2 لباقات الحزمة (قاعدة الـ49 للزيادة بيتطبق في التسعير) */
+  function seatCount(lic) {
+    if (lic && lic.seats && lic.seats > 0) return lic.seats;
+    return WORKSHOP_PLANS.indexOf(lic && lic.plan) >= 0 ? 2 : 0;
+  }
+  /* v1.19: كود صنايعي (kind=1) = الجهاز ده للمصنعية بس — وضع المدير مقفول عليه */
+  function isCraftsmanCode() {
+    var lic = jget(LS.lic);
+    return !!(lic && lic.kind === 1);
+  }
   function planLabel(id) { if (isOwnerPlan(id)) return 'باقة المالك — مدى الحياة'; var p = null; for (var i = 0; i < CFG.plans.length; i++) if (CFG.plans[i].id === id) p = CFG.plans[i]; return p ? p.name : 'باقة'; }
   /* v1.16: باقة «المدير فقط» (1/3/5) لا تشمل وضع الصنايعي — يتطلب باقة تشمل الصنايعية (2/4/6/8)
      أثناء التجربة مفتوح ليجرّ كل حاجة قبل الشراء (قرار قابل للعكس بسطر واحد) */
@@ -405,6 +415,8 @@
         codeId: v.codeId, code: v.code || C.normalizeCode(code), email: C.normalizeEmail(email),
         exp: v.exp, plan: v.plan, device: deviceCode(), pendingCloud: false,
         ver: v.code ? 2 : 1,
+        /* v1.19: مقاعد الصنايعية + نوع الجهاز من الكود (أكواد v1.3 بدونها → قيم افتراضية) */
+        seats: v.seats || 0, kind: v.kind || 0,
         activatedAt: new Date().toISOString()
       };
       return cloudClaim(lic).then(function (res) {
@@ -817,7 +829,7 @@
           (s.pending ? '<div style="font-size:12px;color:var(--warning);font-weight:800;margin-top:8px;">ينتظر التحقق السحابي عند توفر الإنترنت</div>' : '');
       } else {
         el.innerHTML = chip('sbl-st-ok', s.pending ? 'ساري — ينتظر التحقق السحابي' : 'اشتراك ساري ✓') +
-          '<div style="font-size:13.5px;color:var(--text);font-weight:800;">' + planLabel(s.plan) + ' — ينتهي في <b>' + s.expiry + '</b> (متبقي ' + s.daysLeft + ' يوم)</div>' +
+          '<div style="font-size:13.5px;color:var(--text);font-weight:800;">' + planLabel(s.plan) + ' — ينتهي في <b>' + s.expiry + '</b> (متبقي ' + s.daysLeft + ' يوم)' + (s.seats > 0 ? ' • مقاعد الصنايعية: <b>' + s.seats + '</b>' : '') + '</div>' +
           '<div style="font-size:12px;color:var(--text-muted);margin-top:4px;">البريد المسجّل: <b dir="ltr">' + (s.email || '—') + '</b></div>' +
           (s.daysLeft <= 7 ? '<div style="font-size:12px;color:var(--warning);font-weight:800;margin-top:8px;">اشتراكك قريب من الانتهاء — جدّد الآن لتجنب توقف العمل</div>' : '');
       }
@@ -890,7 +902,7 @@
     }
     bootGateDone = true;
     if (s.mode === 'fresh' || s.mode === 'trialused' || s.mode === 'expired') openGate(false);
-    else if (s.mode === 'trial') { openGate('soft'); trialCloudVerify(); } /* v1.16: صفحة الاشتراك تظهر عند كل فتح أثناء التجربة */
+    else if (s.mode === 'trial') { trialCloudVerify(); } /* v1.19 بطلب المالك: مفيش صفحة اشتراك أثناء التجربة السارية — بتظهر بعد ما التجربة تخلص بس */
     else if (s.mode === 'licensed') { emailBoundCheck(jget(LS.lic)); }
   }
   window.SBLicense = {
@@ -900,6 +912,7 @@
     closeGate: closeGate,
     deviceCode: deviceCode,
     craftsmanAllowed: craftsmanAllowed,
+    isCraftsmanCode: isCraftsmanCode,
     refreshSettingsUI: refreshSettingsUI
   };
 

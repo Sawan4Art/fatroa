@@ -290,6 +290,10 @@
     if (!timingSafeEqual(payload.slice(2, 10), emailHash8(email))) return Promise.resolve({ ok: false, reason: 'email' });
     var expDays = (payload[10] << 16) | (payload[11] << 8) | payload[12];
     var plan = payload[13];
+    /* v1.19: بايتات 14/15 كانت صفرية دايماً — 14 = مقاعد الصنايعية، 15 = نوع الجهاز (1=صنايعي فقط).
+       أكواد SB Owner v1.3 بتبتهم صفر → سلوك افتراضي سليم بدون أي كسور رجعية */
+    var seats = payload[14];
+    var kind = payload[15];
     var today = dateToExpDays(new Date().toISOString().slice(0, 10));
     if (today > expDays) return Promise.resolve({ ok: false, reason: 'expired', exp: expDaysToDate(expDays), plan: plan });
     return Promise.resolve({
@@ -298,7 +302,9 @@
       code: n,
       exp: expDaysToDate(expDays),
       expDays: expDays,
-      plan: plan
+      plan: plan,
+      seats: seats || 0,
+      kind: kind || 0
     });
   }
 

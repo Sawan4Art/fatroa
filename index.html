@@ -943,6 +943,24 @@
         box-shadow: 0 0 12px color-mix(in srgb, var(--primary) 30%, transparent) !important; 
         background: color-mix(in srgb, var(--primary) 7%, var(--input-bg)) !important; 
     }
+    /* v1.19: القوائم المنسدلة جوّه الجداول — حجم طبيعي بدل الشريط العريض اللي بياخد الصف كله
+       (طلب المالك: قائمة التخانة حجمها كبير بدون داعي) */
+    .table-responsive tbody.rows-body tr select.t,
+    .table-responsive tbody.rows-body tr select.w,
+    .table-responsive tbody.rows-body tr select.talabis,
+    .table-responsive tbody.rows-body tr select.talabis-count {
+        width: auto !important;
+        min-width: 78px !important;
+        max-width: 140px !important;
+        height: 40px !important;
+        padding: 6px 12px !important;
+        font-size: 13px !important;
+        font-weight: 800 !important;
+        border-radius: 10px !important;
+    }
+    /* v1.19: الأرقام الطويلة بتتصغّر أوتوماتيك جوّا الخانة بدل ما تخرج عن الإطار (كل الجداول) */
+    .table-responsive tbody.rows-body tr input.sb-num-md { font-size: 14px !important; letter-spacing: -0.2px !important; }
+    .table-responsive tbody.rows-body tr input.sb-num-sm { font-size: 11.5px !important; letter-spacing: -0.3px !important; }
     .table-responsive tbody.rows-body tr td:has(.t),
     .table-responsive tbody.rows-body tr td:has(.riser),
     .table-responsive tbody.rows-body tr td:has(.talabis),
@@ -1649,6 +1667,10 @@
       /* v1.12: ترتيب أقسام الورقة المطبوعة — order من الإعدادات + وضع أبيض وأسود */
       #invoiceCardContent.pdf-bw, #invoiceCardContent.pdf-bw * { background-image: none !important; box-shadow: none !important; text-shadow: none !important; }
       #invoiceCardContent.pdf-bw, #invoiceCardContent.pdf-bw * { color: #111111 !important; border-color: #9aa0a6 !important; background-color: #ffffff !important; -webkit-print-color-adjust: economy; print-color-adjust: economy; }
+      /* v1.19: شعار الشركة بس اللي يظهر في المطبوع — العنصر النائب (بدون شعار مرفوع) يتخفى */
+      #invLogoContainer.sb-logo-placeholder { display: none !important; }
+      .pdf-render-mode #invLogoContainer.sb-logo-placeholder { display: none !important; }
+      .print-mode #invLogoContainer.sb-logo-placeholder { display: none !important; }
       .sb-order-mode#invoiceCardContent { display: flex; flex-direction: column; }
       .sb-order-mode#invoiceCardContent > * { order: 99; }
       .sb-order-mode#invoiceCardContent > .custom-print-header { order: 0 !important; }
@@ -5734,20 +5756,15 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
                    </div>
                 </div>
 
-                <!-- 2. لون سمة الفاتورة المطبوعة -->
+                <!-- v1.19: قسم الألوان اتشال بطلب المالك — الطباعة أبيض وأسود افتراضياً والملون بزر مخصص في شاشة الفاتورة -->
                 <div class="pdf-section-box">
                    <div class="pdf-section-title">
-                      <svg class="icon-svg" style="width:16px; height:16px; color:var(--primary);" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r=".5"></circle><circle cx="17.5" cy="10.5" r=".5"></circle><circle cx="8.5" cy="7.5" r=".5"></circle><circle cx="6.5" cy="12.5" r=".5"></circle><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path></svg>
-                      لون سمة الفاتورة المطبوعة
+                      <svg class="icon-svg" style="width:16px; height:16px; color:var(--primary);" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h8M8 14h5"/></svg>
+                      ألوان الطباعة
                    </div>
-                   <div class="pdf-swatches-grid" id="pdfSwatchesContainer">
-                      <button type="button" class="pdf-swatch-btn" data-color="#1e3a8a" style="background:#1e3a8a;" title="كحلي ملكي" onclick="selectPdfColor('#1e3a8a')"></button>
-                      <button type="button" class="pdf-swatch-btn" data-color="#18181b" style="background:#18181b;" title="أسود كربوني" onclick="selectPdfColor('#18181b')"></button>
-                      <button type="button" class="pdf-swatch-btn" data-color="#b45309" style="background:#b45309;" title="ذهبي رخامي" onclick="selectPdfColor('#b45309')"></button>
-                      <button type="button" class="pdf-swatch-btn" data-color="#047857" style="background:#047857;" title="أخضر زمردي" onclick="selectPdfColor('#047857')"></button>
-                      <button type="button" class="pdf-swatch-btn" data-color="#475569" style="background:#475569;" title="رمادي كلاسيكي" onclick="selectPdfColor('#475569')"></button>
-                      <button type="button" class="pdf-swatch-btn" data-color="#4338ca" style="background:#4338ca;" title="بنفسجي نيلي" onclick="selectPdfColor('#4338ca')"></button>
-                      <button type="button" class="pdf-swatch-btn" data-color="theme" style="background:var(--primary);" title="مطابق لسمة التطبيق" onclick="selectPdfColor('theme')"></button>
+                   <div style="font-size:12px; font-weight:700; color:var(--text-muted); line-height:1.9; background:var(--card-bg-alt); border:1px dashed var(--border); border-radius:10px; padding:10px 12px;">
+                      الطباعة دايماً <b style="color:var(--text);">أبيض وأسود</b> اقتصادية افتراضياً ✅
+                      — ولو حبيت تطبع بالألوان، استخدم زر <b style="color:var(--primary);">🎨 طباعة ملونة</b> جوّا شاشة الفاتورة نفسها.
                    </div>
                 </div>
 
@@ -5785,10 +5802,8 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
                       <button type="button" class="pdf-seg-item" data-paper="a5" onclick="selectPdfPaperSize('a5')">A5</button>
                       <button type="button" class="pdf-seg-item" data-paper="letter" onclick="selectPdfPaperSize('letter')">Letter</button>
                    </div>
-                   <label class="pdf-toggle-label" style="margin-bottom:6px;">
-                      <span>طباعة الألوان (إيقافها = نسخة أبيض وأسود اقتصادية)</span>
-                      <input type="checkbox" id="pdf_printColors" checked onchange="selectPdfPrintColors(this.checked)">
-                   </label>
+                   <!-- v1.19: مفتاح طباعة الألوان اتشال — الأبيض والأسود افتراضي ثابت والملون من زر الفاتورة -->
+                   <div style="font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:6px; line-height:1.8;">🖨️ الطباعة الأصلية = أبيض وأسود — للمشاهدة الملونة استخدم زر 🎨 في شاشة الفاتورة</div>
 
                    <div class="pdf-section-title" style="margin-top:14px;">
                       <svg class="icon-svg" style="width:16px; height:16px; color:var(--primary);" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="8 9 12 5 16 9"/><polyline points="8 15 12 19 16 15"/></svg>
@@ -7579,7 +7594,9 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
           <button type="button" id="newInvoiceCuttingBtn" class="action-btn" style="background:#0f766e;" onclick="openWorkshopCuttingSheet()"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M6 2v20M18 2v20M2 6h20M2 18h20"></path></svg> جدول التقطيع</button>
           <button type="button" class="action-btn" style="background:var(--whatsapp);" onclick="shareWhatsAppText()"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg> واتساب</button>
           <!-- زر الحاسبة اتشال من صفحة إنشاء الفاتورة بطلب المالك — متاحة كبوب أب من الشريط السفلي في أي مكان -->
-          <button type="button" class="action-btn" style="background:#64748b;" onclick="openPrintInvoice()"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M12 18v-6"></path><path d="M9 15l3 3 3-3"></path></svg> طباعة (PDF)</button>
+          <!-- v1.19: زرين طباعة — أبيض وأسود افتراضي + ملون اختياري (طلب المالك) -->
+          <button type="button" class="action-btn" style="background:#334155;" onclick="openPrintInvoice()"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M6 9V2h12v7"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg> طباعة أبيض وأسود</button>
+          <button type="button" class="action-btn" style="background:#7c3aed;" onclick="openPrintInvoice(true)"><svg class="icon-svg" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r=".5"></circle><circle cx="17.5" cy="10.5" r=".5"></circle><circle cx="8.5" cy="7.5" r=".5"></circle><circle cx="6.5" cy="12.5" r=".5"></circle><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path></svg> طباعة ملونة</button>
           <button type="button" class="action-btn" style="background:#3b82f6;" onclick="sharePDFInvoice()"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M10 14v-2a3 3 0 0 1 3-3h3"></path><polyline points="13 6 16 9 13 12"></polyline></svg> مشاركة PDF</button>
         </div>
         <div id="archivedInvoiceActionsGroup" style="display:none; grid-template-columns:repeat(auto-fit, minmax(105px, 1fr)); gap:8px; width:100%;">
@@ -7587,7 +7604,9 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
           <button type="button" id="archivedInvoiceCuttingBtn" class="action-btn" style="background:#0f766e;" onclick="openWorkshopCuttingSheet()"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M6 2v20M18 2v20M2 6h20M2 18h20"></path></svg> جدول التقطيع</button>
           <button type="button" id="archivedSendReminderBtn" class="action-btn" style="background:#25d366; display:none;" onclick="sendWhatsAppReminder(currentViewedArchiveId)"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg> تذكير بالسداد</button>
           <button type="button" class="action-btn" style="background:var(--whatsapp);" onclick="shareWhatsAppText()"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg> واتساب (نص)</button>
-          <button type="button" class="action-btn" style="background:#64748b;" onclick="openPrintInvoice()"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M12 18v-6"></path><path d="M9 15l3 3 3-3"></path></svg> طباعة (PDF)</button>
+          <!-- v1.19: زرين طباعة — أبيض وأسود افتراضي + ملون اختياري (طلب المالك) -->
+          <button type="button" class="action-btn" style="background:#334155;" onclick="openPrintInvoice()"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M6 9V2h12v7"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg> طباعة أبيض وأسود</button>
+          <button type="button" class="action-btn" style="background:#7c3aed;" onclick="openPrintInvoice(true)"><svg class="icon-svg" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r=".5"></circle><circle cx="17.5" cy="10.5" r=".5"></circle><circle cx="8.5" cy="7.5" r=".5"></circle><circle cx="6.5" cy="12.5" r=".5"></circle><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path></svg> طباعة ملونة</button>
           <button type="button" class="action-btn" style="background:#3b82f6;" onclick="sharePDFInvoice()"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M10 14v-2a3 3 0 0 1 3-3h3"></path><polyline points="13 6 16 9 13 12"></polyline></svg> مشاركة PDF</button>
         </div>
       </div>
@@ -8483,6 +8502,8 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
     function renderLogo(containerId, size) {
       const c = document.getElementById(containerId); if (!c) return;
       const logo = localStorage.getItem('factoryLogoBase64') || '';
+      /* v1.19: علم إن مفيش شعار شركة — العنصر النائب يتخفى في الطباعة/PDF (شعار التطبيق ممنوع في المطبوع بطلب المالك) */
+      c.classList.toggle('sb-logo-placeholder', !logo);
       const name = localStorage.getItem('factoryName') || 'StoneBill';
       const firstLetter = name ? name.trim().charAt(0).toUpperCase() : 'F';
       
@@ -8586,9 +8607,9 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
     function getDefaultPdfConfig() {
         return {
             template: 'classic',
-            /* v1.12: مقاس الورقة الافتراضي A4 + طباعة الألوان مفعّلة + ترتيب الأقسام الطبيعي */
+            /* v1.12: مقاس الورقة الافتراضي A4 + ترتيب الأقسام الطبيعي — v1.19: الأبيض والأسود هو الافتراضي */
             paperSize: 'a4',
-            printColors: true,
+            printColors: false,
             sectionOrder: SB_DEFAULT_SECTION_ORDER.slice(),
             accentColor: '#1e3a8a',
             fontSize: '11px',
@@ -8606,16 +8627,21 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
     }
 
     function getPdfConfig() {
-        try {
-            const configStr = localStorage.getItem('pdfConfig');
-            if (configStr) {
-                const parsed = JSON.parse(configStr);
-                return Object.assign(getDefaultPdfConfig(), parsed);
+        const merged = (function () {
+            try {
+                const configStr = localStorage.getItem('pdfConfig');
+                if (configStr) {
+                    const parsed = JSON.parse(configStr);
+                    return Object.assign(getDefaultPdfConfig(), parsed);
+                }
+            } catch(e) {
+                console.error('Error parsing pdfConfig', e);
             }
-        } catch(e) {
-            console.error('Error parsing pdfConfig', e);
-        }
-        return getDefaultPdfConfig();
+            return getDefaultPdfConfig();
+        })();
+        /* v1.19 بطلب المالك: الطباعة أبيض وأسود افتراضياً دايماً — الملون فقط بزر «طباعة ملونة» المؤقت */
+        merged.printColors = false;
+        return merged;
     }
 
     function initPdfSettingsPage() {
@@ -8931,6 +8957,8 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         sheet.style.setProperty('--pdf-color', effColor);
         sheet.style.fontSize = config.fontSize || '11px';
         sheet.className = 'pdf-a4-sheet tpl-' + config.template + ' tbl-style-' + config.tableStyle;
+        /* v1.19: المعاينة تطابق الواقع — أبيض وأسود افتراضي */
+        sheet.classList.add('pdf-bw');
 
         const factoryName = localStorage.getItem('factoryName') || 'StoneBill للرخام والجرانيت';
         const factorySubtitle = localStorage.getItem('factorySubtitle') || 'لتوريد وتصنيع وتشطيب كافة أعمال الرخام والجرانيت';
@@ -10700,6 +10728,8 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         const qInp = tr.querySelector('.q');
         const riserInp = tr.querySelector('.riser');
         const talabisInp = tr.querySelector('.talabis');
+        /* v1.19: عدد الجوانب (جدول الدرج بالتلبيسة) يدخل في تمييز التطابق — صف بـ(جنب) مش زي صف بـ(جنبين) */
+        const talabisCountInp = tr.querySelector('.talabis-count');
 
         const l = parseNum(lInp?.value);
         const w = parseNum(wInp?.value);
@@ -10710,13 +10740,31 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
 
         if (l <= 0 || q <= 0) return;
 
-        const key = `${l}_${w}_${tInp ? t : 'default'}_${riser}_${talabis}`;
+        const talabisCount = (talabisCountInp?.value || '').trim();
+        const key = `${l}_${w}_${tInp ? t : 'default'}_${riser}_${talabis}_${talabisCount}`;
         if (seenMap.has(key)) {
           const firstRow = seenMap.get(key);
           const firstQInp = firstRow.querySelector('.q');
           if (firstQInp) {
             const curQ = parseNum(firstQInp.value);
             firstQInp.value = curQ + q;
+            /* v1.19 إصلاح طلب المالك: في جداول الترابيع العدد مربوط بـ«م² مطلوب» — لو مزامناش الهدف
+               مع العدد الجديد، إعادة الحساب كانت بترجّع العدد للقيمة القديمة (١٠٠ بدل ١٥٠).
+               الحل: مزامنة «م² مطلوب» = العدد الكلي × مساحة القطعة عشان القيمتين يفضلوا متطابقين */
+            const firstTarget = firstRow.querySelector('.target-sqm');
+            if (firstTarget) {
+              const fl = parseNum(firstRow.querySelector('.l')?.value);
+              const fw = parseNum(firstRow.querySelector('.w')?.value);
+              const pieceArea = (fl > 0 && fw > 0) ? (fl * fw) / 10000 : 0;
+              if (pieceArea > 0) {
+                const newQ = parseNum(firstQInp.value);
+                const covered = (newQ * pieceArea).toFixed(2);
+                firstTarget.value = covered;
+                firstTarget.title = covered + ' م² مطلوب ÷ مساحة القطعة ' + pieceArea.toFixed(4) + ' م² = ' + newQ + ' قطعة ← بعد دمج المتطابق';
+                const hintEl = firstRow.querySelector('.tarabee-pieces-hint');
+                if (hintEl) { hintEl.innerText = '= ' + newQ + ' قطعة (' + covered + ' م²)'; hintEl.style.display = 'block'; }
+              }
+            }
           }
           tr.remove();
           mergedCount++;
@@ -10868,7 +10916,21 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
       return isNaN(n) ? 0 : n;
     }
 
+    /* v1.19: تصغير خط الأرقام الطويلة أوتوماتيك — تُستدعى مع كل إعادة حساب (بتغطي كل الجداول والدمج) */
+    function sbFitNumInputs() {
+      try {
+        document.querySelectorAll('.rows-body input.l, .rows-body input.w, .rows-body input.q, .rows-body input.riser, .rows-body input.target-sqm').forEach(function (inp) {
+          const v = String(inp.value || '').trim();
+          inp.classList.remove('sb-num-sm', 'sb-num-md');
+          if (v.length >= 7) inp.classList.add('sb-num-sm');
+          else if (v.length >= 5) inp.classList.add('sb-num-md');
+        });
+      } catch (e) {}
+    }
+    window.sbFitNumInputs = sbFitNumInputs;
+
     function calculateAll() {
+      if (typeof sbFitNumInputs === 'function') sbFitNumInputs();
       let gSq = 0, gLin = 0, gPcs = 0, gCost = 0;
       const cards = document.querySelectorAll('#tablesContainer .block-card');
       cards.forEach(b => {
@@ -12629,7 +12691,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
     }
     /* ═══════ نهاية PDF Color Sanitizer ═══════ */
 
-    async function getPdfBlob(client, element, viewActions) {
+    async function getPdfBlob(client, element, viewActions, forceColors) {
       if (typeof applyPdfConfig === 'function') applyPdfConfig();
       if(viewActions) viewActions.style.display = 'none';
       
@@ -12671,7 +12733,8 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         html2canvas:  { scale: 2, useCORS: true },
         jsPDF:        { unit: 'mm', format: (__pdfCfg.paperSize || 'a4'), orientation: 'portrait' }
       };
-      if (__pdfCfg.printColors === false) element.classList.add('pdf-bw');
+      /* v1.19: أبيض وأسود افتراضي — الملون فقط عند تمرير forceColors من زر «طباعة ملونة» */
+      if (forceColors !== true) element.classList.add('pdf-bw');
       element.classList.add('sb-order-mode');
 
       try {
@@ -12715,15 +12778,16 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
     }
     window.sbPrint = sbPrint;
 
-    function openPrintInvoice() {
+    function openPrintInvoice(forceColors) {
         if (typeof applyPdfConfig === 'function') applyPdfConfig();
         const config = (typeof getPdfConfig === 'function') ? getPdfConfig() : { template: 'classic', tableStyle: 'grid' };
         const invoiceContent = document.getElementById('invoiceCardContent');
         if (invoiceContent) {
             invoiceContent.classList.add('pdf-tpl-' + (config.template || 'classic'));
             invoiceContent.classList.add('pdf-tbl-' + (config.tableStyle || 'grid'));
-            /* v1.12: وضع أبيض وأسود لو طباعة الألوان مقفولة + وضع ترتيب الأقسام */
-            if (config.printColors === false) invoiceContent.classList.add('pdf-bw');
+            /* v1.19: أبيض وأسود افتراضي — النسخة الملونة فقط بزر «طباعة ملونة» (forceColors) */
+            if (forceColors === true) invoiceContent.classList.remove('pdf-bw');
+            else invoiceContent.classList.add('pdf-bw');
             invoiceContent.classList.add('sb-order-mode');
         }
         // Sync values for native print too, just in case
@@ -12745,7 +12809,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
             }
         }, 1500);
     }
-    async function sharePDFInvoice() {
+    async function sharePDFInvoice(forceColors) {
       const client = document.getElementById('clientName')?.value.trim() || 'فاتورة';
       const element = document.getElementById('invoiceCardContent');
       const viewActions = document.getElementById('viewActions');
@@ -12753,7 +12817,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
       showToast('جاري إنشاء ملف PDF...');
       let result = null;
       try {
-        result = await getPdfBlob(client, element, viewActions);
+        result = await getPdfBlob(client, element, viewActions, forceColors === true);
       } catch (genErr) {
         console.error('PDF generation threw:', genErr);
         /* v1.12: الفشل الصامت كان بيخلي المشاركة شكلها «لا تستجيب» — نعرض رسالة واضحة */
@@ -15595,6 +15659,17 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
           return;
         }
       } catch (e) { /* لو طبقة الترخيص غير جاهزة لا نمنع الاستخدام */ }
+      /* v1.19: كود صنايعي (kind=1) — الجهاز ده للمصنعية بس، وضع المدير مقفول عليه */
+      try {
+        if (modalSelectedRole === 'admin' && window.SBLicense &&
+            typeof window.SBLicense.isCraftsmanCode === 'function' &&
+            window.SBLicense.isCraftsmanCode()) {
+          if (typeof showToast === 'function') {
+            showToast('الجهاز ده مفعّل بكود صنايعي — وضع المدير بيشتغل على جهاز المدير بس بكود المدير (واتساب 01090042368)', 'warning');
+          }
+          return;
+        }
+      } catch (e) {}
       const storedPin = getStoredAdminPin();
       const pinInput = document.getElementById('adminPinInput');
       const pinBox = document.getElementById('adminPinProtectionBox');
@@ -28401,6 +28476,10 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
     if (!timingSafeEqual(payload.slice(2, 10), emailHash8(email))) return Promise.resolve({ ok: false, reason: 'email' });
     var expDays = (payload[10] << 16) | (payload[11] << 8) | payload[12];
     var plan = payload[13];
+    /* v1.19: بايتات 14/15 كانت صفرية دايماً — 14 = مقاعد الصنايعية، 15 = نوع الجهاز (1=صنايعي فقط).
+       أكواد SB Owner v1.3 بتبتهم صفر → سلوك افتراضي سليم بدون أي كسور رجعية */
+    var seats = payload[14];
+    var kind = payload[15];
     var today = dateToExpDays(new Date().toISOString().slice(0, 10));
     if (today > expDays) return Promise.resolve({ ok: false, reason: 'expired', exp: expDaysToDate(expDays), plan: plan });
     return Promise.resolve({
@@ -28409,7 +28488,9 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       code: n,
       exp: expDaysToDate(expDays),
       expDays: expDays,
-      plan: plan
+      plan: plan,
+      seats: seats || 0,
+      kind: kind || 0
     });
   }
 
@@ -28615,10 +28696,10 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       var expMs = Date.parse(lic.exp + 'T23:59:59Z');
       var daysLeft = Math.ceil((expMs - t) / 86400000);
       if (!lic.pendingCloud && daysLeft >= 0) {
-        return { mode: 'licensed', daysLeft: daysLeft, expiry: lic.exp, email: lic.email, plan: lic.plan, owner: isOwnerPlan(lic.plan) };
+        return { mode: 'licensed', daysLeft: daysLeft, expiry: lic.exp, email: lic.email, plan: lic.plan, seats: seatCount(lic), kind: lic.kind || 0, owner: isOwnerPlan(lic.plan) };
       }
       if (lic.pendingCloud && daysLeft >= 0) {
-        return { mode: 'licensed', daysLeft: daysLeft, expiry: lic.exp, email: lic.email, plan: lic.plan, pending: true, owner: isOwnerPlan(lic.plan) };
+        return { mode: 'licensed', daysLeft: daysLeft, expiry: lic.exp, email: lic.email, plan: lic.plan, seats: seatCount(lic), kind: lic.kind || 0, pending: true, owner: isOwnerPlan(lic.plan) };
       }
       return { mode: 'expired', reason: 'انتهى اشتراكك في ' + lic.exp, email: lic.email, expiry: lic.exp };
     }
@@ -28635,6 +28716,16 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
     return { mode: 'fresh' }; /* لم تبدأ تجربة بعد — بوابة الترحيب تطلب البريد */
   }
   function isLicensed() { return state().mode === 'licensed'; }
+  /* v1.19: مقاعد الصنايعية — من الكود لو موجود، والافتراضي 2 لباقات الحزمة (قاعدة الـ49 للزيادة بيتطبق في التسعير) */
+  function seatCount(lic) {
+    if (lic && lic.seats && lic.seats > 0) return lic.seats;
+    return WORKSHOP_PLANS.indexOf(lic && lic.plan) >= 0 ? 2 : 0;
+  }
+  /* v1.19: كود صنايعي (kind=1) = الجهاز ده للمصنعية بس — وضع المدير مقفول عليه */
+  function isCraftsmanCode() {
+    var lic = jget(LS.lic);
+    return !!(lic && lic.kind === 1);
+  }
   function planLabel(id) { if (isOwnerPlan(id)) return 'باقة المالك — مدى الحياة'; var p = null; for (var i = 0; i < CFG.plans.length; i++) if (CFG.plans[i].id === id) p = CFG.plans[i]; return p ? p.name : 'باقة'; }
   /* v1.16: باقة «المدير فقط» (1/3/5) لا تشمل وضع الصنايعي — يتطلب باقة تشمل الصنايعية (2/4/6/8)
      أثناء التجربة مفتوح ليجرّ كل حاجة قبل الشراء (قرار قابل للعكس بسطر واحد) */
@@ -28850,6 +28941,8 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
         codeId: v.codeId, code: v.code || C.normalizeCode(code), email: C.normalizeEmail(email),
         exp: v.exp, plan: v.plan, device: deviceCode(), pendingCloud: false,
         ver: v.code ? 2 : 1,
+        /* v1.19: مقاعد الصنايعية + نوع الجهاز من الكود (أكواد v1.3 بدونها → قيم افتراضية) */
+        seats: v.seats || 0, kind: v.kind || 0,
         activatedAt: new Date().toISOString()
       };
       return cloudClaim(lic).then(function (res) {
@@ -29262,7 +29355,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
           (s.pending ? '<div style="font-size:12px;color:var(--warning);font-weight:800;margin-top:8px;">ينتظر التحقق السحابي عند توفر الإنترنت</div>' : '');
       } else {
         el.innerHTML = chip('sbl-st-ok', s.pending ? 'ساري — ينتظر التحقق السحابي' : 'اشتراك ساري ✓') +
-          '<div style="font-size:13.5px;color:var(--text);font-weight:800;">' + planLabel(s.plan) + ' — ينتهي في <b>' + s.expiry + '</b> (متبقي ' + s.daysLeft + ' يوم)</div>' +
+          '<div style="font-size:13.5px;color:var(--text);font-weight:800;">' + planLabel(s.plan) + ' — ينتهي في <b>' + s.expiry + '</b> (متبقي ' + s.daysLeft + ' يوم)' + (s.seats > 0 ? ' • مقاعد الصنايعية: <b>' + s.seats + '</b>' : '') + '</div>' +
           '<div style="font-size:12px;color:var(--text-muted);margin-top:4px;">البريد المسجّل: <b dir="ltr">' + (s.email || '—') + '</b></div>' +
           (s.daysLeft <= 7 ? '<div style="font-size:12px;color:var(--warning);font-weight:800;margin-top:8px;">اشتراكك قريب من الانتهاء — جدّد الآن لتجنب توقف العمل</div>' : '');
       }
@@ -29335,7 +29428,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
     }
     bootGateDone = true;
     if (s.mode === 'fresh' || s.mode === 'trialused' || s.mode === 'expired') openGate(false);
-    else if (s.mode === 'trial') { openGate('soft'); trialCloudVerify(); } /* v1.16: صفحة الاشتراك تظهر عند كل فتح أثناء التجربة */
+    else if (s.mode === 'trial') { trialCloudVerify(); } /* v1.19 بطلب المالك: مفيش صفحة اشتراك أثناء التجربة السارية — بتظهر بعد ما التجربة تخلص بس */
     else if (s.mode === 'licensed') { emailBoundCheck(jget(LS.lic)); }
   }
   window.SBLicense = {
@@ -29345,6 +29438,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
     closeGate: closeGate,
     deviceCode: deviceCode,
     craftsmanAllowed: craftsmanAllowed,
+    isCraftsmanCode: isCraftsmanCode,
     refreshSettingsUI: refreshSettingsUI
   };
 
