@@ -41,3 +41,10 @@ __pycache__/
 
 # Large binaries / archives (keep repo light)
 *.zip
+
+# Signing & secrets (never commit)
+keystores/
+*.keystore
+*.jks
+secrets-backup/
+.github-token
