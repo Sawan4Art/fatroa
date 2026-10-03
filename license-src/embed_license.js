@@ -12,7 +12,7 @@ const app = fs.readFileSync(path.join(S, 'sb_license_app.js'), 'utf8').trim();
 
 const block =
   '<!--SBL-START-->\n<script>\n' +
-  '/* ===== StoneBill v1.18 — نظام الاشتراك والترخيص (طبقة معزولة — قاعدة 1: لا يمس منطق الجداول) ===== */\n' +
+  '/* ===== StoneBill v1.20 — نظام الاشتراك والترخيص (طبقة معزولة — قاعدة 1: لا يمس منطق الجداول) ===== */\n' +
   '/* طبقة 1/4: tweetnacl — Ed25519 (مفتاح عام فقط داخل التطبيق) */\n' +
   '/*SBL-NACL-START*/\n' + nacl + '\n/*SBL-NACL-END*/\n' +
   '/* طبقة 2/4: نواة v1 (HMAC — معطلة للتحقق، موجودة للأرشيف) */\n' +

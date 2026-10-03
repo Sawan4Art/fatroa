@@ -366,7 +366,7 @@
     .settings-section h3 { margin: 0 0 10px; font-size: 15px; font-weight: 800; color: var(--text); }
     .settings-section h4 { margin: 8px 0 8px; font-size: 12px; color: var(--text-muted); font-weight: 700; }
     .settings-section label { font-weight: 800; font-size: 14px; display: block; margin-bottom: 6px; color: var(--text); }
-    .settings-section input[type="text"], .settings-section input[type="number"], .settings-section input[type="email"], .settings-section input[type="file"], .settings-section select, .settings-section textarea { width: 100%; padding: 10px; border: 2px solid var(--primary); border-radius: 9px; font-size: 13.5px; font-weight: 600; background: var(--input-bg); color: var(--text); margin-bottom: 10px; outline: none; box-sizing: border-box; }
+    .settings-section input[type="text"], .settings-section input[type="text"][inputmode], .settings-section input[type="email"], .settings-section input[type="file"], .settings-section select, .settings-section textarea { width: 100%; padding: 10px; border: 2px solid var(--primary); border-radius: 9px; font-size: 13.5px; font-weight: 600; background: var(--input-bg); color: var(--text); margin-bottom: 10px; outline: none; box-sizing: border-box; }
     .settings-section input:focus, .settings-section select:focus, .settings-section textarea:focus { border-color: var(--primary); }
     .settings-section select { cursor: pointer; }
     .settings-section textarea { resize: vertical; min-height: 80px; font-family: inherit; line-height: 1.5; }
@@ -1167,6 +1167,11 @@
     html.pdf-generating *::after {
       transition: none !important;
       animation: none !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      box-shadow: none !important;
+      text-shadow: none !important;
+      filter: none !important;
     }
     .pdf-render-mode .table-responsive { overflow: visible !important; padding: 0 !important; }
     .pdf-render-mode .table-responsive table { display: table !important; width: 100% !important; border-collapse: collapse !important; }
@@ -1901,6 +1906,13 @@
       body.print-cutting-sheet-mode .formah-card { border: 1.5px solid #000 !important; page-break-inside: avoid !important; margin-bottom: 14px !important; background: #fff !important; box-shadow: none !important; }
       body.print-cutting-sheet-mode .cutting-table th, body.print-cutting-sheet-mode .cutting-table td { border: 1px solid #000 !important; color: #000 !important; padding: 5px 6px !important; }
       body.print-cutting-sheet-mode .cutting-table th { background: #e2e8f0 !important; -webkit-print-color-adjust: exact !important; font-weight: 800 !important; }
+      /* v1.20: الطباعة المفصلة — كل نوع جدول يبدأ في ورقة مستقلة بعنوانه */
+      body.print-cutting-sheet-mode .cutting-bytable-group { page-break-inside: auto !important; }
+      body.print-cutting-sheet-mode .cutting-bytable-group + .cutting-bytable-group { page-break-before: always !important; }
+      body.print-cutting-sheet-mode .cutting-table thead { display: table-header-group !important; }
+      /* v1.20 (نقطة 11): أعمدة الإجمالي التراكمي — رقم أصغر معتّم بعد إجمالي كل صف */
+      .rows-body .r-cum-area, .rows-body .r-cum-cost { font-size: 10.5px; font-weight: 800; color: var(--text-muted); white-space: nowrap; }
+      th.th-cum, th.th-cum2 { font-size: 10px !important; white-space: nowrap; }
 
     }
 
@@ -6726,7 +6738,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
               <!-- Field 2: Daily Wage -->
               <div>
                  <label style="display:block; font-size:11.5px; font-weight:800; color:var(--text); margin-bottom:4px;">2. اليومية المعتمدة (ج.م) *</label>
-                 <input type="number" id="directWorkerWage" step="any" min="1" placeholder="مثلاً: 500" style="width:100%; min-height:40px; padding:6px 12px; border:1.5px solid var(--border); border-radius:8px; background:var(--input-bg); color:var(--text); font-size:13.5px; font-weight:900; outline:none; box-sizing:border-box;" required />
+                 <input type="text" inputmode="decimal" id="directWorkerWage" step="any" min="1" placeholder="مثلاً: 500" style="width:100%; min-height:40px; padding:6px 12px; border:1.5px solid var(--border); border-radius:8px; background:var(--input-bg); color:var(--text); font-size:13.5px; font-weight:900; outline:none; box-sizing:border-box;" required />
               </div>
 
               <!-- Submit Button -->
@@ -6769,7 +6781,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
                     </div>
                     <div>
                        <label style="display:block; font-size:11.5px; font-weight:800; color:var(--text); margin-bottom:4px;">عدد الأيام المشتغلة</label>
-                       <input type="number" id="wageDaysInput" step="0.25" min="0.25" max="10" value="1" oninput="recalculateWageAmount()" style="width:100%; min-height:38px; padding:6px 10px; border:1.5px solid var(--border); border-radius:8px; background:var(--input-bg); color:var(--text); font-weight:900; font-size:13px; outline:none; box-sizing:border-box;" required />
+                       <input type="text" inputmode="decimal" id="wageDaysInput" step="0.25" min="0.25" max="10" value="1" oninput="recalculateWageAmount()" style="width:100%; min-height:38px; padding:6px 10px; border:1.5px solid var(--border); border-radius:8px; background:var(--input-bg); color:var(--text); font-weight:900; font-size:13px; outline:none; box-sizing:border-box;" required />
                     </div>
                  </div>
 
@@ -6785,7 +6797,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
                  <div style="display:grid; grid-template-columns:110px 1fr; gap:8px;">
                     <div>
                        <label style="display:block; font-size:11.5px; font-weight:800; color:var(--success); margin-bottom:4px;">المستحق (ج.م)</label>
-                       <input type="number" id="wageAmountInput" step="any" min="1" placeholder="0.00" style="width:100%; min-height:38px; padding:6px 8px; border:1.5px solid var(--success); border-radius:8px; background:var(--input-bg); color:var(--text); font-weight:900; font-size:13.5px; outline:none; box-sizing:border-box;" required />
+                       <input type="text" inputmode="decimal" id="wageAmountInput" step="any" min="1" placeholder="0.00" style="width:100%; min-height:38px; padding:6px 8px; border:1.5px solid var(--success); border-radius:8px; background:var(--input-bg); color:var(--text); font-weight:900; font-size:13.5px; outline:none; box-sizing:border-box;" required />
                     </div>
                     <div>
                        <label style="display:block; font-size:11.5px; font-weight:800; color:var(--text); margin-bottom:4px;">ملاحظات العمل (اختياري)</label>
@@ -6834,7 +6846,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
                     </div>
                     <div>
                        <label style="display:block; font-size:11.5px; font-weight:800; color:#d97706; margin-bottom:4px;">المبلغ المسحوب (ج.م) *</label>
-                       <input type="number" id="advanceAmountInput" oninput="checkAdvanceLimitInput()" step="any" min="1" placeholder="مثلاً: 100 أو 500" style="width:100%; min-height:38px; padding:6px 10px; border:1.5px solid #d97706; border-radius:8px; background:var(--input-bg); color:var(--text); font-weight:900; font-size:14px; outline:none; box-sizing:border-box;" required />
+                       <input type="text" inputmode="decimal" id="advanceAmountInput" oninput="checkAdvanceLimitInput()" step="any" min="1" placeholder="مثلاً: 100 أو 500" style="width:100%; min-height:38px; padding:6px 10px; border:1.5px solid #d97706; border-radius:8px; background:var(--input-bg); color:var(--text); font-weight:900; font-size:14px; outline:none; box-sizing:border-box;" required />
                     </div>
                  </div>
 
@@ -6959,7 +6971,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
             <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:8px; margin-bottom:10px;">
               <div>
                 <label style="display:block; font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:3px;">المبلغ (ج.م) *</label>
-                <input type="number" inputmode="decimal" id="sbExpenseAmount" placeholder="0" style="width:100%; padding:8px 10px; border-radius:8px; border:1.5px solid var(--border); background:var(--input-bg); color:var(--input-text); font-weight:800; box-sizing:border-box;">
+                <input type="text" inputmode="decimal" id="sbExpenseAmount" placeholder="0" style="width:100%; padding:8px 10px; border-radius:8px; border:1.5px solid var(--border); background:var(--input-bg); color:var(--input-text); font-weight:800; box-sizing:border-box;">
               </div>
               <div>
                 <label style="display:block; font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:3px;">التاريخ</label>
@@ -7048,7 +7060,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
                     </div>
                     <div>
                        <label style="display:block; font-size:12px; font-weight:800; margin-bottom:4px; color:var(--primary);">اليومية الجديدة المعتمدة (ج):</label>
-                       <input type="number" id="editWorkerNewWage" step="any" min="1" required placeholder="مثلاً: 500" style="width:100%; padding:9px 12px; border:2px solid var(--primary); border-radius:8px; background:var(--card-bg); color:var(--text); font-size:14px; font-weight:900;">
+                       <input type="text" inputmode="decimal" id="editWorkerNewWage" step="any" min="1" required placeholder="مثلاً: 500" style="width:100%; padding:9px 12px; border:2px solid var(--primary); border-radius:8px; background:var(--card-bg); color:var(--text); font-size:14px; font-weight:900;">
                     </div>
                  </div>
 
@@ -7473,10 +7485,10 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
           <span>المساحات: <span id="grandSqMeters">0 م²</span> | الأطوال: <span id="grandLinMeters">0 م.ط</span> | القطع: <span id="grandPieces">0</span></span>
         </div>
         <div class="grand-row"><span>الإجمالي:</span><span id="grandCost">0.00 ج.م</span></div>
-        <div class="grand-row"><span>الخصم (-):</span><input type="number" inputmode="decimal" step="any" id="discountVal" placeholder="0" oninput="calculateAll()"></div>
+        <div class="grand-row"><span>الخصم (-):</span><input type="text" inputmode="decimal" step="any" id="discountVal" placeholder="0" oninput="sbQueueCalc()"></div>
         <div class="grand-row"><span>الصافي بعد الخصم:</span><span id="netCost">0.00 ج.م</span></div>
-        <div class="grand-row"><span>المدفوع (عربون):</span><input type="number" inputmode="decimal" step="any" id="paidVal" placeholder="0" oninput="if(document.getElementById('instDownPayment')) document.getElementById('instDownPayment').value = this.value; calculateAll();"></div>
-        <div class="grand-row"><span>إكرامية / بقشيش (اختياري):</span><input type="number" inputmode="decimal" step="any" id="tipVal" placeholder="0" oninput="calculateAll()"></div>
+        <div class="grand-row"><span>المدفوع (عربون):</span><input type="text" inputmode="decimal" step="any" id="paidVal" placeholder="0" oninput="if(document.getElementById('instDownPayment')) document.getElementById('instDownPayment').value = this.value; calculateAll();"></div>
+        <div class="grand-row"><span>إكرامية / بقشيش (اختياري):</span><input type="text" inputmode="decimal" step="any" id="tipVal" placeholder="0" oninput="sbQueueCalc()"></div>
         <div id="paymentActionButtons" class="grand-row no-print" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none; gap: 10px;">
           <button type="button" onclick="setPaidInFull()" style="flex:1; background:var(--success); color:#fff; border-radius:8px; padding:10px; font-weight:800; font-size:14px; display:flex; justify-content:center; gap:6px;">
             <svg class="icon-svg" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> تم الدفع
@@ -7491,7 +7503,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         </div>
         <div class="grand-row" id="dueDateRow" style="display:none;">
           <span>مهلة الاستحقاق (أيام):</span>
-          <input type="number" inputmode="numeric" step="any" id="dueDaysInput"  placeholder="0" oninput="calculateAll()">
+          <input type="text" inputmode="numeric" step="any" id="dueDaysInput"  placeholder="0" oninput="sbQueueCalc()">
         </div>
         <div class="grand-row final">
           <span>المتبقي:</span>
@@ -7509,15 +7521,15 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                 <div>
                     <label style="font-size:11px; font-weight:700;">المقدم المدفوع</label>
-                    <input type="number" inputmode="decimal" step="any" id="instDownPayment" placeholder="0" oninput="syncDownPayment()" style="width:100%; padding:8px; border-radius:6px; border:1px solid var(--border); background:var(--input-bg); color:var(--input-text);">
+                    <input type="text" inputmode="decimal" step="any" id="instDownPayment" placeholder="0" oninput="syncDownPayment()" style="width:100%; padding:8px; border-radius:6px; border:1px solid var(--border); background:var(--input-bg); color:var(--input-text);">
                 </div>
                 <div>
                     <label style="font-size:11px; font-weight:700;">نسبة الفائدة (%)</label>
-                    <input type="number" inputmode="decimal" step="any" id="instInterestRate" placeholder="0" value="0" oninput="calculateAll()" style="width:100%; padding:8px; border-radius:6px; border:1px solid var(--border); background:var(--input-bg); color:var(--input-text);">
+                    <input type="text" inputmode="decimal" step="any" id="instInterestRate" placeholder="0" value="0" oninput="sbQueueCalc()" style="width:100%; padding:8px; border-radius:6px; border:1px solid var(--border); background:var(--input-bg); color:var(--input-text);">
                 </div>
                 <div>
                     <label style="font-size:11px; font-weight:700;">عدد الأقساط</label>
-                    <input type="number" inputmode="decimal" id="instCount" min="1" max="120" value="3" oninput="calculateAll()" style="width:100%; padding:8px; border-radius:6px; border:1px solid var(--border); background:var(--input-bg); color:var(--input-text);">
+                    <input type="text" inputmode="decimal" id="instCount" min="1" max="120" value="3" oninput="sbQueueCalc()" style="width:100%; padding:8px; border-radius:6px; border:1px solid var(--border); background:var(--input-bg); color:var(--input-text);">
                 </div>
                 <div>
                     <label style="font-size:11px; font-weight:700;">دورية الدفع</label>
@@ -9023,15 +9035,15 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
                             });
                         }
                     });
-                    const subAreaEl = blk.querySelector('.subtotal-area');
-                    const subCostEl = blk.querySelector('.subtotal-cost');
+                    const subAreaEl = blk.querySelector('.s-sqm');
+                    const subCostEl = blk.querySelector('.s-cost');
                     blocksData.push({
                         title: bTitle,
                         rows: rows.length ? rows : [
                             { name: 'جلالة فص ممتاز', length: '3.20', width: '0.60', qty: '18', total: '34.56', price: '380', cost: '13,132.80' }
                         ],
-                        subtotalArea: subAreaEl ? subAreaEl.innerText : '',
-                        subtotalCost: subCostEl ? subCostEl.innerText : ''
+                        subtotalArea: subAreaEl ? (subAreaEl.innerText + ' م²') : '',
+                        subtotalCost: subCostEl ? (subCostEl.innerText + ' ج.م') : ''
                     });
                 });
 
@@ -9410,25 +9422,25 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
             <div class="thick-group">
               <div class="thick-title">تخانة 2 سم</div>
               <div class="width-row">
-                <div class="price-box"><span class="w-label">عرض 80</span><input type="number" inputmode="decimal" step="any" id="mat_p80_2" class="mat-price-inp" placeholder="0"></div>
-                <div class="price-box"><span class="w-label">عرض 70</span><input type="number" inputmode="decimal" step="any" id="mat_p70_2" class="mat-price-inp" placeholder="0"></div>
-                <div class="price-box"><span class="w-label">عرض 60</span><input type="number" inputmode="decimal" step="any" id="mat_p60_2" class="mat-price-inp" placeholder="0"></div>
+                <div class="price-box"><span class="w-label">عرض 80</span><input type="text" inputmode="decimal" step="any" id="mat_p80_2" class="mat-price-inp" placeholder="0"></div>
+                <div class="price-box"><span class="w-label">عرض 70</span><input type="text" inputmode="decimal" step="any" id="mat_p70_2" class="mat-price-inp" placeholder="0"></div>
+                <div class="price-box"><span class="w-label">عرض 60</span><input type="text" inputmode="decimal" step="any" id="mat_p60_2" class="mat-price-inp" placeholder="0"></div>
               </div>
             </div>
             <div class="thick-group">
               <div class="thick-title">تخانة 3 سم</div>
               <div class="width-row">
-                <div class="price-box"><span class="w-label">عرض 80</span><input type="number" inputmode="decimal" step="any" id="mat_p80_3" class="mat-price-inp" placeholder="0"></div>
-                <div class="price-box"><span class="w-label">عرض 70</span><input type="number" inputmode="decimal" step="any" id="mat_p70_3" class="mat-price-inp" placeholder="0"></div>
-                <div class="price-box"><span class="w-label">عرض 60</span><input type="number" inputmode="decimal" step="any" id="mat_p60_3" class="mat-price-inp" placeholder="0"></div>
+                <div class="price-box"><span class="w-label">عرض 80</span><input type="text" inputmode="decimal" step="any" id="mat_p80_3" class="mat-price-inp" placeholder="0"></div>
+                <div class="price-box"><span class="w-label">عرض 70</span><input type="text" inputmode="decimal" step="any" id="mat_p70_3" class="mat-price-inp" placeholder="0"></div>
+                <div class="price-box"><span class="w-label">عرض 60</span><input type="text" inputmode="decimal" step="any" id="mat_p60_3" class="mat-price-inp" placeholder="0"></div>
               </div>
             </div>
             <div class="thick-group">
               <div class="thick-title">تخانة 4 سم</div>
               <div class="width-row">
-                <div class="price-box"><span class="w-label">عرض 80</span><input type="number" inputmode="decimal" step="any" id="mat_p80_4" class="mat-price-inp" placeholder="0"></div>
-                <div class="price-box"><span class="w-label">عرض 70</span><input type="number" inputmode="decimal" step="any" id="mat_p70_4" class="mat-price-inp" placeholder="0"></div>
-                <div class="price-box"><span class="w-label">عرض 60</span><input type="number" inputmode="decimal" step="any" id="mat_p60_4" class="mat-price-inp" placeholder="0"></div>
+                <div class="price-box"><span class="w-label">عرض 80</span><input type="text" inputmode="decimal" step="any" id="mat_p80_4" class="mat-price-inp" placeholder="0"></div>
+                <div class="price-box"><span class="w-label">عرض 70</span><input type="text" inputmode="decimal" step="any" id="mat_p70_4" class="mat-price-inp" placeholder="0"></div>
+                <div class="price-box"><span class="w-label">عرض 60</span><input type="text" inputmode="decimal" step="any" id="mat_p60_4" class="mat-price-inp" placeholder="0"></div>
               </div>
             </div>
           </div>
@@ -9443,9 +9455,9 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
               <button type="button" class="btn-clear-prices" onclick="clearMaterialGridInputs()" title="تفريغ جميع خانات الأسعار">تفريغ الخانات</button>
             </div>
             <div style="display:flex; gap:8px;">
-              <div class="price-box" style="flex:1;"><span class="w-label">تخانة 2 سم</span><input type="number" inputmode="decimal" step="any" id="mat_p2" class="mat-price-inp" placeholder="0"></div>
-              <div class="price-box" style="flex:1;"><span class="w-label">تخانة 3 سم</span><input type="number" inputmode="decimal" step="any" id="mat_p3" class="mat-price-inp" placeholder="0"></div>
-              <div class="price-box" style="flex:1;"><span class="w-label">تخانة 4 سم</span><input type="number" inputmode="decimal" step="any" id="mat_p4" class="mat-price-inp" placeholder="0"></div>
+              <div class="price-box" style="flex:1;"><span class="w-label">تخانة 2 سم</span><input type="text" inputmode="decimal" step="any" id="mat_p2" class="mat-price-inp" placeholder="0"></div>
+              <div class="price-box" style="flex:1;"><span class="w-label">تخانة 3 سم</span><input type="text" inputmode="decimal" step="any" id="mat_p3" class="mat-price-inp" placeholder="0"></div>
+              <div class="price-box" style="flex:1;"><span class="w-label">تخانة 4 سم</span><input type="text" inputmode="decimal" step="any" id="mat_p4" class="mat-price-inp" placeholder="0"></div>
             </div>
           </div>
         `;
@@ -9459,8 +9471,8 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
               <button type="button" class="btn-clear-prices" onclick="clearMaterialGridInputs()" title="تفريغ جميع خانات الأسعار">تفريغ الخانات</button>
             </div>
             <div style="display:flex; gap:8px;">
-              <div class="price-box" style="flex:1;"><span class="w-label">تخانة 3 سم</span><input type="number" inputmode="decimal" step="any" id="mat_p3" class="mat-price-inp" placeholder="0"></div>
-              <div class="price-box" style="flex:1;"><span class="w-label">تخانة 4 سم</span><input type="number" inputmode="decimal" step="any" id="mat_p4" class="mat-price-inp" placeholder="0"></div>
+              <div class="price-box" style="flex:1;"><span class="w-label">تخانة 3 سم</span><input type="text" inputmode="decimal" step="any" id="mat_p3" class="mat-price-inp" placeholder="0"></div>
+              <div class="price-box" style="flex:1;"><span class="w-label">تخانة 4 سم</span><input type="text" inputmode="decimal" step="any" id="mat_p4" class="mat-price-inp" placeholder="0"></div>
             </div>
           </div>
         `;
@@ -9476,21 +9488,30 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
              <div style="margin-bottom:8px;">
                <div style="font-size:11px; font-weight:bold; color:var(--text-muted); margin-bottom:4px;">سعر الأطوال (م²)</div>
                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px;">
-                 <div class="price-box"><span class="w-label">تخانة (2)</span><input type="number" inputmode="decimal" step="any" id="mat_p_len_2" class="mat-price-inp" placeholder="0"></div>
-                 <div class="price-box"><span class="w-label">تخانة (3)</span><input type="number" inputmode="decimal" step="any" id="mat_p_len_3" class="mat-price-inp" placeholder="0"></div>
-                 <div class="price-box"><span class="w-label">تخانة (4)</span><input type="number" inputmode="decimal" step="any" id="mat_p_len_4" class="mat-price-inp" placeholder="0"></div>
+                 <div class="price-box"><span class="w-label">تخانة (2)</span><input type="text" inputmode="decimal" step="any" id="mat_p_len_2" class="mat-price-inp" placeholder="0"></div>
+                 <div class="price-box"><span class="w-label">تخانة (3)</span><input type="text" inputmode="decimal" step="any" id="mat_p_len_3" class="mat-price-inp" placeholder="0"></div>
+                 <div class="price-box"><span class="w-label">تخانة (4)</span><input type="text" inputmode="decimal" step="any" id="mat_p_len_4" class="mat-price-inp" placeholder="0"></div>
                </div>
              </div>
              <div style="margin-bottom:8px;">
                <div style="font-size:11px; font-weight:bold; color:var(--text-muted); margin-bottom:4px;">سعر القصاير (م²)</div>
                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px;">
-                 <div class="price-box"><span class="w-label">تخانة (2)</span><input type="number" inputmode="decimal" step="any" id="mat_p_sh_2" class="mat-price-inp" placeholder="0"></div>
-                 <div class="price-box"><span class="w-label">تخانة (3)</span><input type="number" inputmode="decimal" step="any" id="mat_p_sh_3" class="mat-price-inp" placeholder="0"></div>
-                 <div class="price-box"><span class="w-label">تخانة (4)</span><input type="number" inputmode="decimal" step="any" id="mat_p_sh_4" class="mat-price-inp" placeholder="0"></div>
+                 <div class="price-box"><span class="w-label">تخانة (2)</span><input type="text" inputmode="decimal" step="any" id="mat_p_sh_2" class="mat-price-inp" placeholder="0"></div>
+                 <div class="price-box"><span class="w-label">تخانة (3)</span><input type="text" inputmode="decimal" step="any" id="mat_p_sh_3" class="mat-price-inp" placeholder="0"></div>
+                 <div class="price-box"><span class="w-label">تخانة (4)</span><input type="text" inputmode="decimal" step="any" id="mat_p_sh_4" class="mat-price-inp" placeholder="0"></div>
                </div>
              </div>
-             <div style="display:grid; grid-template-columns: 1fr; gap:8px; margin-bottom:8px;">
-               <div class="price-box"><span class="w-label" style="color:var(--primary);">أقصى طول للقصاير (سم)</span><input type="number" inputmode="decimal" step="any" id="mat_max_short_len" class="mat-price-inp" placeholder="190" value="190"></div>
+             <div style="margin-bottom:8px;">
+               <div style="font-size:11px; font-weight:bold; color:var(--text-muted); margin-bottom:4px;">سعر الوسط (م²) — اختياري</div>
+               <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px;">
+                 <div class="price-box"><span class="w-label">تخانة (2)</span><input type="text" inputmode="decimal" step="any" id="mat_p_mid_2" class="mat-price-inp" placeholder="0"></div>
+                 <div class="price-box"><span class="w-label">تخانة (3)</span><input type="text" inputmode="decimal" step="any" id="mat_p_mid_3" class="mat-price-inp" placeholder="0"></div>
+                 <div class="price-box"><span class="w-label">تخانة (4)</span><input type="text" inputmode="decimal" step="any" id="mat_p_mid_4" class="mat-price-inp" placeholder="0"></div>
+               </div>
+             </div>
+             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:8px;">
+               <div class="price-box"><span class="w-label" style="color:var(--primary);">أقصى طول للقصاير (سم)</span><input type="text" inputmode="decimal" step="any" id="mat_max_short_len" class="mat-price-inp" placeholder="190" value="190"></div>
+               <div class="price-box"><span class="w-label" style="color:var(--primary);">أقصى طول للوسط (سم)</span><input type="text" inputmode="decimal" step="any" id="mat_max_mid_len" class="mat-price-inp" placeholder="مثال: 250" value=""></div>
              </div>
             <div style="font-size:11px; color:var(--text-muted); line-height:1.4;">
               <svg class="icon-svg" style="width:1.2em; height:1.2em; margin:0 4px 0 0; vertical-align:-3px; display:inline-block; color:inherit;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6M10 22h4"/></svg> أي مقاس يتجاوز أقصى طول محدد للقصاير يُحسب تلقائياً كأطوال بالسعر المطابق لتخانته.
@@ -9507,8 +9528,8 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
               <button type="button" class="btn-clear-prices" onclick="clearMaterialGridInputs()" title="تفريغ جميع خانات الأسعار">تفريغ الخانات</button>
             </div>
             <div style="display:flex; gap:8px;">
-              <div class="price-box" style="flex:1;"><span class="w-label">سعر م² درج</span><input type="number" inputmode="decimal" step="any" id="mat_p_sqm" class="mat-price-inp" placeholder="0"></div>
-              <div class="price-box" style="flex:1;"><span class="w-label">سعر الفرش</span><input type="number" inputmode="decimal" step="any" id="mat_p_skirt" class="mat-price-inp" placeholder="0"></div>
+              <div class="price-box" style="flex:1;"><span class="w-label">سعر م² درج</span><input type="text" inputmode="decimal" step="any" id="mat_p_sqm" class="mat-price-inp" placeholder="0"></div>
+              <div class="price-box" style="flex:1;"><span class="w-label">سعر الفرش</span><input type="text" inputmode="decimal" step="any" id="mat_p_skirt" class="mat-price-inp" placeholder="0"></div>
             </div>
           </div>
         `;
@@ -9522,8 +9543,8 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
               <button type="button" class="btn-clear-prices" onclick="clearMaterialGridInputs()" title="تفريغ جميع خانات الأسعار">تفريغ الخانات</button>
             </div>
             <div style="display:flex; gap:8px;">
-              <div class="price-box" style="flex:1;"><span class="w-label">سعر م² عادية</span><input type="number" inputmode="decimal" step="any" id="mat_p_talabis_normal" class="mat-price-inp" placeholder="0"></div>
-              <div class="price-box" style="flex:1;"><span class="w-label">سعر م² مائل</span><input type="number" inputmode="decimal" step="any" id="mat_p_talabis_slant" class="mat-price-inp" placeholder="0"></div>
+              <div class="price-box" style="flex:1;"><span class="w-label">سعر م² عادية</span><input type="text" inputmode="decimal" step="any" id="mat_p_talabis_normal" class="mat-price-inp" placeholder="0"></div>
+              <div class="price-box" style="flex:1;"><span class="w-label">سعر م² مائل</span><input type="text" inputmode="decimal" step="any" id="mat_p_talabis_slant" class="mat-price-inp" placeholder="0"></div>
             </div>
           </div>
         `;
@@ -9538,9 +9559,9 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
               <button type="button" class="btn-clear-prices" onclick="clearMaterialGridInputs()" title="تفريغ جميع خانات الأسعار">تفريغ الخانات</button>
             </div>
             <div style="display:flex; gap:8px;">
-              <div class="price-box" style="flex:1;"><span class="w-label">تخانة (2)</span><input type="number" inputmode="decimal" step="any" id="mat_p2" class="mat-price-inp" placeholder="0"></div>
-              <div class="price-box" style="flex:1;"><span class="w-label">تخانة (3)</span><input type="number" inputmode="decimal" step="any" id="mat_p3" class="mat-price-inp" placeholder="0"></div>
-              <div class="price-box" style="flex:1;"><span class="w-label">تخانة (4)</span><input type="number" inputmode="decimal" step="any" id="mat_p4" class="mat-price-inp" placeholder="0"></div>
+              <div class="price-box" style="flex:1;"><span class="w-label">تخانة (2)</span><input type="text" inputmode="decimal" step="any" id="mat_p2" class="mat-price-inp" placeholder="0"></div>
+              <div class="price-box" style="flex:1;"><span class="w-label">تخانة (3)</span><input type="text" inputmode="decimal" step="any" id="mat_p3" class="mat-price-inp" placeholder="0"></div>
+              <div class="price-box" style="flex:1;"><span class="w-label">تخانة (4)</span><input type="text" inputmode="decimal" step="any" id="mat_p4" class="mat-price-inp" placeholder="0"></div>
             </div>
           </div>
         `;
@@ -9554,7 +9575,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
               <button type="button" class="btn-clear-prices" onclick="clearMaterialGridInputs()" title="تفريغ جميع خانات الأسعار">تفريغ الخانات</button>
             </div>
             <div style="display:flex; gap:8px;">
-              <div class="price-box" style="flex:1;"><span class="w-label">السعر</span><input type="number" inputmode="decimal" step="any" id="mat_p_single" class="mat-price-inp" placeholder="0"></div>
+              <div class="price-box" style="flex:1;"><span class="w-label">السعر</span><input type="text" inputmode="decimal" step="any" id="mat_p_single" class="mat-price-inp" placeholder="0"></div>
             </div>
           </div>
         `;
@@ -9603,6 +9624,12 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
           } else if (v.width === 'shorts') {
             const inp = document.getElementById('mat_p_sh_' + v.thick);
             if (inp) inp.value = v.price || '';
+          } else if (v.width === 'mids') {
+            const inpM = document.getElementById('mat_p_mid_' + v.thick);
+            if (inpM) inpM.value = v.price || '';
+          } else if (v.width === 'max_mid_len') {
+            const inpMaxMid = document.getElementById('mat_max_mid_len');
+            if (inpMaxMid) inpMaxMid.value = v.price || '';
           } else if (v.width === 'max_len') {
             const inpMax = document.getElementById('mat_max_short_len');
             if (inpMax) inpMax.value = v.price || '';
@@ -9671,7 +9698,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         widths.forEach(w => {
           thicks.forEach(th => {
             const inp = document.getElementById(`mat_p${w}_${th}`);
-            const val = parseFloat(inp ? inp.value : '');
+            const val = parseNum(inp ? inp.value : '');
             if (!isNaN(val) && val > 0) {
               newItems.push({ width: w, thick: th, price: val });
             }
@@ -9680,7 +9707,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
       } else if (effType === 'marble') {
         ['2', '3', '4'].forEach(th => {
           const inp = document.getElementById(`mat_p${th}`);
-          const val = parseFloat(inp ? inp.value : '');
+          const val = parseNum(inp ? inp.value : '');
           if (!isNaN(val) && val > 0) {
             newItems.push({ width: '', thick: th, price: val });
           }
@@ -9688,54 +9715,61 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
       } else if (effType === 'stairs-lin') {
         ['3', '4'].forEach(th => {
           const inp = document.getElementById(`mat_p${th}`);
-          const val = parseFloat(inp ? inp.value : '');
+          const val = parseNum(inp ? inp.value : '');
           if (!isNaN(val) && val > 0) {
             newItems.push({ width: '', thick: th, price: val });
           }
         });
       } else if (effType === 'lengths-shorts') {
         const inpMax = document.getElementById('mat_max_short_len');
-        const valMax = parseFloat(inpMax ? inpMax.value : '190') || 190;
+        const valMax = parseNum(inpMax ? inpMax.value : '190') || 190;
         newItems.push({ width: 'max_len', thick: '', price: valMax });
+        const inpMaxMid = document.getElementById('mat_max_mid_len');
+        const valMaxMid = parseNum(inpMaxMid ? inpMaxMid.value : '');
+        if (valMaxMid > valMax) newItems.push({ width: 'max_mid_len', thick: '', price: valMaxMid });
         
         ['2', '3', '4'].forEach(th => {
           const inpL = document.getElementById(`mat_p_len_${th}`);
-          const valL = parseFloat(inpL ? inpL.value : '');
+          const valL = parseNum(inpL ? inpL.value : '');
           if (!isNaN(valL) && valL > 0) newItems.push({ width: 'lengths', thick: th, price: valL });
           
+          const inpM = document.getElementById(`mat_p_mid_${th}`);
+          const valM = parseNum(inpM ? inpM.value : '');
+          if (!isNaN(valM) && valM > 0) newItems.push({ width: 'mids', thick: th, price: valM });
+          
           const inpS = document.getElementById(`mat_p_sh_${th}`);
-          const valS = parseFloat(inpS ? inpS.value : '');
+          const valS = parseNum(inpS ? inpS.value : '');
           if (!isNaN(valS) && valS > 0) newItems.push({ width: 'shorts', thick: th, price: valS });
         });
       } else if (effType === 'stairs-thick') {
         const inp = document.getElementById('mat_p_sqm');
-        const val = parseFloat(inp ? inp.value : '');
+        const val = parseNum(inp ? inp.value : '');
         if (!isNaN(val) && val > 0) {
           newItems.push({ width: '', thick: '', price: val });
         }
         const inpS = document.getElementById('mat_p_skirt');
-        const valS = parseFloat(inpS ? inpS.value : '');
+        const valS = parseNum(inpS ? inpS.value : '');
         if (!isNaN(valS) && valS > 0) {
           newItems.push({ width: 'skirt', thick: '', price: valS });
         }
       } else if (effType === 'talabis') {
         const inpN = document.getElementById('mat_p_talabis_normal');
-        const valN = parseFloat(inpN ? inpN.value : '');
+        const valN = parseNum(inpN ? inpN.value : '');
         if (!isNaN(valN) && valN > 0) newItems.push({ width: 'normal', thick: '', price: valN });
         const inpS = document.getElementById('mat_p_talabis_slant');
-        const valS = parseFloat(inpS ? inpS.value : '');
+        const valS = parseNum(inpS ? inpS.value : '');
         if (!isNaN(valS) && valS > 0) newItems.push({ width: 'slant', thick: '', price: valS });
       } else if (effType === 'tarabee' || effType === 'tawlat') {
         ['2', '3', '4'].forEach(th => {
           const inp = document.getElementById(`mat_p${th}`);
-          const val = parseFloat(inp ? inp.value : '');
+          const val = parseNum(inp ? inp.value : '');
           if (!isNaN(val) && val > 0) {
             newItems.push({ width: '', thick: th, price: val });
           }
         });
       } else {
         const inp = document.getElementById('mat_p_single');
-        const val = parseFloat(inp ? inp.value : '');
+        const val = parseNum(inp ? inp.value : '');
         if (!isNaN(val) && val > 0) {
           newItems.push({ width: '', thick: '', price: val });
         }
@@ -9896,7 +9930,11 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
           variants.forEach(v => {
             let dimLabel = '';
             if (t === 'lengths-shorts' || v.type === 'lengths-shorts') {
-              dimLabel = v.width === 'lengths' ? `أطوال (> ${v.thick || '190'} سم)` : `قصاير (≤ ${v.thick || '190'} سم)`;
+              if (v.width === 'lengths') dimLabel = `أطوال (> ${v.thick || '190'} سم)`;
+              else if (v.width === 'mids') dimLabel = `وسط (${v.thick || '190'}–${v.thick || '250'} سم)`;
+              else if (v.width === 'max_mid_len') dimLabel = `أقصى طول للوسط: ${v.price} سم`;
+              else if (v.width === 'max_len') dimLabel = `أقصى طول للقصاير: ${v.price} سم`;
+              else dimLabel = `قصاير (≤ ${v.thick || '190'} سم)`;
             } else if (v.width && v.thick) dimLabel = `ع: ${v.width} · ت: ${v.thick} سم`;
             else if (v.thick) dimLabel = `تخانة: ${v.thick} سم`;
             else if (v.width) dimLabel = `عرض: ${v.width}`;
@@ -9907,7 +9945,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
                   <span class="vtype" style="font-size:11px; font-weight:700; color:var(--text); min-width:auto;">${dimLabel}</span>
                   <div class="vprice-box">
                     <div style="position:relative; display:inline-flex; align-items:center;">
-                      <input type="number" inputmode="decimal" step="any" class="vprice-input" value="${v.price}"
+                      <input type="text" inputmode="decimal" step="any" class="vprice-input" value="${v.price}"
                         style="width:75px; padding:3px 18px 3px 6px; font-size:12px; font-weight:800; border-radius:4px; text-align:center; background:var(--card-bg); border:1px solid color-mix(in srgb, var(--primary) 30%, var(--border)); color:var(--text);"
                         onchange="updatePriceDBItemPrice(${v.id}, this.value, true)"
                         oninput="updatePriceDBItemPrice(${v.id}, this.value, false)"
@@ -10018,8 +10056,10 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         const item = document.createElement('div'); item.className = 'autocomplete-item';
         let specText = variants.map(v => {
           if (v.type === 'lengths-shorts') {
-            if (v.width === 'max_len') return `أقصى: ${v.price}سم`;
-            return `${v.width === 'lengths' ? 'أطوال' : 'قصاير'} ت:${v.thick} (${v.price}ج)`;
+            if (v.width === 'max_len') return `أقصى قصاير: ${v.price}سم`;
+            if (v.width === 'max_mid_len') return `أقصى وسط: ${v.price}سم`;
+            const lbl = v.width === 'lengths' ? 'أطوال' : (v.width === 'mids' ? 'وسط' : 'قصاير');
+            return `${lbl} ت:${v.thick} (${v.price}ج)`;
           }
           return `${typeNames[v.type]||v.type}${v.width?' ع:'+v.width:''}${v.thick?' ت:'+v.thick:''}: ${v.price}ج`;
         }).join(' | ');
@@ -10109,10 +10149,10 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
       document.querySelectorAll('#tablesContainer details.slabs-price-acc').forEach(details => {
         const badge = details.querySelector('.acc-status-badge');
         if (!badge) return;
-        const inputs = details.querySelectorAll('input[type="number"]');
+        const inputs = details.querySelectorAll('input[type="text"][inputmode]');
         let hasValue = false;
         inputs.forEach(inp => {
-          const v = parseFloat(inp.value);
+          const v = parseNum(inp.value);
           if (!isNaN(v) && v > 0) {
             hasValue = true;
           }
@@ -10137,9 +10177,9 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
              <span class="slabs-acc-title">قائمة أسعار التخانات</span>
           </summary>
           <div class="slabs-acc-content" style="display:flex; gap:10px;">
-             <div class="price-box" style="flex:1;"><span class="w-label">تخانة 2 سم</span><input type="number" inputmode="decimal" step="any" class="p2" placeholder="0" oninput="calculateAll()"></div>
-             <div class="price-box" style="flex:1;"><span class="w-label">تخانة 3 سم</span><input type="number" inputmode="decimal" step="any" class="p3" placeholder="0" oninput="calculateAll()"></div>
-             <div class="price-box" style="flex:1;"><span class="w-label">تخانة 4 سم</span><input type="number" inputmode="decimal" step="any" class="p4" placeholder="0" oninput="calculateAll()"></div>
+             <div class="price-box" style="flex:1;"><span class="w-label">تخانة 2 سم</span><input type="text" inputmode="decimal" step="any" class="p2" placeholder="0" oninput="sbQueueCalc()"></div>
+             <div class="price-box" style="flex:1;"><span class="w-label">تخانة 3 سم</span><input type="text" inputmode="decimal" step="any" class="p3" placeholder="0" oninput="sbQueueCalc()"></div>
+             <div class="price-box" style="flex:1;"><span class="w-label">تخانة 4 سم</span><input type="text" inputmode="decimal" step="any" class="p4" placeholder="0" oninput="sbQueueCalc()"></div>
           </div>
         </details>
       `;
@@ -10155,9 +10195,9 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
              <span class="slabs-acc-title">قائمة أسعار التخانات (م²)</span>
           </summary>
           <div class="slabs-acc-content" style="display:flex; gap:10px;">
-             <div class="price-box" style="flex:1;"><span class="w-label">تخانة 2 سم</span><input type="number" inputmode="decimal" step="any" class="p2" placeholder="0" oninput="calculateAll()"></div>
-             <div class="price-box" style="flex:1;"><span class="w-label">تخانة 3 سم</span><input type="number" inputmode="decimal" step="any" class="p3" placeholder="0" oninput="calculateAll()"></div>
-             <div class="price-box" style="flex:1;"><span class="w-label">تخانة 4 سم</span><input type="number" inputmode="decimal" step="any" class="p4" placeholder="0" oninput="calculateAll()"></div>
+             <div class="price-box" style="flex:1;"><span class="w-label">تخانة 2 سم</span><input type="text" inputmode="decimal" step="any" class="p2" placeholder="0" oninput="sbQueueCalc()"></div>
+             <div class="price-box" style="flex:1;"><span class="w-label">تخانة 3 سم</span><input type="text" inputmode="decimal" step="any" class="p3" placeholder="0" oninput="sbQueueCalc()"></div>
+             <div class="price-box" style="flex:1;"><span class="w-label">تخانة 4 سم</span><input type="text" inputmode="decimal" step="any" class="p4" placeholder="0" oninput="sbQueueCalc()"></div>
           </div>
         </details>
       `;
@@ -10173,9 +10213,9 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
              <span class="slabs-acc-title">قائمة أسعار التخانات (طاولات م²)</span>
           </summary>
           <div class="slabs-acc-content" style="display:flex; gap:10px;">
-             <div class="price-box" style="flex:1;"><span class="w-label">تخانة 2 سم</span><input type="number" inputmode="decimal" step="any" class="p2" placeholder="0" oninput="calculateAll()"></div>
-             <div class="price-box" style="flex:1;"><span class="w-label">تخانة 3 سم</span><input type="number" inputmode="decimal" step="any" class="p3" placeholder="0" oninput="calculateAll()"></div>
-             <div class="price-box" style="flex:1;"><span class="w-label">تخانة 4 سم</span><input type="number" inputmode="decimal" step="any" class="p4" placeholder="0" oninput="calculateAll()"></div>
+             <div class="price-box" style="flex:1;"><span class="w-label">تخانة 2 سم</span><input type="text" inputmode="decimal" step="any" class="p2" placeholder="0" oninput="sbQueueCalc()"></div>
+             <div class="price-box" style="flex:1;"><span class="w-label">تخانة 3 سم</span><input type="text" inputmode="decimal" step="any" class="p3" placeholder="0" oninput="sbQueueCalc()"></div>
+             <div class="price-box" style="flex:1;"><span class="w-label">تخانة 4 سم</span><input type="text" inputmode="decimal" step="any" class="p4" placeholder="0" oninput="sbQueueCalc()"></div>
           </div>
         </details>
       `;
@@ -10190,9 +10230,9 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
       const hintEl = tr.querySelector('.tarabee-pieces-hint');
       if (!targetInp || !qInp || !lInp || !wInp) return;
 
-      const targetVal = parseFloat(targetInp.value);
-      const l = parseFloat(lInp.value);
-      const w = parseFloat(wInp.value);
+      const targetVal = parseNum(targetInp.value);
+      const l = parseNum(lInp.value);
+      const w = parseNum(wInp.value);
 
       if (!isNaN(targetVal) && targetVal > 0 && !isNaN(l) && l > 0 && !isNaN(w) && w > 0) {
         const pieceArea = (l * w) / 10000;
@@ -10268,25 +10308,25 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
              <div class="thick-group">
                 <div class="thick-title">تخانة 2 سم</div>
                 <div class="width-row">
-                   <div class="price-box"><span class="w-label">عرض 80</span><input type="number" inputmode="decimal" step="any" class="p80-2" placeholder="0" oninput="calculateAll()"></div>
-                   <div class="price-box"><span class="w-label">عرض 70</span><input type="number" inputmode="decimal" step="any" class="p70-2" placeholder="0" oninput="calculateAll()"></div>
-                   <div class="price-box"><span class="w-label">عرض 60</span><input type="number" inputmode="decimal" step="any" class="p60-2" placeholder="0" oninput="calculateAll()"></div>
+                   <div class="price-box"><span class="w-label">عرض 80</span><input type="text" inputmode="decimal" step="any" class="p80-2" placeholder="0" oninput="sbQueueCalc()"></div>
+                   <div class="price-box"><span class="w-label">عرض 70</span><input type="text" inputmode="decimal" step="any" class="p70-2" placeholder="0" oninput="sbQueueCalc()"></div>
+                   <div class="price-box"><span class="w-label">عرض 60</span><input type="text" inputmode="decimal" step="any" class="p60-2" placeholder="0" oninput="sbQueueCalc()"></div>
                 </div>
              </div>
              <div class="thick-group">
                 <div class="thick-title">تخانة 3 سم</div>
                 <div class="width-row">
-                   <div class="price-box"><span class="w-label">عرض 80</span><input type="number" inputmode="decimal" step="any" class="p80-3" placeholder="0" oninput="calculateAll()"></div>
-                   <div class="price-box"><span class="w-label">عرض 70</span><input type="number" inputmode="decimal" step="any" class="p70-3" placeholder="0" oninput="calculateAll()"></div>
-                   <div class="price-box"><span class="w-label">عرض 60</span><input type="number" inputmode="decimal" step="any" class="p60-3" placeholder="0" oninput="calculateAll()"></div>
+                   <div class="price-box"><span class="w-label">عرض 80</span><input type="text" inputmode="decimal" step="any" class="p80-3" placeholder="0" oninput="sbQueueCalc()"></div>
+                   <div class="price-box"><span class="w-label">عرض 70</span><input type="text" inputmode="decimal" step="any" class="p70-3" placeholder="0" oninput="sbQueueCalc()"></div>
+                   <div class="price-box"><span class="w-label">عرض 60</span><input type="text" inputmode="decimal" step="any" class="p60-3" placeholder="0" oninput="sbQueueCalc()"></div>
                 </div>
              </div>
              <div class="thick-group">
                 <div class="thick-title">تخانة 4 سم</div>
                 <div class="width-row">
-                   <div class="price-box"><span class="w-label">عرض 80</span><input type="number" inputmode="decimal" step="any" class="p80-4" placeholder="0" oninput="calculateAll()"></div>
-                   <div class="price-box"><span class="w-label">عرض 70</span><input type="number" inputmode="decimal" step="any" class="p70-4" placeholder="0" oninput="calculateAll()"></div>
-                   <div class="price-box"><span class="w-label">عرض 60</span><input type="number" inputmode="decimal" step="any" class="p60-4" placeholder="0" oninput="calculateAll()"></div>
+                   <div class="price-box"><span class="w-label">عرض 80</span><input type="text" inputmode="decimal" step="any" class="p80-4" placeholder="0" oninput="sbQueueCalc()"></div>
+                   <div class="price-box"><span class="w-label">عرض 70</span><input type="text" inputmode="decimal" step="any" class="p70-4" placeholder="0" oninput="sbQueueCalc()"></div>
+                   <div class="price-box"><span class="w-label">عرض 60</span><input type="text" inputmode="decimal" step="any" class="p60-4" placeholder="0" oninput="sbQueueCalc()"></div>
                 </div>
              </div>
           </div>
@@ -10307,24 +10347,33 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
              <div style="margin-bottom:8px;">
                <div style="font-size:11px; font-weight:bold; color:var(--text-muted); margin-bottom:4px;">سعر الأطوال (م²)</div>
                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px;">
-                 <div class="price-box"><span class="w-label">تخانة (2)</span><input type="number" inputmode="decimal" step="any" class="p-len-2" placeholder="0" oninput="calculateAll()"></div>
-                 <div class="price-box"><span class="w-label">تخانة (3)</span><input type="number" inputmode="decimal" step="any" class="p-len-3" placeholder="0" oninput="calculateAll()"></div>
-                 <div class="price-box"><span class="w-label">تخانة (4)</span><input type="number" inputmode="decimal" step="any" class="p-len-4" placeholder="0" oninput="calculateAll()"></div>
+                 <div class="price-box"><span class="w-label">تخانة (2)</span><input type="text" inputmode="decimal" step="any" class="p-len-2" placeholder="0" oninput="sbQueueCalc()"></div>
+                 <div class="price-box"><span class="w-label">تخانة (3)</span><input type="text" inputmode="decimal" step="any" class="p-len-3" placeholder="0" oninput="sbQueueCalc()"></div>
+                 <div class="price-box"><span class="w-label">تخانة (4)</span><input type="text" inputmode="decimal" step="any" class="p-len-4" placeholder="0" oninput="sbQueueCalc()"></div>
                </div>
              </div>
              <div style="margin-bottom:8px;">
                <div style="font-size:11px; font-weight:bold; color:var(--text-muted); margin-bottom:4px;">سعر القصاير (م²)</div>
                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px;">
-                 <div class="price-box"><span class="w-label">تخانة (2)</span><input type="number" inputmode="decimal" step="any" class="p-sh-2" placeholder="0" oninput="calculateAll()"></div>
-                 <div class="price-box"><span class="w-label">تخانة (3)</span><input type="number" inputmode="decimal" step="any" class="p-sh-3" placeholder="0" oninput="calculateAll()"></div>
-                 <div class="price-box"><span class="w-label">تخانة (4)</span><input type="number" inputmode="decimal" step="any" class="p-sh-4" placeholder="0" oninput="calculateAll()"></div>
+                 <div class="price-box"><span class="w-label">تخانة (2)</span><input type="text" inputmode="decimal" step="any" class="p-sh-2" placeholder="0" oninput="sbQueueCalc()"></div>
+                 <div class="price-box"><span class="w-label">تخانة (3)</span><input type="text" inputmode="decimal" step="any" class="p-sh-3" placeholder="0" oninput="sbQueueCalc()"></div>
+                 <div class="price-box"><span class="w-label">تخانة (4)</span><input type="text" inputmode="decimal" step="any" class="p-sh-4" placeholder="0" oninput="sbQueueCalc()"></div>
                </div>
              </div>
-             <div style="display:grid; grid-template-columns: 1fr; gap:8px; margin-bottom:8px;">
-               <div class="price-box"><span class="w-label" style="color:var(--primary);">أقصى طول للقصاير (سم)</span><input type="number" inputmode="decimal" step="any" class="max-short-len" placeholder="190" value="190" oninput="calculateAll()"></div>
+             <div style="margin-bottom:8px;">
+               <div style="font-size:11px; font-weight:bold; color:var(--text-muted); margin-bottom:4px;">سعر الوسط (م²) — اختياري</div>
+               <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px;">
+                 <div class="price-box"><span class="w-label">تخانة (2)</span><input type="text" inputmode="decimal" step="any" class="p-mid-2" placeholder="0" oninput="sbQueueCalc()"></div>
+                 <div class="price-box"><span class="w-label">تخانة (3)</span><input type="text" inputmode="decimal" step="any" class="p-mid-3" placeholder="0" oninput="sbQueueCalc()"></div>
+                 <div class="price-box"><span class="w-label">تخانة (4)</span><input type="text" inputmode="decimal" step="any" class="p-mid-4" placeholder="0" oninput="sbQueueCalc()"></div>
+               </div>
+             </div>
+             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:8px;">
+               <div class="price-box"><span class="w-label" style="color:var(--primary);">أقصى طول للقصاير (سم)</span><input type="text" inputmode="decimal" step="any" class="max-short-len" placeholder="190" value="190" oninput="sbQueueCalc()"></div>
+               <div class="price-box"><span class="w-label" style="color:var(--primary);">أقصى طول للوسط (سم)</span><input type="text" inputmode="decimal" step="any" class="max-mid-len" placeholder="مثال: 250" value="" oninput="sbQueueCalc()"></div>
              </div>
              <div style="font-size:11px; color:var(--text-muted); line-height:1.4;">
-               <svg class="icon-svg" style="width:1.2em; height:1.2em; margin:0 4px 0 0; vertical-align:-3px; display:inline-block; color:inherit;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6M10 22h4"/></svg> أي مقاس يتجاوز أقصى طول محدد للقصاير يُحسب تلقائياً كأطوال بالسعر المطابق لتخانته.
+               <svg class="icon-svg" style="width:1.2em; height:1.2em; margin:0 4px 0 0; vertical-align:-3px; display:inline-block; color:inherit;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6M10 22h4"/></svg> التصنيف تلقائياً بالطول: قصاير حتى «أقصى طول للقصاير»، ثم وسط حتى «أقصى طول للوسط»، وما بعده أطوال — اكتب سعر الوسط لتفعيله أو اتركه فارغاً لتقسيم أطوال/قصاير فقط.
              </div>
           </div>
         </details>
@@ -10344,7 +10393,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
            </div>
            <div style="flex:1; display:flex; flex-direction:column;">
              <label style="font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:6px;">السعر (ج.م)</label>
-             <input type="number" inputmode="decimal" step="any" class="price-visible" placeholder="0" oninput="const b = this.closest('.block-card'); const sel = b.querySelector('.price-selector').value; b.querySelector('.'+sel).value = this.value; calculateAll();" style="width:100%; padding:10px; border-radius:8px; border:1.5px solid var(--border); background:var(--input-bg); color:var(--text); font-weight:800; outline:none;">
+             <input type="text" inputmode="decimal" step="any" class="price-visible" placeholder="0" oninput="const b = this.closest('.block-card'); const sel = b.querySelector('.price-selector').value; b.querySelector('.'+sel).value = this.value; calculateAll();" style="width:100%; padding:10px; border-radius:8px; border:1.5px solid var(--border); background:var(--input-bg); color:var(--text); font-weight:800; outline:none;">
            </div>
         </div>
         ${inputs}
@@ -10404,7 +10453,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
                   <div style="display:flex; gap:8px; width:100%; box-sizing:border-box;">
                      <div class="price-box" style="flex:1; width:100%; box-sizing:border-box;">
                         <span class="w-label">طول التلبيسة (سم)</span>
-                        <input type="number" inputmode="decimal" step="any" class="t-normal-len" placeholder="33" oninput="if(this.value.trim()!==''){this.dataset.userEdited='true';}else{delete this.dataset.userEdited;} calculateAll();" title="طول التلبيسة العادية (عرض النايمة - 2 + 5 سم)">
+                        <input type="text" inputmode="decimal" step="any" class="t-normal-len" placeholder="33" oninput="if(this.value.trim()!==''){this.dataset.userEdited='true';}else{delete this.dataset.userEdited;} calculateAll();" title="طول التلبيسة العادية (عرض النايمة - 2 + 5 سم)">
                      </div>
                   </div>
                </div>
@@ -10417,11 +10466,11 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
                   <div style="display:flex; gap:8px; width:100%; box-sizing:border-box;">
                      <div class="price-box" style="flex:1; box-sizing:border-box;">
                         <span class="w-label">عرض التلبيسة (سم)</span>
-                        <input type="number" inputmode="decimal" step="any" class="t-slant-w" placeholder="28" oninput="if(this.value.trim()!==''){this.dataset.userEdited='true';}else{delete this.dataset.userEdited;} calculateAll();" title="عرض التلبيسة المايلة (عرض النايمة - 2 سم)">
+                        <input type="text" inputmode="decimal" step="any" class="t-slant-w" placeholder="28" oninput="if(this.value.trim()!==''){this.dataset.userEdited='true';}else{delete this.dataset.userEdited;} calculateAll();" title="عرض التلبيسة المايلة (عرض النايمة - 2 سم)">
                      </div>
                      <div class="price-box" style="flex:1; box-sizing:border-box;">
                         <span class="w-label">المتبقي فوق الدرجة (سم)</span>
-                        <input type="number" inputmode="decimal" step="any" class="t-slant-extra" value="12" oninput="calculateAll()" title="المسافة المتبقية فوق الدرجة (افتراضي 12 سم)">
+                        <input type="text" inputmode="decimal" step="any" class="t-slant-extra" value="12" oninput="sbQueueCalc()" title="المسافة المتبقية فوق الدرجة (افتراضي 12 سم)">
                      </div>
                   </div>
                </div>
@@ -10456,11 +10505,11 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
                   <div style="display:flex; gap:8px; width:100%; box-sizing:border-box;">
                      <div class="price-box" style="flex:1; box-sizing:border-box;">
                         <span class="w-label">الطول (سم)</span>
-                        <input type="number" inputmode="decimal" step="any" class="t-normal-len" value="35" oninput="calculateAll()" title="طول التلبيسة العادية (افتراضي 35 سم)">
+                        <input type="text" inputmode="decimal" step="any" class="t-normal-len" value="35" oninput="sbQueueCalc()" title="طول التلبيسة العادية (افتراضي 35 سم)">
                      </div>
                      <div class="price-box" style="flex:1; box-sizing:border-box;">
                         <span class="w-label">سعر م² (ج)</span>
-                        <input type="number" inputmode="decimal" step="any" class="p-talabis-normal" placeholder="0" oninput="calculateAll()" title="سعر المتر المربع للتلابيس العادية">
+                        <input type="text" inputmode="decimal" step="any" class="p-talabis-normal" placeholder="0" oninput="sbQueueCalc()" title="سعر المتر المربع للتلابيس العادية">
                      </div>
                   </div>
                </div>
@@ -10473,11 +10522,11 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
                   <div style="display:flex; gap:8px; width:100%; box-sizing:border-box;">
                      <div class="price-box" style="flex:1; box-sizing:border-box;">
                         <span class="w-label">المتبقي فوق الدرجة (سم)</span>
-                        <input type="number" inputmode="decimal" step="any" class="t-slant-extra" value="12" oninput="calculateAll()" title="المسافة المتبقية فوق الدرجة (تُضرب في 2 ويُضاف 1 سم، والقطعة تُنتج تلبيستين)">
+                        <input type="text" inputmode="decimal" step="any" class="t-slant-extra" value="12" oninput="sbQueueCalc()" title="المسافة المتبقية فوق الدرجة (تُضرب في 2 ويُضاف 1 سم، والقطعة تُنتج تلبيستين)">
                      </div>
                      <div class="price-box" style="flex:1; box-sizing:border-box;">
                         <span class="w-label">سعر م² (ج)</span>
-                        <input type="number" inputmode="decimal" step="any" class="p-talabis-slant" placeholder="0" oninput="calculateAll()" title="سعر المتر المربع للتلابيس المايلة">
+                        <input type="text" inputmode="decimal" step="any" class="p-talabis-slant" placeholder="0" oninput="sbQueueCalc()" title="سعر المتر المربع للتلابيس المايلة">
                      </div>
                   </div>
                </div>
@@ -10498,8 +10547,8 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
                <span class="slabs-acc-title">قائمة أسعار التخانات</span>
             </summary>
             <div class="slabs-acc-content" style="display:flex; gap:10px; box-sizing:border-box; width:100%;">
-               <div class="price-box" style="flex:1; box-sizing:border-box;"><span class="w-label">تخانة 3 سم</span><input type="number" inputmode="decimal" step="any" class="p3" placeholder="0" oninput="calculateAll()"></div>
-               <div class="price-box" style="flex:1; box-sizing:border-box;"><span class="w-label">تخانة 4 سم</span><input type="number" inputmode="decimal" step="any" class="p4" placeholder="0" oninput="calculateAll()"></div>
+               <div class="price-box" style="flex:1; box-sizing:border-box;"><span class="w-label">تخانة 3 سم</span><input type="text" inputmode="decimal" step="any" class="p3" placeholder="0" oninput="sbQueueCalc()"></div>
+               <div class="price-box" style="flex:1; box-sizing:border-box;"><span class="w-label">تخانة 4 سم</span><input type="text" inputmode="decimal" step="any" class="p4" placeholder="0" oninput="sbQueueCalc()"></div>
             </div>
           </details>
         </div>
@@ -10553,12 +10602,12 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
                <span class="slabs-acc-title">السعر والمقاسات</span>
             </summary>
             <div class="slabs-acc-content" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(80px, 1fr)); gap:10px; box-sizing:border-box; width:100%;">
-               <div class="price-box" style="width:100%; box-sizing:border-box;"><span class="w-label">السعر م²</span><input type="number" inputmode="decimal" step="any" class="p-sqm" placeholder="0" oninput="calculateAll()"></div>
-               <div class="price-box" style="width:100%; box-sizing:border-box;"><span class="w-label">قايمة (سم)</span><input type="number" inputmode="decimal" step="any" class="w-r" placeholder="0" oninput="calculateAll()"></div>
-               <div class="price-box" style="width:100%; box-sizing:border-box;"><span class="w-label">نايمة (سم)</span><input type="number" inputmode="decimal" step="any" class="w-t" placeholder="0" oninput="onStairsThickNaimaInput(this)"></div>
-               <div class="price-box" style="width:100%; box-sizing:border-box;"><span class="w-label">ستارة (سم)</span><input type="number" inputmode="decimal" step="any" class="w-curtain" placeholder="0" oninput="calculateAll()"></div>
-               <div class="price-box" style="width:100%; box-sizing:border-box;"><span class="w-label">عرض الفرش</span><input type="number" inputmode="decimal" step="any" class="w-skirt" placeholder="0" oninput="calculateAll()"></div>
-               <div class="price-box" style="width:100%; box-sizing:border-box;"><span class="w-label">سعر الفرش</span><input type="number" inputmode="decimal" step="any" class="p-skirt" placeholder="0" oninput="calculateAll()"></div>
+               <div class="price-box" style="width:100%; box-sizing:border-box;"><span class="w-label">السعر م²</span><input type="text" inputmode="decimal" step="any" class="p-sqm" placeholder="0" oninput="sbQueueCalc()"></div>
+               <div class="price-box" style="width:100%; box-sizing:border-box;"><span class="w-label">قايمة (سم)</span><input type="text" inputmode="decimal" step="any" class="w-r" placeholder="0" oninput="sbQueueCalc()"></div>
+               <div class="price-box" style="width:100%; box-sizing:border-box;"><span class="w-label">نايمة (سم)</span><input type="text" inputmode="decimal" step="any" class="w-t" placeholder="0" oninput="onStairsThickNaimaInput(this)"></div>
+               <div class="price-box" style="width:100%; box-sizing:border-box;"><span class="w-label">ستارة (سم)</span><input type="text" inputmode="decimal" step="any" class="w-curtain" placeholder="0" oninput="sbQueueCalc()"></div>
+               <div class="price-box" style="width:100%; box-sizing:border-box;"><span class="w-label">عرض الفرش</span><input type="text" inputmode="decimal" step="any" class="w-skirt" placeholder="0" oninput="sbQueueCalc()"></div>
+               <div class="price-box" style="width:100%; box-sizing:border-box;"><span class="w-label">سعر الفرش</span><input type="text" inputmode="decimal" step="any" class="p-skirt" placeholder="0" oninput="sbQueueCalc()"></div>
             </div>
           </details>
 
@@ -10607,39 +10656,39 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
       const sectionTitle = typeDef ? typeDef.name : type;
       const sectionColor = 'var(--primary)';
       let headerHTML = '', tableHTML = '';
-      let subColspan = 7, subExtra = '';
+      let subColspan = 8, subExtra = '';
       let effType = type;
       if (type.startsWith('custom-') && typeDef) effType = typeDef.calc;
       if (effType === 'marble') {
         headerHTML = `<div style="width:100%;"><label style="font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:6px; display:block;">الخام:</label><input type="text" class="b-name" placeholder="اكتب اسم الخامة" style="width:100%; padding:10px; border-radius:8px; border:1.5px solid var(--border); background:var(--input-bg); font-weight:800; outline:none; margin-bottom:10px; color:var(--text);"></div>` + generateMarblePriceGrid();
-        tableHTML = `<thead><tr><th>#</th><th>الطول</th><th>العرض</th><th>التخانة</th><th>العدد</th><th>م²</th><th>السعر</th><th>الإجمالي</th><th class="no-print"><svg class="icon-svg" style="margin:0; width:14px; height:14px;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></th></tr></thead>`;
+        tableHTML = `<thead><tr><th>#</th><th>الطول</th><th>العرض</th><th>التخانة</th><th>العدد</th><th>م²</th><th>السعر</th><th>الإجمالي</th><th class="th-cum">م² تراكمي</th><th class="th-cum2">سعر تراكمي (ج)</th><th class="no-print"><svg class="icon-svg" style="margin:0; width:14px; height:14px;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></th></tr></thead>`;
       } else if (effType === 'slabs') {
         headerHTML = `<div style="width:100%;"><label style="font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:6px; display:block;">البيان:</label><input type="text" class="b-name" placeholder="اكتب اسم الخامة" style="width:100%; padding:10px; border-radius:8px; border:1.5px solid var(--border); background:var(--input-bg); font-weight:800; outline:none; margin-bottom:10px; color:var(--text);"></div>` + generateSlabsPriceGrid();
-        tableHTML = `<thead><tr><th>#</th><th>الطول</th><th>العرض</th><th>التخانة</th><th>العدد</th><th>شريحة</th><th>م²</th><th>السعر</th><th>الإجمالي</th><th class="no-print"><svg class="icon-svg" style="margin:0; width:14px; height:14px;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></th></tr></thead>`;
-        subColspan = 8;
+        tableHTML = `<thead><tr><th>#</th><th>الطول</th><th>العرض</th><th>التخانة</th><th>العدد</th><th>شريحة</th><th>م²</th><th>السعر</th><th>الإجمالي</th><th class="th-cum">م² تراكمي</th><th class="th-cum2">سعر تراكمي (ج)</th><th class="no-print"><svg class="icon-svg" style="margin:0; width:14px; height:14px;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></th></tr></thead>`;
+        subColspan = 9;
       } else if (effType === 'granite') {
         headerHTML = `<div style="width:100%;"><label style="font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:6px; display:block;">البيان:</label><input type="text" class="b-name" placeholder="اكتب اسم الخامة" style="width:100%; padding:10px; border-radius:8px; border:1.5px solid var(--border); background:var(--input-bg); font-weight:800; outline:none; margin-bottom:10px; color:var(--text);"></div>` + generateSlabsPriceGrid();
-        tableHTML = `<thead><tr><th>#</th><th>الطول</th><th>العرض</th><th>التخانة</th><th>العدد</th><th>شريحة</th><th>م²</th><th>السعر</th><th>الإجمالي</th><th class="no-print"><svg class="icon-svg" style="margin:0; width:14px; height:14px;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></th></tr></thead>`;
-        subColspan = 8;
+        tableHTML = `<thead><tr><th>#</th><th>الطول</th><th>العرض</th><th>التخانة</th><th>العدد</th><th>شريحة</th><th>م²</th><th>السعر</th><th>الإجمالي</th><th class="th-cum">م² تراكمي</th><th class="th-cum2">سعر تراكمي (ج)</th><th class="no-print"><svg class="icon-svg" style="margin:0; width:14px; height:14px;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></th></tr></thead>`;
+        subColspan = 9;
       } else if (effType === 'lengths-shorts') {
         headerHTML = `<div style="width:100%;"><label style="font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:6px; display:block;">البيان:</label><input type="text" class="b-name" placeholder="اكتب اسم الخامة" style="width:100%; padding:10px; border-radius:8px; border:1.5px solid var(--border); background:var(--input-bg); font-weight:800; outline:none; margin-bottom:10px; color:var(--text);"></div>` + generateLengthsShortsPriceGrid();
-        tableHTML = `<thead><tr><th>#</th><th>الطول</th><th>العرض</th><th>التخانة</th><th>العدد</th><th>النوع</th><th>م²</th><th>السعر</th><th>الإجمالي</th><th class="no-print"><svg class="icon-svg" style="margin:0; width:14px; height:14px;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></th></tr></thead>`;
-        subColspan = 8;
+        tableHTML = `<thead><tr><th>#</th><th>الطول</th><th>العرض</th><th>التخانة</th><th>العدد</th><th>النوع</th><th>م²</th><th>السعر</th><th>الإجمالي</th><th class="th-cum">م² تراكمي</th><th class="th-cum2">سعر تراكمي (ج)</th><th class="no-print"><svg class="icon-svg" style="margin:0; width:14px; height:14px;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></th></tr></thead>`;
+        subColspan = 9;
       }
       else if (effType === 'stairs-lin') {
         headerHTML = `<div style="width:100%;"><label style="font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:6px; display:block;">البيان:</label><input type="text" class="b-name" placeholder="اكتب البيان" style="width:100%; padding:10px; border-radius:8px; border:1.5px solid var(--border); background:var(--input-bg); font-weight:800; outline:none; margin-bottom:10px; color:var(--text);"></div>` + generateStairsLinPriceGrid();
-        tableHTML = `<thead><tr><th>#</th><th>الطول</th><th>قايمة</th><th>التخانة</th><th>عدد الدرج</th><th>م.ط</th><th>السعر</th><th>الإجمالي</th><th class="no-print"><svg class="icon-svg" style="margin:0; width:14px; height:14px;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></th></tr></thead>`;
-        subColspan = 7; subExtra = ''; 
+        tableHTML = `<thead><tr><th>#</th><th>الطول</th><th>قايمة</th><th>التخانة</th><th>عدد الدرج</th><th>م.ط</th><th>السعر</th><th>الإجمالي</th><th class="th-cum">م.ط تراكمي</th><th class="th-cum2">سعر تراكمي (ج)</th><th class="no-print"><svg class="icon-svg" style="margin:0; width:14px; height:14px;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></th></tr></thead>`;
+        subColspan = 8; subExtra = ''; 
       }
       else if (effType === 'stairs-thick') {
         headerHTML = `<div style="width:100%;"><label style="font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:6px; display:block;">البيان:</label><input type="text" class="b-name" placeholder="اكتب البيان" style="width:100%; padding:10px; border-radius:8px; border:1.5px solid var(--border); background:var(--input-bg); font-weight:800; outline:none; margin-bottom:10px; color:var(--text);"></div>` + generateStairsThickPriceGrid();
-        tableHTML = `<thead><tr><th>#</th><th>الطول</th><th>نوع التلبيسة</th><th>التلابيس</th><th>عدد الدرج</th><th>م² درج</th><th>م² فرش</th><th>الإجمالي</th><th class="no-print"><svg class="icon-svg" style="margin:0; width:14px; height:14px;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></th></tr></thead>`;
-        subColspan = 7; subExtra = ''; 
+        tableHTML = `<thead><tr><th>#</th><th>الطول</th><th>نوع التلبيسة</th><th>التلابيس</th><th>عدد الدرج</th><th>م² درج</th><th>م² فرش</th><th>الإجمالي</th><th class="th-cum">م² تراكمي</th><th class="th-cum2">سعر تراكمي (ج)</th><th class="no-print"><svg class="icon-svg" style="margin:0; width:14px; height:14px;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></th></tr></thead>`;
+        subColspan = 8; subExtra = ''; 
       }
       else if (effType === 'talabis') {
         headerHTML = `<div style="width:100%;"><label style="font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:6px; display:block;">البيان:</label><input type="text" class="b-name" placeholder="اكتب البيان أو اسم الخامة" style="width:100%; padding:10px; border-radius:8px; border:1.5px solid var(--border); background:var(--input-bg); font-weight:800; outline:none; margin-bottom:10px; color:var(--text);"></div>` + generateTalabisPriceGrid(true);
-        tableHTML = `<thead><tr><th>#</th><th>نوع التلبيسة</th><th class="col-dim-header">الطول</th><th>ارتفاع الدرجة</th><th>العدد</th><th>م²</th><th>السعر</th><th>الإجمالي</th><th class="no-print"><svg class="icon-svg" style="margin:0; width:14px; height:14px;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></th></tr></thead>`;
-        subColspan = 7; subExtra = '';
+        tableHTML = `<thead><tr><th>#</th><th>نوع التلبيسة</th><th class="col-dim-header">الطول</th><th>ارتفاع الدرجة</th><th>العدد</th><th>م²</th><th>السعر</th><th>الإجمالي</th><th class="th-cum">م² تراكمي</th><th class="th-cum2">سعر تراكمي (ج)</th><th class="no-print"><svg class="icon-svg" style="margin:0; width:14px; height:14px;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></th></tr></thead>`;
+        subColspan = 8; subExtra = '';
       }
       else if (effType === 'tarabee') {
         headerHTML = `<div style="width:100%;"><label style="font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:6px; display:block;">البيان:</label><input type="text" class="b-name" placeholder="اكتب البيان أو اسم الخامة" style="width:100%; padding:10px; border-radius:8px; border:1.5px solid var(--border); background:var(--input-bg); font-weight:800; outline:none; margin-bottom:10px; color:var(--text);"></div>` + generateTarabeePriceGrid() + `
@@ -10647,15 +10696,17 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
           <svg class="icon-svg" style="width:14px; height:14px; color:var(--primary); flex-shrink:0;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
           <span><strong>ميزة حاسبة الأمتار:</strong> اكتب عدد الأمتار المطلوبة في خانة <strong>«م² مطلوب»</strong> وسيقوم التطبيق باحتساب عدد القطع (البلاطات) فوراً.</span>
         </div>`;
-        tableHTML = `<thead><tr><th>#</th><th>الطول</th><th>العرض</th><th>التخانة</th><th class="no-print" style="color:var(--primary); font-weight:800;" title="اكتب عدد الأمتار المطلوبة ليتم حساب عدد القطع تلقائياً">م² مطلوب</th><th>العدد</th><th>م²</th><th>السعر</th><th>الإجمالي</th><th class="no-print"><svg class="icon-svg" style="margin:0; width:14px; height:14px;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></th></tr></thead>`;
-        subColspan = 8; subExtra = '';
+        tableHTML = `<thead><tr><th>#</th><th>الطول</th><th>العرض</th><th>التخانة</th><th class="no-print" style="color:var(--primary); font-weight:800;" title="اكتب عدد الأمتار المطلوبة ليتم حساب عدد القطع تلقائياً">م² مطلوب</th><th>العدد</th><th>م²</th><th>السعر</th><th>الإجمالي</th><th class="th-cum">م² تراكمي</th><th class="th-cum2">سعر تراكمي (ج)</th><th class="no-print"><svg class="icon-svg" style="margin:0; width:14px; height:14px;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></th></tr></thead>`;
+        subColspan = 9; subExtra = '';
       }
       else if (effType === 'tawlat') {
         headerHTML = `<div style="width:100%;"><label style="font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:6px; display:block;">البيان:</label><input type="text" class="b-name" placeholder="اكتب البيان أو اسم الخامة" style="width:100%; padding:10px; border-radius:8px; border:1.5px solid var(--border); background:var(--input-bg); font-weight:800; outline:none; margin-bottom:10px; color:var(--text);"></div>` + generateTawlatPriceGrid();
-        tableHTML = `<thead><tr><th>#</th><th>الطول</th><th>العرض</th><th>التخانة</th><th>العدد</th><th>م²</th><th>السعر</th><th>الإجمالي</th><th class="no-print"><svg class="icon-svg" style="margin:0; width:14px; height:14px;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></th></tr></thead>`;
-        subColspan = 7; subExtra = '';
+        tableHTML = `<thead><tr><th>#</th><th>الطول</th><th>العرض</th><th>التخانة</th><th>العدد</th><th>م²</th><th>السعر</th><th>الإجمالي</th><th class="th-cum">م² تراكمي</th><th class="th-cum2">سعر تراكمي (ج)</th><th class="no-print"><svg class="icon-svg" style="margin:0; width:14px; height:14px;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></th></tr></thead>`;
+        subColspan = 8; subExtra = '';
       }
-      else { const calcType = typeDef ? typeDef.calc : 'sqm'; subColspan = calcType === 'lin' ? 4 : 5; subExtra = ''; }
+      else { const calcType = typeDef ? typeDef.calc : 'sqm'; subColspan = calcType === 'lin' ? 5 : 6; subExtra = ''; }
+      /* v1.20: صف إجمالي الجدول يعرض مجموع الأمتار بجانب مجموع السعر */
+      const sqmUnit = (effType === 'stairs-lin' || (typeDef && typeDef.calc === 'lin')) ? 'م.ط' : 'م²';
 
       block.innerHTML = `<div class="table-section-title" style="--table-accent:${sectionColor};">
         <button type="button" class="btn-del-table no-print" onclick="deleteTableBlock(this)" title="حذف الجدول" aria-label="حذف الجدول">
@@ -10668,7 +10719,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
       </div>
       <div class="block-header"><div class="block-header-title">${headerHTML}</div></div>
       <div class="table-responsive"><table>${tableHTML}<tbody class="rows-body"></tbody>
-      <tfoot><tr class="subtotal-row"><td colspan="${subColspan}" class="subtotal-lbl-cell">الإجمالي</td>${subExtra}<td class="subtotal-val-cell"><span class="s-cost">0.00</span> ج</td><td class="no-print"></td></tr></tfoot></table></div>
+      <tfoot><tr class="subtotal-row"><td colspan="${subColspan}" class="subtotal-lbl-cell">الإجمالي</td>${subExtra}<td class="subtotal-val-cell"><span class="s-sqm">0.00</span> ${sqmUnit}</td><td class="subtotal-val-cell"><span class="s-cost">0.00</span> ج</td><td class="no-print"></td></tr></tfoot></table></div>
       <div class="no-print" style="padding:4px 14px 14px;">
         <button type="button" class="btn-add-size-prominent" onclick="addRow('${blockId}','${type}')">
           <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -10813,12 +10864,12 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
           if (lastTalabisCount) defTalabisCount = lastTalabisCount.value;
       }
 
-      if (effType === 'marble') h += `<td><span class="m-card-lbl">الطول</span><input type="number" inputmode="decimal" step="any" class="l neon-input" placeholder="" oninput="calculateAll()"></td><td><span class="m-card-lbl">العرض</span><input type="number" inputmode="decimal" step="any" class="w neon-input" placeholder="" oninput="calculateAll()"></td><td><span class="m-card-lbl">التخانة</span>${genSeg('t', ['4', '3', '2'], defT)}</td><td><span class="m-card-lbl">العدد</span><input type="number" inputmode="decimal" step="any" class="q neon-input" placeholder="" oninput="calculateAll()"></td><td><span class="calc-val r-area">0.00</span><span class="m-metric-lbl">:م²</span></td><td><span class="m-metric-lbl">سعر:</span><span class="calc-val a-prc">0</span></td><td><span class="m-cost-eq">= </span><span class="calc-val r-cost">0.00</span><span class="m-cost-cur"> ج</span></td>`;
-      else if (effType === 'slabs') h += `<td><span class="m-card-lbl">الطول</span><input type="number" inputmode="decimal" step="any" class="l neon-input" placeholder="" oninput="calculateAll()"></td><td><span class="m-card-lbl">العرض</span>${genSeg('w', ['80', '70', '60'], defW)}</td><td><span class="m-card-lbl">التخانة</span>${genSeg('t', ['4', '3', '2'], defT)}</td><td><span class="m-card-lbl">العدد</span><input type="number" inputmode="decimal" step="any" class="q neon-input" placeholder="" oninput="calculateAll()"></td><td><span class="calc-val r-cat">-</span><span class="m-metric-lbl">:شريحة</span></td><td><span class="calc-val r-area">0.00</span><span class="m-metric-lbl">:م²</span></td><td><span class="m-metric-lbl">سعر:</span><span class="calc-val a-prc">0</span></td><td><span class="m-cost-eq">= </span><span class="calc-val r-cost">0.00</span><span class="m-cost-cur"> ج</span></td>`;
-      else if (effType === 'lengths-shorts') h += `<td><span class="m-card-lbl">الطول</span><input type="number" inputmode="decimal" step="any" class="l neon-input" placeholder="" oninput="calculateAll()"></td><td><span class="m-card-lbl">العرض</span><input type="number" inputmode="decimal" step="any" class="w neon-input" placeholder="" oninput="calculateAll()"></td><td><span class="m-card-lbl">التخانة</span>${genSeg('t', ['4', '3', '2'], defT)}</td><td><span class="m-card-lbl">العدد</span><input type="number" inputmode="decimal" step="any" class="q neon-input" placeholder="" oninput="calculateAll()"></td><td><span class="calc-val r-type">-</span><span class="m-metric-lbl">:نوع</span></td><td><span class="calc-val r-area">0.00</span><span class="m-metric-lbl">:م²</span></td><td><span class="m-metric-lbl">سعر:</span><span class="calc-val a-prc">0</span></td><td><span class="m-cost-eq">= </span><span class="calc-val r-cost">0.00</span><span class="m-cost-cur"> ج</span></td>`;
-      else if (effType === 'granite') h += `<td><span class="m-card-lbl">الطول</span><input type="number" inputmode="decimal" step="any" class="l neon-input" placeholder="" oninput="calculateAll()"></td><td><span class="m-card-lbl">العرض</span><input type="number" inputmode="decimal" step="any" class="w neon-input" placeholder="" oninput="calculateAll()"></td><td><span class="m-card-lbl">التخانة</span>${genSeg('t', ['4', '3', '2'], defT)}</td><td><span class="m-card-lbl">العدد</span><input type="number" inputmode="decimal" step="any" class="q neon-input" placeholder="" oninput="calculateAll()"></td><td><span class="calc-val r-cat">-</span><span class="m-metric-lbl">:شريحة</span></td><td><span class="calc-val r-area">0.00</span><span class="m-metric-lbl">:م²</span></td><td><span class="m-metric-lbl">سعر:</span><span class="calc-val a-prc">0</span></td><td><span class="m-cost-eq">= </span><span class="calc-val r-cost">0.00</span><span class="m-cost-cur"> ج</span></td>`;
-      else if (effType === 'stairs-lin') h += `<td><span class="m-card-lbl">الطول</span><input type="number" inputmode="decimal" step="any" class="l neon-input" placeholder="" oninput="calculateAll()"></td><td><span class="m-card-lbl">القايمة</span><input type="number" inputmode="decimal" step="any" class="riser neon-input" value="${defRiser}" placeholder="" oninput="calculateAll()" title="القايمة (سم)" style="min-width:45px;"></td><td><span class="m-card-lbl">التخانة</span>${genSeg('t', ['4', '3'], defT)}</td><td><span class="m-card-lbl">عدد الدرج</span><input type="number" inputmode="decimal" step="any" class="q neon-input" placeholder="" oninput="calculateAll()" title="عدد الدرج"></td><td><span class="calc-val r-lin">0.00</span><span class="m-metric-lbl">:م.ط</span></td><td><span class="m-metric-lbl">سعر:</span><span class="calc-val a-prc">0</span></td><td><span class="m-cost-eq">= </span><span class="calc-val r-cost">0.00</span><span class="m-cost-cur"> ج</span></td>`;
-      else if (effType === 'stairs-thick') h += `<td><span class="m-card-lbl">الطول</span><input type="number" inputmode="decimal" step="any" class="l neon-input" placeholder="" oninput="calculateAll()"></td><td><span class="m-card-lbl">التلبيسة</span>${genSeg('talabis', [{val:'-', label:'- (بدون)', display:'-'}, {val:'عادية', label:'عادية (ع)', display:'عادية'}, {val:'مائل', label:'مائل (م)', display:'مائل'}], defTalabis)}</td><td><span class="m-card-lbl">العدد</span>${genSeg('talabis-count', [{val:'0', label:'بدون', display:'بدون'}, {val:'1', label:'جنب (1)', display:'جنب'}, {val:'2', label:'جنبين (2)', display:'جنبين'}], defTalabisCount)}</td><td><span class="m-card-lbl">عدد الدرج</span><input type="number" inputmode="decimal" step="any" class="q neon-input" placeholder="" oninput="calculateAll()" title="عدد الدرج"></td><td><span class="calc-val r-area">0.00</span><span class="m-metric-lbl">:درج</span></td><td><span class="calc-val r-skirt-area">0.00</span><span class="m-metric-lbl">:فرش</span></td><td><span class="m-cost-eq">= </span><span class="calc-val r-cost">0.00</span><span class="m-cost-cur"> ج</span></td>`;
+      if (effType === 'marble') h += `<td><span class="m-card-lbl">الطول</span><input type="text" inputmode="decimal" step="any" class="l neon-input" placeholder="" oninput="sbQueueCalc()"></td><td><span class="m-card-lbl">العرض</span><input type="text" inputmode="decimal" step="any" class="w neon-input" placeholder="" oninput="sbQueueCalc()"></td><td><span class="m-card-lbl">التخانة</span>${genSeg('t', ['4', '3', '2'], defT)}</td><td><span class="m-card-lbl">العدد</span><input type="text" inputmode="decimal" step="any" class="q neon-input" placeholder="" oninput="sbQueueCalc()"></td><td><span class="calc-val r-area">0.00</span><span class="m-metric-lbl">:م²</span></td><td><span class="m-metric-lbl">سعر:</span><span class="calc-val a-prc">0</span></td><td><span class="m-cost-eq">= </span><span class="calc-val r-cost">0.00</span><span class="m-cost-cur"> ج</span></td>`;
+      else if (effType === 'slabs') h += `<td><span class="m-card-lbl">الطول</span><input type="text" inputmode="decimal" step="any" class="l neon-input" placeholder="" oninput="sbQueueCalc()"></td><td><span class="m-card-lbl">العرض</span>${genSeg('w', ['80', '70', '60'], defW)}</td><td><span class="m-card-lbl">التخانة</span>${genSeg('t', ['4', '3', '2'], defT)}</td><td><span class="m-card-lbl">العدد</span><input type="text" inputmode="decimal" step="any" class="q neon-input" placeholder="" oninput="sbQueueCalc()"></td><td><span class="calc-val r-cat">-</span><span class="m-metric-lbl">:شريحة</span></td><td><span class="calc-val r-area">0.00</span><span class="m-metric-lbl">:م²</span></td><td><span class="m-metric-lbl">سعر:</span><span class="calc-val a-prc">0</span></td><td><span class="m-cost-eq">= </span><span class="calc-val r-cost">0.00</span><span class="m-cost-cur"> ج</span></td>`;
+      else if (effType === 'lengths-shorts') h += `<td><span class="m-card-lbl">الطول</span><input type="text" inputmode="decimal" step="any" class="l neon-input" placeholder="" oninput="sbQueueCalc()"></td><td><span class="m-card-lbl">العرض</span><input type="text" inputmode="decimal" step="any" class="w neon-input" placeholder="" oninput="sbQueueCalc()"></td><td><span class="m-card-lbl">التخانة</span>${genSeg('t', ['4', '3', '2'], defT)}</td><td><span class="m-card-lbl">العدد</span><input type="text" inputmode="decimal" step="any" class="q neon-input" placeholder="" oninput="sbQueueCalc()"></td><td><span class="calc-val r-type">-</span><span class="m-metric-lbl">:نوع</span></td><td><span class="calc-val r-area">0.00</span><span class="m-metric-lbl">:م²</span></td><td><span class="m-metric-lbl">سعر:</span><span class="calc-val a-prc">0</span></td><td><span class="m-cost-eq">= </span><span class="calc-val r-cost">0.00</span><span class="m-cost-cur"> ج</span></td>`;
+      else if (effType === 'granite') h += `<td><span class="m-card-lbl">الطول</span><input type="text" inputmode="decimal" step="any" class="l neon-input" placeholder="" oninput="sbQueueCalc()"></td><td><span class="m-card-lbl">العرض</span><input type="text" inputmode="decimal" step="any" class="w neon-input" placeholder="" oninput="sbQueueCalc()"></td><td><span class="m-card-lbl">التخانة</span>${genSeg('t', ['4', '3', '2'], defT)}</td><td><span class="m-card-lbl">العدد</span><input type="text" inputmode="decimal" step="any" class="q neon-input" placeholder="" oninput="sbQueueCalc()"></td><td><span class="calc-val r-cat">-</span><span class="m-metric-lbl">:شريحة</span></td><td><span class="calc-val r-area">0.00</span><span class="m-metric-lbl">:م²</span></td><td><span class="m-metric-lbl">سعر:</span><span class="calc-val a-prc">0</span></td><td><span class="m-cost-eq">= </span><span class="calc-val r-cost">0.00</span><span class="m-cost-cur"> ج</span></td>`;
+      else if (effType === 'stairs-lin') h += `<td><span class="m-card-lbl">الطول</span><input type="text" inputmode="decimal" step="any" class="l neon-input" placeholder="" oninput="sbQueueCalc()"></td><td><span class="m-card-lbl">القايمة</span><input type="text" inputmode="decimal" step="any" class="riser neon-input" value="${defRiser}" placeholder="" oninput="sbQueueCalc()" title="القايمة (سم)" style="min-width:45px;"></td><td><span class="m-card-lbl">التخانة</span>${genSeg('t', ['4', '3'], defT)}</td><td><span class="m-card-lbl">عدد الدرج</span><input type="text" inputmode="decimal" step="any" class="q neon-input" placeholder="" oninput="sbQueueCalc()" title="عدد الدرج"></td><td><span class="calc-val r-lin">0.00</span><span class="m-metric-lbl">:م.ط</span></td><td><span class="m-metric-lbl">سعر:</span><span class="calc-val a-prc">0</span></td><td><span class="m-cost-eq">= </span><span class="calc-val r-cost">0.00</span><span class="m-cost-cur"> ج</span></td>`;
+      else if (effType === 'stairs-thick') h += `<td><span class="m-card-lbl">الطول</span><input type="text" inputmode="decimal" step="any" class="l neon-input" placeholder="" oninput="sbQueueCalc()"></td><td><span class="m-card-lbl">التلبيسة</span>${genSeg('talabis', [{val:'-', label:'- (بدون)', display:'-'}, {val:'عادية', label:'عادية (ع)', display:'عادية'}, {val:'مائل', label:'مائل (م)', display:'مائل'}], defTalabis)}</td><td><span class="m-card-lbl">العدد</span>${genSeg('talabis-count', [{val:'0', label:'بدون', display:'بدون'}, {val:'1', label:'جنب (1)', display:'جنب'}, {val:'2', label:'جنبين (2)', display:'جنبين'}], defTalabisCount)}</td><td><span class="m-card-lbl">عدد الدرج</span><input type="text" inputmode="decimal" step="any" class="q neon-input" placeholder="" oninput="sbQueueCalc()" title="عدد الدرج"></td><td><span class="calc-val r-area">0.00</span><span class="m-metric-lbl">:درج</span></td><td><span class="calc-val r-skirt-area">0.00</span><span class="m-metric-lbl">:فرش</span></td><td><span class="m-cost-eq">= </span><span class="calc-val r-cost">0.00</span><span class="m-cost-cur"> ج</span></td>`;
       else if (effType === 'talabis') {
         let defTalabisType = 'عادية';
         let defRiserVal = '';
@@ -10833,15 +10884,16 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         const dimLabel = isSlant ? 'عرض التلبيسة' : 'الطول';
         const dimPlaceholder = isSlant ? '30' : '35';
         const dimTitle = isSlant ? 'عرض التلبيسة (سم) - افتراضي 30' : 'طول التلبيسة (سم) - افتراضي 35';
-        h += `<td><span class="m-card-lbl">النوع</span>${genSeg('talabis', [{val:'عادية', label:'عادية (ع)', display:'عادية'}, {val:'مائل', label:'مائل (م)', display:'مائل'}], defTalabisType)}</td><td><span class="m-card-lbl col-dim-label">${dimLabel}</span><input type="number" inputmode="decimal" step="any" class="l neon-input" placeholder="${dimPlaceholder}" oninput="calculateAll()" title="${dimTitle}"></td><td><span class="m-card-lbl">ارتفاع الدرجة</span><input type="number" inputmode="decimal" step="any" class="riser neon-input" value="${defRiserVal}" placeholder="" oninput="calculateAll()" title="ارتفاع الدرجة (سم)" style="min-width:45px;"></td><td><span class="m-card-lbl">العدد</span><input type="number" inputmode="decimal" step="any" class="q neon-input" placeholder="" oninput="calculateAll()" title="عدد التلابيس"></td><td><span class="calc-val r-area">0.00</span><span class="m-metric-lbl">:م²</span></td><td><span class="m-metric-lbl">سعر:</span><span class="calc-val a-prc">0</span></td><td><span class="m-cost-eq">= </span><span class="calc-val r-cost">0.00</span><span class="m-cost-cur"> ج</span></td>`;
+        h += `<td><span class="m-card-lbl">النوع</span>${genSeg('talabis', [{val:'عادية', label:'عادية (ع)', display:'عادية'}, {val:'مائل', label:'مائل (م)', display:'مائل'}], defTalabisType)}</td><td><span class="m-card-lbl col-dim-label">${dimLabel}</span><input type="text" inputmode="decimal" step="any" class="l neon-input" placeholder="${dimPlaceholder}" oninput="sbQueueCalc()" title="${dimTitle}"></td><td><span class="m-card-lbl">ارتفاع الدرجة</span><input type="text" inputmode="decimal" step="any" class="riser neon-input" value="${defRiserVal}" placeholder="" oninput="sbQueueCalc()" title="ارتفاع الدرجة (سم)" style="min-width:45px;"></td><td><span class="m-card-lbl">العدد</span><input type="text" inputmode="decimal" step="any" class="q neon-input" placeholder="" oninput="sbQueueCalc()" title="عدد التلابيس"></td><td><span class="calc-val r-area">0.00</span><span class="m-metric-lbl">:م²</span></td><td><span class="m-metric-lbl">سعر:</span><span class="calc-val a-prc">0</span></td><td><span class="m-cost-eq">= </span><span class="calc-val r-cost">0.00</span><span class="m-cost-cur"> ج</span></td>`;
       }
       else if (effType === 'tarabee') {
-        h += `<td><span class="m-card-lbl">الطول</span><input type="number" inputmode="decimal" step="any" class="l neon-input" placeholder="" oninput="onTarabeeLengthInput(this)"></td><td><span class="m-card-lbl">العرض</span><input type="number" inputmode="decimal" step="any" class="w neon-input" placeholder="" oninput="onTarabeeWidthInput(this)"></td><td><span class="m-card-lbl">التخانة</span>${genSeg('t', ['4', '3', '2'], defT)}</td><td class="no-print"><span class="m-card-lbl">م² مطلوب</span><input type="number" inputmode="decimal" step="any" class="target-sqm neon-input" placeholder="مثال 50" oninput="onTarabeeTargetSqmInput(this)" title="اكتب الأمتار المطلوبة لحساب عدد القطع تلقائياً"><div class="tarabee-pieces-hint" style="font-size:10.5px; font-weight:800; color:var(--primary); margin-top:2px; text-align:center; display:none; white-space:nowrap;"></div></td><td><span class="m-card-lbl">العدد</span><input type="number" inputmode="decimal" step="any" class="q neon-input" placeholder="" oninput="onTarabeeQuantityInput(this)"></td><td><span class="calc-val r-area">0.00</span><span class="m-metric-lbl">:م²</span></td><td><span class="m-metric-lbl">سعر:</span><span class="calc-val a-prc">0</span></td><td><span class="m-cost-eq">= </span><span class="calc-val r-cost">0.00</span><span class="m-cost-cur"> ج</span></td>`;
+        h += `<td><span class="m-card-lbl">الطول</span><input type="text" inputmode="decimal" step="any" class="l neon-input" placeholder="" oninput="onTarabeeLengthInput(this)"></td><td><span class="m-card-lbl">العرض</span><input type="text" inputmode="decimal" step="any" class="w neon-input" placeholder="" oninput="onTarabeeWidthInput(this)"></td><td><span class="m-card-lbl">التخانة</span>${genSeg('t', ['4', '3', '2'], defT)}</td><td class="no-print"><span class="m-card-lbl">م² مطلوب</span><input type="text" inputmode="decimal" step="any" class="target-sqm neon-input" placeholder="مثال 50" oninput="onTarabeeTargetSqmInput(this)" title="اكتب الأمتار المطلوبة لحساب عدد القطع تلقائياً"><div class="tarabee-pieces-hint" style="font-size:10.5px; font-weight:800; color:var(--primary); margin-top:2px; text-align:center; display:none; white-space:nowrap;"></div></td><td><span class="m-card-lbl">العدد</span><input type="text" inputmode="decimal" step="any" class="q neon-input" placeholder="" oninput="onTarabeeQuantityInput(this)"></td><td><span class="calc-val r-area">0.00</span><span class="m-metric-lbl">:م²</span></td><td><span class="m-metric-lbl">سعر:</span><span class="calc-val a-prc">0</span></td><td><span class="m-cost-eq">= </span><span class="calc-val r-cost">0.00</span><span class="m-cost-cur"> ج</span></td>`;
       }
       else if (effType === 'tawlat') {
-        h += `<td><span class="m-card-lbl">الطول</span><input type="number" inputmode="decimal" step="any" class="l neon-input" placeholder="" oninput="calculateAll()"></td><td><span class="m-card-lbl">العرض</span><input type="number" inputmode="decimal" step="any" class="w neon-input" placeholder="" oninput="calculateAll()"></td><td><span class="m-card-lbl">التخانة</span>${genSeg('t', ['4', '3', '2'], defT)}</td><td><span class="m-card-lbl">العدد</span><input type="number" inputmode="decimal" step="any" class="q neon-input" placeholder="" oninput="calculateAll()"></td><td><span class="calc-val r-area">0.00</span><span class="m-metric-lbl">:م²</span></td><td><span class="m-metric-lbl">سعر:</span><span class="calc-val a-prc">0</span></td><td><span class="m-cost-eq">= </span><span class="calc-val r-cost">0.00</span><span class="m-cost-cur"> ج</span></td>`;
+        h += `<td><span class="m-card-lbl">الطول</span><input type="text" inputmode="decimal" step="any" class="l neon-input" placeholder="" oninput="sbQueueCalc()"></td><td><span class="m-card-lbl">العرض</span><input type="text" inputmode="decimal" step="any" class="w neon-input" placeholder="" oninput="sbQueueCalc()"></td><td><span class="m-card-lbl">التخانة</span>${genSeg('t', ['4', '3', '2'], defT)}</td><td><span class="m-card-lbl">العدد</span><input type="text" inputmode="decimal" step="any" class="q neon-input" placeholder="" oninput="sbQueueCalc()"></td><td><span class="calc-val r-area">0.00</span><span class="m-metric-lbl">:م²</span></td><td><span class="m-metric-lbl">سعر:</span><span class="calc-val a-prc">0</span></td><td><span class="m-cost-eq">= </span><span class="calc-val r-cost">0.00</span><span class="m-cost-cur"> ج</span></td>`;
       }
-      else { const calcType = typeDef ? typeDef.calc : 'sqm'; if (calcType === 'lin') h += `<td><span class="m-card-lbl">الطول</span><input type="number" inputmode="decimal" step="any" class="l neon-input" placeholder="" oninput="calculateAll()"></td><td><span class="m-card-lbl">العدد</span><input type="number" inputmode="decimal" step="any" class="q neon-input" placeholder="" oninput="calculateAll()"></td><td><span class="calc-val r-lin">0.00</span><span class="m-metric-lbl">:م.ط</span></td><td><span class="m-cost-eq">= </span><span class="calc-val r-cost">0.00</span><span class="m-cost-cur"> ج</span></td>`; else h += `<td><span class="m-card-lbl">الطول</span><input type="number" inputmode="decimal" step="any" class="l neon-input" placeholder="" oninput="calculateAll()"></td><td><span class="m-card-lbl">العرض</span><input type="number" inputmode="decimal" step="any" class="w neon-input" placeholder="" oninput="calculateAll()"></td><td><span class="m-card-lbl">العدد</span><input type="number" inputmode="decimal" step="any" class="q neon-input" placeholder="" oninput="calculateAll()"></td><td><span class="calc-val r-area">0.00</span><span class="m-metric-lbl">:م²</span></td><td><span class="m-cost-eq">= </span><span class="calc-val r-cost">0.00</span><span class="m-cost-cur"> ج</span></td>`; }
+      else { const calcType = typeDef ? typeDef.calc : 'sqm'; if (calcType === 'lin') h += `<td><span class="m-card-lbl">الطول</span><input type="text" inputmode="decimal" step="any" class="l neon-input" placeholder="" oninput="sbQueueCalc()"></td><td><span class="m-card-lbl">العدد</span><input type="text" inputmode="decimal" step="any" class="q neon-input" placeholder="" oninput="sbQueueCalc()"></td><td><span class="calc-val r-lin">0.00</span><span class="m-metric-lbl">:م.ط</span></td><td><span class="m-cost-eq">= </span><span class="calc-val r-cost">0.00</span><span class="m-cost-cur"> ج</span></td>`; else h += `<td><span class="m-card-lbl">الطول</span><input type="text" inputmode="decimal" step="any" class="l neon-input" placeholder="" oninput="sbQueueCalc()"></td><td><span class="m-card-lbl">العرض</span><input type="text" inputmode="decimal" step="any" class="w neon-input" placeholder="" oninput="sbQueueCalc()"></td><td><span class="m-card-lbl">العدد</span><input type="text" inputmode="decimal" step="any" class="q neon-input" placeholder="" oninput="sbQueueCalc()"></td><td><span class="calc-val r-area">0.00</span><span class="m-metric-lbl">:م²</span></td><td><span class="m-cost-eq">= </span><span class="calc-val r-cost">0.00</span><span class="m-cost-cur"> ج</span></td>`; }
+      h += `<td><span class="calc-val r-cum-area">0.00</span></td><td><span class="calc-val r-cum-cost">0.00</span></td>`;
       h += `<td class="no-print"><button type="button" class="btn-del-row" onclick="if(this.closest('tbody').rows.length>1){playDeleteSound();this.closest('tr').remove();calculateAll();}"><svg class="icon-svg" style="margin:0; width:14px; height:14px;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></td>`;
       tr.innerHTML = h; tb.appendChild(tr); calculateAll();
     }
@@ -10911,10 +10963,49 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
       let s = String(val).trim();
       if (!s) return 0;
       s = s.replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
-      s = s.replace(/[,،]/g, '.');
+      s = s.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+      s = s.replace(/[٫,،]/g, '.');
       const n = parseFloat(s);
       return isNaN(n) ? 0 : n;
     }
+
+    /* v1.20 (نقطة 14): قبول الأرقام العربية (٠-٩) والفارسية (۰-۹) في كل خانات الإدخال —
+       تحويل فوري 1:1 (نفس الطول → مكان المؤشر محفوظ) يعمل في مرحلة الالتقاط قبل أي handler،
+       فكل الحسابات اللي بعد смه تشوف أرقام إنجليزية جاهزة */
+    (function sbArabicDigitsNormalizer(){
+      const AR = '٠١٢٣٤٥٦٧٨٩', FA = '۰۱۲۳۴۵۶۷۸۹';
+      document.addEventListener('input', function(e){
+        const t = e.target;
+        if (!t || (t.tagName !== 'INPUT' && t.tagName !== 'TEXTAREA')) return;
+        const ty = (t.type || '').toLowerCase();
+        if (ty === 'password' || ty === 'email' || ty === 'file' || ty === 'hidden') return;
+        const v = t.value;
+        if (!v || !/[\u0660-\u0669\u06F0-\u06F9]/.test(v)) return;
+        let out = '', changed = false;
+        for (let i = 0; i < v.length; i++) {
+          const ch = v[i];
+          const ai = AR.indexOf(ch), fi = FA.indexOf(ch);
+          if (ai > -1) { out += ai; changed = true; }
+          else if (fi > -1) { out += fi; changed = true; }
+          else out += ch;
+        }
+        if (!changed) return;
+        const pos = (typeof t.selectionStart === 'number') ? t.selectionStart : null;
+        const posEnd = (typeof t.selectionEnd === 'number') ? t.selectionEnd : null;
+        t.value = out;
+        try { if (pos !== null) t.setSelectionRange(pos, posEnd); } catch (_e) {}
+      }, true);
+    })();
+
+    /* v1.20 (نقطة 10): تجميع إعادة الحساب على إطار رسم واحد (rAF) — كتابة جداول كثيرة بقت سلسة
+       لأن calculateAll مش بيتنفذ مع كل حرف، لكن مرة واحدة لكل إطار — نفس النتيجة بعد أقل من 16ms */
+    let __sbCalcQueued = false;
+    function sbQueueCalc() {
+      if (__sbCalcQueued) return;
+      __sbCalcQueued = true;
+      requestAnimationFrame(function(){ __sbCalcQueued = false; calculateAll(); });
+    }
+    window.sbQueueCalc = sbQueueCalc;
 
     /* v1.19: تصغير خط الأرقام الطويلة أوتوماتيك — تُستدعى مع كل إعادة حساب (بتغطي كل الجداول والدمج) */
     function sbFitNumInputs() {
@@ -10936,7 +11027,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
       cards.forEach(b => {
         const type = b.dataset.type;
         if (!type || type === 'installments') return;
-        let sQ = 0, sV = 0, sC = 0, sTalabisSq = 0;
+        let sQ = 0, sV = 0, sC = 0, sTalabisSq = 0; let cumA = 0, cumC = 0; /* v1.20: إجمالي تراكمي (نقطة 11) */
         const types = getTableTypes(); const typeDef = types.find(t => t.id === type);
         let effType = b.dataset.calcType || type;
         if (!b.dataset.calcType && type.startsWith('custom-') && typeDef) effType = typeDef.calc;
@@ -11019,13 +11110,19 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
             if (r.querySelector('.a-prc')) r.querySelector('.a-prc').innerText = prc;
           }
           else if (effType === 'lengths-shorts') {
+            /* v1.20: فئة ثالثة «وسط» — قصاير حتى أقصى طول للقصاير، ثم وسط حتى أقصى طول للوسط، ثم أطوال (تتعطل تلقائياً لو سعر الوسط فاضي) */
             const maxL = parseNum(b.querySelector('.max-short-len')?.value) || 190;
+            const maxMid = parseNum(b.querySelector('.max-mid-len')?.value) || 0;
             const tt = r.querySelector('.t')?.value || '2';
             const pL = parseNum(b.querySelector('.p-len-' + tt)?.value);
+            const pM = parseNum(b.querySelector('.p-mid-' + tt)?.value);
             const pS = parseNum(b.querySelector('.p-sh-' + tt)?.value);
-            const isLength = l > maxL;
-            const prc = isLength ? pL : pS;
-            const typeLbl = isLength ? 'أطوال' : 'قصاير';
+            const midEnabled = maxMid > maxL && pM > 0;
+            let typeLbl, prc;
+            if (midEnabled && l > maxMid) { typeLbl = 'أطوال'; prc = pL; }
+            else if (midEnabled && l > maxL) { typeLbl = 'وسط'; prc = pM; }
+            else if (l > maxL) { typeLbl = 'أطوال'; prc = pL; }
+            else { typeLbl = 'قصاير'; prc = pS; }
             area = (l * w / 10000) * q;
             cost = area * prc;
             if (r.querySelector('.r-type')) r.querySelector('.r-type').innerText = typeLbl;
@@ -11158,7 +11255,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
             if (effType === 'tarabee') {
               const hintEl = r.querySelector('.tarabee-pieces-hint');
               const targetInp = r.querySelector('.target-sqm');
-              const targetVal = targetInp ? parseFloat(targetInp.value) : 0;
+              const targetVal = targetInp ? parseNum(targetInp.value) : 0;
               if (hintEl) {
                 if (!isNaN(targetVal) && targetVal > 0 && l > 0 && w > 0 && q > 0) {
                   hintEl.innerText = `= ${q} قطعة (${area.toFixed(2)} م²)`;
@@ -11185,6 +11282,10 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
             }
           }
           if (r.querySelector('.r-cost')) r.querySelector('.r-cost').innerText = cost.toFixed(2);
+          /* v1.20 (نقطة 11): الإجمالي التراكمي بعد كل مقاس = مجموع كل المقاسات السابقة + الحالية */
+          cumA += area; cumC += cost;
+          if (r.querySelector('.r-cum-area')) r.querySelector('.r-cum-area').innerText = cumA.toFixed(2);
+          if (r.querySelector('.r-cum-cost')) r.querySelector('.r-cum-cost').innerText = cumC.toFixed(2);
           sQ += q; sV += area; sC += cost;
         });
         if (effType === 'talabis') {
@@ -11208,6 +11309,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
             }
           }
         }
+        if (b.querySelector('.s-sqm')) b.querySelector('.s-sqm').innerText = sV.toFixed(2);
         if (b.querySelector('.s-cost')) b.querySelector('.s-cost').innerText = sC.toFixed(2);
         gPcs += sQ; gCost += sC;
         if (effType === 'stairs-lin' || (typeDef && typeDef.calc === 'lin')) {
@@ -11375,7 +11477,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         const client = document.getElementById('clientName').value || 'عميل نقدي';
         const net = document.getElementById('netCost').innerText;
         const tipEl = document.getElementById('tipVal');
-        const tip = tipEl && tipEl.value ? parseFloat(tipEl.value) : 0;
+        const tip = tipEl && tipEl.value ? parseNum(tipEl.value) : 0;
         
         // Generate a simple hash to prevent manual tampering of physical paper
         let hashStr = (invNum + client + net + tip).replace(/\s+/g, '');
@@ -11442,7 +11544,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
       const invNum = document.getElementById('invNum').value;
       const netForHash = document.getElementById('netCost').innerText;
       const tipForHashEl = document.getElementById('tipVal');
-      const tipForHash = tipForHashEl && tipForHashEl.value ? parseFloat(tipForHashEl.value) : 0;
+      const tipForHash = tipForHashEl && tipForHashEl.value ? parseNum(tipForHashEl.value) : 0;
       let hashStr = (invNum + client + netForHash + tipForHash).replace(/\s+/g, '');
       let hash = 0;
       for (let i = 0; i < hashStr.length; i++) { hash = ((hash << 5) - hash) + hashStr.charCodeAt(i); hash |= 0; }
@@ -11458,7 +11560,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
           instDetails = {
               count: parseInt(document.getElementById('instCount').value) || 1,
               freq: document.getElementById('instFreq').value,
-              downPayment: parseFloat(document.getElementById('instDownPayment').value) || 0,
+              downPayment: parseNum(document.getElementById('instDownPayment').value) || 0,
               startDate: instStartDate
           };
       }
@@ -12232,7 +12334,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         msgEl.style.fontSize = '14px';
 
         const input = document.createElement('input');
-        input.type = 'number';
+        input.type = 'text'; input.inputMode = 'decimal';
         input.value = defaultValue;
         input.style.width = '100%';
         input.style.padding = '12px';
@@ -12440,7 +12542,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
             modal: true
         });
         const input = document.createElement('input');
-        input.type = opts.password ? 'password' : (opts.inputmode === 'numeric' ? 'number' : 'text');
+        input.type = opts.password ? 'password' : ('text');
         if (opts.inputmode) input.setAttribute('inputmode', opts.inputmode);
         input.value = defaultValue == null ? '' : defaultValue;
         input.autocomplete = 'off';
@@ -12730,7 +12832,7 @@ html[dir="ltr"] .units-back-btn svg { transform: rotate(180deg); }
         margin:       10,
         filename:     client + '.pdf',
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true },
+        html2canvas:  (() => { const __h = (element.scrollHeight || element.offsetHeight || 0); const __sc = __h > 11000 ? 1.25 : (__h > 7000 ? 1.5 : 2); return { scale: __sc, useCORS: true, logging: false }; })(),
         jsPDF:        { unit: 'mm', format: (__pdfCfg.paperSize || 'a4'), orientation: 'portrait' }
       };
       /* v1.19: أبيض وأسود افتراضي — الملون فقط عند تمرير forceColors من زر «طباعة ملونة» */
@@ -17356,11 +17458,12 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
     });
     window.addEventListener('DOMContentLoaded', () => {
       document.addEventListener('input', (e) => {
-        if (e.target && (e.target.matches('input.neon-input, input[inputmode="decimal"], input[type="number"]') || e.target.classList?.contains('neon-input'))) {
+        if (e.target && (e.target.matches('input.neon-input, input[inputmode="decimal"], input[inputmode="numeric"], input[type="text"][inputmode]') || e.target.classList?.contains('neon-input'))) {
           const val = e.target.value;
-          if (/[٠-٩,،]/.test(val)) {
+          if (/[٠-٩۰-۹٫,،]/.test(val)) {
             let converted = val.replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
-            converted = converted.replace(/[,،]/g, '.');
+            converted = converted.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+            converted = converted.replace(/[٫,،]/g, '.');
             const parts = converted.split('.');
             if (parts.length > 2) converted = parts[0] + '.' + parts.slice(1).join('');
             e.target.value = converted;
@@ -18472,7 +18575,7 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:10px; margin-bottom:10px;">
             <div>
               <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">مبلغ الدفعة (ج.م) *</label>
-              <input type="number" inputmode="decimal" id="payInputAmount" step="any" min="1" placeholder="مثال: 5000" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--border); background:var(--input-bg); color:var(--input-text); font-weight:800; font-size:14px; box-sizing:border-box;">
+              <input type="text" inputmode="decimal" id="payInputAmount" step="any" min="1" placeholder="مثال: 5000" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--border); background:var(--input-bg); color:var(--input-text); font-weight:800; font-size:14px; box-sizing:border-box;">
             </div>
             <div>
               <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">طريقة السداد</label>
@@ -18618,7 +18721,11 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
 
       <!-- View Tabs (No Print) -->
       <div class="no-print" style="padding:10px 18px 0; display:flex; gap:8px; border-bottom:1px solid var(--border); background:var(--card-bg-alt); overflow-x:auto;">
-        <button type="button" class="cutting-tab-btn active" id="tabBtnFormah" onclick="setCuttingSheetTab('formah')">
+        <button type="button" class="cutting-tab-btn active" id="tabBtnBytable" onclick="setCuttingSheetTab('bytable')">
+          <svg class="icon-svg" style="width:14px; height:14px; margin:0;" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          مفصل حسب الجدول
+        </button>
+        <button type="button" class="cutting-tab-btn" id="tabBtnFormah" onclick="setCuttingSheetTab('formah')">
           <svg class="icon-svg" style="width:14px; height:14px; margin:0;" viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
           تجميع الفرمات (عرض التقطيع)
         </button>
@@ -18797,13 +18904,13 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
           </div>
           <div>
             <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">الكمية المتوفرة حالياً *</label>
-            <input type="number" inputmode="decimal" id="invItemQty" step="any" min="0" placeholder="0" style="width:100%; padding:9px 12px; border-radius:8px; border:1px solid var(--border); background:var(--input-bg); color:var(--input-text); font-weight:800; font-size:14px; box-sizing:border-box;">
+            <input type="text" inputmode="decimal" id="invItemQty" step="any" min="0" placeholder="0" style="width:100%; padding:9px 12px; border-radius:8px; border:1px solid var(--border); background:var(--input-bg); color:var(--input-text); font-weight:800; font-size:14px; box-sizing:border-box;">
           </div>
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
           <div>
             <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">حد الأمان للتنبيه</label>
-            <input type="number" inputmode="decimal" id="invItemMinAlert" step="any" min="0" value="10" placeholder="10" style="width:100%; padding:9px 12px; border-radius:8px; border:1px solid var(--border); background:var(--input-bg); color:var(--input-text); font-weight:700; font-size:13px; box-sizing:border-box;">
+            <input type="text" inputmode="decimal" id="invItemMinAlert" step="any" min="0" value="10" placeholder="10" style="width:100%; padding:9px 12px; border-radius:8px; border:1px solid var(--border); background:var(--input-bg); color:var(--input-text); font-weight:700; font-size:13px; box-sizing:border-box;">
           </div>
           <div>
             <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">مكان التخزين / العنبر</label>
@@ -18813,11 +18920,11 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
           <div>
             <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">سعر التكلفة للوحدة (ج.م)</label>
-            <input type="number" inputmode="decimal" id="invItemCost" step="any" min="0" placeholder="0" style="width:100%; padding:9px 12px; border-radius:8px; border:1px solid var(--border); background:var(--input-bg); color:var(--input-text); font-weight:700; font-size:13px; box-sizing:border-box;">
+            <input type="text" inputmode="decimal" id="invItemCost" step="any" min="0" placeholder="0" style="width:100%; padding:9px 12px; border-radius:8px; border:1px solid var(--border); background:var(--input-bg); color:var(--input-text); font-weight:700; font-size:13px; box-sizing:border-box;">
           </div>
           <div>
             <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">سعر البيع المقترح (ج.م)</label>
-            <input type="number" inputmode="decimal" id="invItemPrice" step="any" min="0" placeholder="0" style="width:100%; padding:9px 12px; border-radius:8px; border:1px solid var(--border); background:var(--input-bg); color:var(--input-text); font-weight:700; font-size:13px; box-sizing:border-box;">
+            <input type="text" inputmode="decimal" id="invItemPrice" step="any" min="0" placeholder="0" style="width:100%; padding:9px 12px; border-radius:8px; border:1px solid var(--border); background:var(--input-bg); color:var(--input-text); font-weight:700; font-size:13px; box-sizing:border-box;">
           </div>
         </div>
         <div>
@@ -18864,7 +18971,7 @@ window.leaveCurrentWorkshop = leaveCurrentWorkshop;
 
         <div>
           <label style="display:block; font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">الكمية المراد حركتها *</label>
-          <input type="number" inputmode="decimal" id="invTransQty" step="any" min="0.01" placeholder="أدخل الكمية" style="width:100%; padding:9px 12px; border-radius:8px; border:1px solid var(--border); background:var(--input-bg); color:var(--input-text); font-weight:800; font-size:15px; box-sizing:border-box;">
+          <input type="text" inputmode="decimal" id="invTransQty" step="any" min="0.01" placeholder="أدخل الكمية" style="width:100%; padding:9px 12px; border-radius:8px; border:1px solid var(--border); background:var(--input-bg); color:var(--input-text); font-weight:800; font-size:15px; box-sizing:border-box;">
         </div>
 
         <div>
@@ -20171,7 +20278,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
        WORKSHOP CUTTING SHEET ENGINE (جدول تقطيع الورشة من الأكبر للأصغر ودمج المقاسات)
        ========================================================================== */
     let currentCuttingData = null;
-    let currentCuttingTab = 'formah'; // 'formah' | 'flat' | 'material'
+    let currentCuttingTab = 'bytable'; // v1.20: 'bytable' | 'formah' | 'flat' | 'material'
     const cuttingDoneSet = new Set();
     let pendingSaveCuttingRecord = null;
 
@@ -20245,8 +20352,12 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
           return;
         }
 
+        /* v1.20: وسم كل قطعة بنوع جدولها المصدر — للعرض المفصل حسب الجدول */
+        const __ps = pieces.length;
+        const SRC_TABLE_LABELS = { 'marble': 'جدول رخام', 'granite': 'جدول جرانيت', 'lengths-shorts': 'جدول أطوال وقصاير', 'stairs-lin': 'جدول درج (م.ط)', 'stairs-thick': 'جدول درج (بتخانة)', 'tarabee': 'جدول ترابيع', 'talabis': 'جدول تلابيس' };
         const blockNameInput = card.querySelector('.table-custom-title-input');
         const blockName = blockNameInput ? getElValSafe(blockNameInput) : '';
+        const srcTableLbl = (type && type.startsWith('custom-')) ? ('جدول ' + (blockName || 'مخصص')) : (SRC_TABLE_LABELS[type] || 'جدول عام');
         const rows = card.querySelectorAll('tbody tr');
 
         if (type === 'marble' || type === 'granite' || type === 'lengths-shorts' || (type && type.startsWith('custom-'))) {
@@ -20527,6 +20638,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
             }
           });
         }
+        for (let pi = __ps; pi < pieces.length; pi++) pieces[pi].srcTable = srcTableLbl;
       });
 
       return pieces;
@@ -20561,6 +20673,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
             length: l,
             thickness: t,
             material: mat,
+            srcTable: p.srcTable || 'جدول عام',
             qty: 0,
             sourcesMap: new Map()
           });
@@ -20581,6 +20694,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
           length: item.length,
           thickness: item.thickness,
           material: item.material,
+          srcTable: item.srcTable || 'جدول عام',
           qty: item.qty,
           area: Math.round(area * 1000) / 1000,
           sources: sourcesArr
@@ -20693,10 +20807,24 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       const grandTotalQty = flatList.reduce((acc, it) => acc + it.qty, 0);
       const grandTotalArea = flatList.reduce((acc, it) => acc + it.area, 0);
 
+      /* v1.20: تجميع حسب نوع الجدول المصدر — عرض/طباعة مفصلة بعنوان لكل جدول */
+      const byTableMap = new Map();
+      flatList.forEach(item => {
+        const lbl = item.srcTable || 'جدول عام';
+        if (!byTableMap.has(lbl)) byTableMap.set(lbl, { table: lbl, totalQty: 0, totalArea: 0, items: [] });
+        const g = byTableMap.get(lbl);
+        g.totalQty += item.qty;
+        g.totalArea += item.area;
+        g.items.push(item);
+      });
+      const byTableGroups = Array.from(byTableMap.values());
+      byTableGroups.forEach(g => g.items.sort((a, b) => (b.length - a.length) || (b.width - a.width)));
+
       return {
         flatList,
         formahList,
         materialGroups,
+        byTableGroups,
         grandTotalQty,
         grandTotalArea,
         formahCount: formahList.length,
@@ -20744,7 +20872,78 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
 
       let html = '';
 
-      if (data.nearMatchesCount > 0) {
+      /* v1.20: العرض المفصل حسب نوع الجدول (افتراضي) — كل جدول بعنوانه وإجمالياته، وكل جدول يبدأ ورقة مستقلة عند الطباعة */
+      if (currentCuttingTab === 'bytable') {
+        if (data.byTableGroups && data.byTableGroups.length > 0) {
+          data.byTableGroups.forEach(grp => {
+            html += `
+            <div class="formah-card cutting-bytable-group">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; border-bottom:1.5px solid var(--border); padding-bottom:8px; margin-bottom:10px;">
+                <span style="background:#0f766e; color:#fff; font-weight:900; font-size:14px; padding:5px 14px; border-radius:8px;">${grp.table}</span>
+                <span style="font-size:12px; font-weight:700; color:var(--text-muted);">إجمالي: ${grp.totalQty} قطعة | ${grp.totalArea.toFixed(2)} م²</span>
+              </div>
+              <div class="table-responsive" style="overflow-x:auto;">
+                <table class="cutting-table">
+                  <thead>
+                    <tr>
+                      <th style="width:44px;" class="no-print">تم</th>
+                      <th style="width:36px;">م</th>
+                      <th style="background:color-mix(in srgb, #0f766e 15%, var(--card-bg-alt));">الطول (سم)</th>
+                      <th>العرض (سم)</th>
+                      <th>التخانة</th>
+                      <th style="background:color-mix(in srgb, var(--primary) 15%, var(--card-bg-alt)); font-weight:900;">العدد المطلوب</th>
+                      <th>المساحة (م²)</th>
+                      <th>الخامة / البيان ومصدر المقاس</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+            `;
+            grp.items.forEach((item, idx) => {
+              const isDone = cuttingDoneSet.has(item.id);
+              const doneClass = isDone ? 'cutting-row-done' : '';
+              const checkedAttr = isDone ? 'checked' : '';
+              const sourceText = item.sources && item.sources.length > 0 ? item.sources.join(' + ') : item.material;
+              const isMerged = item.sources && item.sources.length > 1;
+              const hasNearMatch = item.nearMatches && item.nearMatches.length > 0;
+              let badgesHtml = '';
+              if (isMerged) {
+                badgesHtml += `<span style="display:inline-flex; align-items:center; gap:3px; background:rgba(15,118,110,0.12); color:#0f766e; border:1px solid rgba(15,118,110,0.35); padding:2px 6px; border-radius:5px; font-size:10.5px; font-weight:800;" title="تم تجميع هذا المقاس تلقائياً من عدة مواضع متفرقة في الفاتورة"><svg class="icon-svg" style="width:11px; height:11px; margin:0;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg> مدمج (${item.sources.length} مواضع)</span> `;
+              }
+              if (hasNearMatch) {
+                const nearInfo = item.nearMatches.map(m => `${m.otherLength} سم (فرق ${m.diff} سم)`).join('، ');
+                badgesHtml += `<span style="display:inline-flex; align-items:center; gap:3px; background:#fef3c7; color:#92400e; border:1px solid #f59e0b; padding:2px 6px; border-radius:5px; font-size:10.5px; font-weight:800;" title="مقاس متقارب جداً بنفس الفرمة"><svg class="icon-svg" style="width:11px; height:11px; margin:0; color:#b45309;" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg> متقارب مع: ${nearInfo}</span>`;
+              }
+              html += `
+                    <tr id="row_${item.id.replace(/[^\w]/g, '_')}" class="${doneClass}">
+                      <td class="no-print">
+                        <input type="checkbox" id="chk_${item.id.replace(/[^\w]/g, '_')}" ${checkedAttr} onchange="toggleCuttingPieceDone('${item.id}')" style="cursor:pointer; width:16px; height:16px; accent-color:#0f766e;">
+                      </td>
+                      <td style="font-weight:700; color:var(--text-muted);">${idx + 1}</td>
+                      <td class="cut-dim" style="font-weight:900; font-size:14.5px; color:#0f766e; background:color-mix(in srgb, #0f766e 5%, transparent);">${item.length} سم</td>
+                      <td class="cut-dim" style="font-weight:800; font-size:13px;">${item.width} سم</td>
+                      <td style="font-size:12px; color:var(--text-muted);">${item.thickness} سم</td>
+                      <td style="font-weight:900; font-size:15px; color:var(--primary); background:color-mix(in srgb, var(--primary) 6%, transparent);">${item.qty}</td>
+                      <td style="font-size:12px;">${item.area.toFixed(2)}</td>
+                      <td style="text-align:right; font-size:11.5px; line-height:1.4;">
+                        <div><span style="font-weight:700; color:var(--text);">${item.material}:</span> ${sourceText}</div>
+                        ${badgesHtml ? `<div style="margin-top:4px; display:flex; flex-wrap:wrap; gap:4px;">${badgesHtml}</div>` : ''}
+                      </td>
+                    </tr>
+              `;
+            });
+            html += `
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            `;
+          });
+        } else {
+          html += `<div class="formah-card cutting-bytable-group" style="text-align:center; padding:24px; color:var(--text-muted); font-size:13px;">لا توجد مقاسات مجمّعة حسب الجداول.</div>`;
+        }
+      }
+
+      else if (currentCuttingTab === 'formah') {
         html += `
           <div class="no-print" style="background:#fffbeb; border:1.5px solid #f59e0b; border-radius:12px; padding:12px 16px; margin-bottom:16px; font-size:12.5px; color:#92400e; display:flex; align-items:center; gap:12px; box-shadow:0 2px 8px rgba(245,158,11,0.08);">
             <span style="display:flex; align-items:center;"><svg class="icon-svg" style="width:24px; height:24px; color:#b45309;" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></span>
@@ -27729,7 +27928,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       if (c.kind === 'text') {
         return '<td style="padding:3px 2px;"><input type="text" data-col="' + esc(c.name) + '" class="neon-input" style="width:100%; min-width:64px; padding:5px 6px; border:1px solid var(--border); border-radius:6px; background:var(--input-bg); color:var(--input-text); box-sizing:border-box; text-align:center;" oninput="sbRecalcFormulaRow(this)"></td>';
       }
-      return '<td style="padding:3px 2px;"><input type="number" inputmode="decimal" data-col="' + esc(c.name) + '" class="neon-input" style="width:100%; min-width:64px; padding:5px 6px; border:1px solid var(--border); border-radius:6px; background:var(--input-bg); color:var(--input-text); box-sizing:border-box; text-align:center;" oninput="sbRecalcFormulaRow(this)"></td>';
+      return '<td style="padding:3px 2px;"><input type="text" inputmode="decimal" data-col="' + esc(c.name) + '" class="neon-input" style="width:100%; min-width:64px; padding:5px 6px; border:1px solid var(--border); border-radius:6px; background:var(--input-bg); color:var(--input-text); box-sizing:border-box; text-align:center;" oninput="sbRecalcFormulaRow(this)"></td>';
     }).join('');
     tr.innerHTML = cells +
       '<td style="padding:3px 2px; position:relative;">' +
@@ -27855,7 +28054,7 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
 
 <!--SBL-START-->
 <script>
-/* ===== StoneBill v1.18 — نظام الاشتراك والترخيص (طبقة معزولة — قاعدة 1: لا يمس منطق الجداول) ===== */
+/* ===== StoneBill v1.20 — نظام الاشتراك والترخيص (طبقة معزولة — قاعدة 1: لا يمس منطق الجداول) ===== */
 /* طبقة 1/4: tweetnacl — Ed25519 (مفتاح عام فقط داخل التطبيق) */
 /*SBL-NACL-START*/
 !function(i){"use strict";var v=function(r){var t,n=new Float64Array(16);if(r)for(t=0;t<r.length;t++)n[t]=r[t];return n},h=function(){throw new Error("no PRNG")},o=new Uint8Array(16),n=new Uint8Array(32);n[0]=9;var s=v(),u=v([1]),p=v([56129,1]),c=v([30883,4953,19914,30187,55467,16705,2637,112,59544,30585,16505,36039,65139,11119,27886,20995]),y=v([61785,9906,39828,60374,45398,33411,5274,224,53552,61171,33010,6542,64743,22239,55772,9222]),e=v([54554,36645,11616,51542,42930,38181,51040,26924,56412,64982,57905,49316,21502,52590,14035,8553]),a=v([26200,26214,26214,26214,26214,26214,26214,26214,26214,26214,26214,26214,26214,26214,26214,26214]),l=v([41136,18958,6951,50414,58488,44335,6150,12099,55207,15867,153,11085,57099,20417,9344,11139]);function f(r,t,n,e){r[t]=n>>24&255,r[t+1]=n>>16&255,r[t+2]=n>>8&255,r[t+3]=255&n,r[t+4]=e>>24&255,r[t+5]=e>>16&255,r[t+6]=e>>8&255,r[t+7]=255&e}function w(r,t,n,e,o){var i,h=0;for(i=0;i<o;i++)h|=r[t+i]^n[e+i];return(1&h-1>>>8)-1}function b(r,t,n,e){return w(r,t,n,e,16)}function g(r,t,n,e){return w(r,t,n,e,32)}function A(r,t,n,e){!function(r,t,n,e){for(var o,i=255&e[0]|(255&e[1])<<8|(255&e[2])<<16|(255&e[3])<<24,h=255&n[0]|(255&n[1])<<8|(255&n[2])<<16|(255&n[3])<<24,a=255&n[4]|(255&n[5])<<8|(255&n[6])<<16|(255&n[7])<<24,f=255&n[8]|(255&n[9])<<8|(255&n[10])<<16|(255&n[11])<<24,s=255&n[12]|(255&n[13])<<8|(255&n[14])<<16|(255&n[15])<<24,u=255&e[4]|(255&e[5])<<8|(255&e[6])<<16|(255&e[7])<<24,c=255&t[0]|(255&t[1])<<8|(255&t[2])<<16|(255&t[3])<<24,y=255&t[4]|(255&t[5])<<8|(255&t[6])<<16|(255&t[7])<<24,l=255&t[8]|(255&t[9])<<8|(255&t[10])<<16|(255&t[11])<<24,w=255&t[12]|(255&t[13])<<8|(255&t[14])<<16|(255&t[15])<<24,v=255&e[8]|(255&e[9])<<8|(255&e[10])<<16|(255&e[11])<<24,p=255&n[16]|(255&n[17])<<8|(255&n[18])<<16|(255&n[19])<<24,b=255&n[20]|(255&n[21])<<8|(255&n[22])<<16|(255&n[23])<<24,g=255&n[24]|(255&n[25])<<8|(255&n[26])<<16|(255&n[27])<<24,A=255&n[28]|(255&n[29])<<8|(255&n[30])<<16|(255&n[31])<<24,_=255&e[12]|(255&e[13])<<8|(255&e[14])<<16|(255&e[15])<<24,U=i,d=h,E=a,x=f,M=s,m=u,B=c,S=y,k=l,K=w,Y=v,L=p,T=b,z=g,R=A,P=_,N=0;N<20;N+=2)U^=(o=(T^=(o=(k^=(o=(M^=(o=U+T|0)<<7|o>>>25)+U|0)<<9|o>>>23)+M|0)<<13|o>>>19)+k|0)<<18|o>>>14,m^=(o=(d^=(o=(z^=(o=(K^=(o=m+d|0)<<7|o>>>25)+m|0)<<9|o>>>23)+K|0)<<13|o>>>19)+z|0)<<18|o>>>14,Y^=(o=(B^=(o=(E^=(o=(R^=(o=Y+B|0)<<7|o>>>25)+Y|0)<<9|o>>>23)+R|0)<<13|o>>>19)+E|0)<<18|o>>>14,P^=(o=(L^=(o=(S^=(o=(x^=(o=P+L|0)<<7|o>>>25)+P|0)<<9|o>>>23)+x|0)<<13|o>>>19)+S|0)<<18|o>>>14,U^=(o=(x^=(o=(E^=(o=(d^=(o=U+x|0)<<7|o>>>25)+U|0)<<9|o>>>23)+d|0)<<13|o>>>19)+E|0)<<18|o>>>14,m^=(o=(M^=(o=(S^=(o=(B^=(o=m+M|0)<<7|o>>>25)+m|0)<<9|o>>>23)+B|0)<<13|o>>>19)+S|0)<<18|o>>>14,Y^=(o=(K^=(o=(k^=(o=(L^=(o=Y+K|0)<<7|o>>>25)+Y|0)<<9|o>>>23)+L|0)<<13|o>>>19)+k|0)<<18|o>>>14,P^=(o=(R^=(o=(z^=(o=(T^=(o=P+R|0)<<7|o>>>25)+P|0)<<9|o>>>23)+T|0)<<13|o>>>19)+z|0)<<18|o>>>14;U=U+i|0,d=d+h|0,E=E+a|0,x=x+f|0,M=M+s|0,m=m+u|0,B=B+c|0,S=S+y|0,k=k+l|0,K=K+w|0,Y=Y+v|0,L=L+p|0,T=T+b|0,z=z+g|0,R=R+A|0,P=P+_|0,r[0]=U>>>0&255,r[1]=U>>>8&255,r[2]=U>>>16&255,r[3]=U>>>24&255,r[4]=d>>>0&255,r[5]=d>>>8&255,r[6]=d>>>16&255,r[7]=d>>>24&255,r[8]=E>>>0&255,r[9]=E>>>8&255,r[10]=E>>>16&255,r[11]=E>>>24&255,r[12]=x>>>0&255,r[13]=x>>>8&255,r[14]=x>>>16&255,r[15]=x>>>24&255,r[16]=M>>>0&255,r[17]=M>>>8&255,r[18]=M>>>16&255,r[19]=M>>>24&255,r[20]=m>>>0&255,r[21]=m>>>8&255,r[22]=m>>>16&255,r[23]=m>>>24&255,r[24]=B>>>0&255,r[25]=B>>>8&255,r[26]=B>>>16&255,r[27]=B>>>24&255,r[28]=S>>>0&255,r[29]=S>>>8&255,r[30]=S>>>16&255,r[31]=S>>>24&255,r[32]=k>>>0&255,r[33]=k>>>8&255,r[34]=k>>>16&255,r[35]=k>>>24&255,r[36]=K>>>0&255,r[37]=K>>>8&255,r[38]=K>>>16&255,r[39]=K>>>24&255,r[40]=Y>>>0&255,r[41]=Y>>>8&255,r[42]=Y>>>16&255,r[43]=Y>>>24&255,r[44]=L>>>0&255,r[45]=L>>>8&255,r[46]=L>>>16&255,r[47]=L>>>24&255,r[48]=T>>>0&255,r[49]=T>>>8&255,r[50]=T>>>16&255,r[51]=T>>>24&255,r[52]=z>>>0&255,r[53]=z>>>8&255,r[54]=z>>>16&255,r[55]=z>>>24&255,r[56]=R>>>0&255,r[57]=R>>>8&255,r[58]=R>>>16&255,r[59]=R>>>24&255,r[60]=P>>>0&255,r[61]=P>>>8&255,r[62]=P>>>16&255,r[63]=P>>>24&255}(r,t,n,e)}function _(r,t,n,e){!function(r,t,n,e){for(var o,i=255&e[0]|(255&e[1])<<8|(255&e[2])<<16|(255&e[3])<<24,h=255&n[0]|(255&n[1])<<8|(255&n[2])<<16|(255&n[3])<<24,a=255&n[4]|(255&n[5])<<8|(255&n[6])<<16|(255&n[7])<<24,f=255&n[8]|(255&n[9])<<8|(255&n[10])<<16|(255&n[11])<<24,s=255&n[12]|(255&n[13])<<8|(255&n[14])<<16|(255&n[15])<<24,u=255&e[4]|(255&e[5])<<8|(255&e[6])<<16|(255&e[7])<<24,c=255&t[0]|(255&t[1])<<8|(255&t[2])<<16|(255&t[3])<<24,y=255&t[4]|(255&t[5])<<8|(255&t[6])<<16|(255&t[7])<<24,l=255&t[8]|(255&t[9])<<8|(255&t[10])<<16|(255&t[11])<<24,w=255&t[12]|(255&t[13])<<8|(255&t[14])<<16|(255&t[15])<<24,v=255&e[8]|(255&e[9])<<8|(255&e[10])<<16|(255&e[11])<<24,p=255&n[16]|(255&n[17])<<8|(255&n[18])<<16|(255&n[19])<<24,b=255&n[20]|(255&n[21])<<8|(255&n[22])<<16|(255&n[23])<<24,g=255&n[24]|(255&n[25])<<8|(255&n[26])<<16|(255&n[27])<<24,A=255&n[28]|(255&n[29])<<8|(255&n[30])<<16|(255&n[31])<<24,_=255&e[12]|(255&e[13])<<8|(255&e[14])<<16|(255&e[15])<<24,U=0;U<20;U+=2)i^=(o=(b^=(o=(l^=(o=(s^=(o=i+b|0)<<7|o>>>25)+i|0)<<9|o>>>23)+s|0)<<13|o>>>19)+l|0)<<18|o>>>14,u^=(o=(h^=(o=(g^=(o=(w^=(o=u+h|0)<<7|o>>>25)+u|0)<<9|o>>>23)+w|0)<<13|o>>>19)+g|0)<<18|o>>>14,v^=(o=(c^=(o=(a^=(o=(A^=(o=v+c|0)<<7|o>>>25)+v|0)<<9|o>>>23)+A|0)<<13|o>>>19)+a|0)<<18|o>>>14,_^=(o=(p^=(o=(y^=(o=(f^=(o=_+p|0)<<7|o>>>25)+_|0)<<9|o>>>23)+f|0)<<13|o>>>19)+y|0)<<18|o>>>14,i^=(o=(f^=(o=(a^=(o=(h^=(o=i+f|0)<<7|o>>>25)+i|0)<<9|o>>>23)+h|0)<<13|o>>>19)+a|0)<<18|o>>>14,u^=(o=(s^=(o=(y^=(o=(c^=(o=u+s|0)<<7|o>>>25)+u|0)<<9|o>>>23)+c|0)<<13|o>>>19)+y|0)<<18|o>>>14,v^=(o=(w^=(o=(l^=(o=(p^=(o=v+w|0)<<7|o>>>25)+v|0)<<9|o>>>23)+p|0)<<13|o>>>19)+l|0)<<18|o>>>14,_^=(o=(A^=(o=(g^=(o=(b^=(o=_+A|0)<<7|o>>>25)+_|0)<<9|o>>>23)+b|0)<<13|o>>>19)+g|0)<<18|o>>>14;r[0]=i>>>0&255,r[1]=i>>>8&255,r[2]=i>>>16&255,r[3]=i>>>24&255,r[4]=u>>>0&255,r[5]=u>>>8&255,r[6]=u>>>16&255,r[7]=u>>>24&255,r[8]=v>>>0&255,r[9]=v>>>8&255,r[10]=v>>>16&255,r[11]=v>>>24&255,r[12]=_>>>0&255,r[13]=_>>>8&255,r[14]=_>>>16&255,r[15]=_>>>24&255,r[16]=c>>>0&255,r[17]=c>>>8&255,r[18]=c>>>16&255,r[19]=c>>>24&255,r[20]=y>>>0&255,r[21]=y>>>8&255,r[22]=y>>>16&255,r[23]=y>>>24&255,r[24]=l>>>0&255,r[25]=l>>>8&255,r[26]=l>>>16&255,r[27]=l>>>24&255,r[28]=w>>>0&255,r[29]=w>>>8&255,r[30]=w>>>16&255,r[31]=w>>>24&255}(r,t,n,e)}var U=new Uint8Array([101,120,112,97,110,100,32,51,50,45,98,121,116,101,32,107]);function d(r,t,n,e,o,i,h){var a,f,s=new Uint8Array(16),u=new Uint8Array(64);for(f=0;f<16;f++)s[f]=0;for(f=0;f<8;f++)s[f]=i[f];for(;64<=o;){for(A(u,s,h,U),f=0;f<64;f++)r[t+f]=n[e+f]^u[f];for(a=1,f=8;f<16;f++)a=a+(255&s[f])|0,s[f]=255&a,a>>>=8;o-=64,t+=64,e+=64}if(0<o)for(A(u,s,h,U),f=0;f<o;f++)r[t+f]=n[e+f]^u[f];return 0}function E(r,t,n,e,o){var i,h,a=new Uint8Array(16),f=new Uint8Array(64);for(h=0;h<16;h++)a[h]=0;for(h=0;h<8;h++)a[h]=e[h];for(;64<=n;){for(A(f,a,o,U),h=0;h<64;h++)r[t+h]=f[h];for(i=1,h=8;h<16;h++)i=i+(255&a[h])|0,a[h]=255&i,i>>>=8;n-=64,t+=64}if(0<n)for(A(f,a,o,U),h=0;h<n;h++)r[t+h]=f[h];return 0}function x(r,t,n,e,o){var i=new Uint8Array(32);_(i,e,o,U);for(var h=new Uint8Array(8),a=0;a<8;a++)h[a]=e[a+16];return E(r,t,n,h,i)}function M(r,t,n,e,o,i,h){var a=new Uint8Array(32);_(a,i,h,U);for(var f=new Uint8Array(8),s=0;s<8;s++)f[s]=i[s+16];return d(r,t,n,e,o,f,a)}var m=function(r){var t,n,e,o,i,h,a,f;this.buffer=new Uint8Array(16),this.r=new Uint16Array(10),this.h=new Uint16Array(10),this.pad=new Uint16Array(8),this.leftover=0,t=255&r[this.fin=0]|(255&r[1])<<8,this.r[0]=8191&t,n=255&r[2]|(255&r[3])<<8,this.r[1]=8191&(t>>>13|n<<3),e=255&r[4]|(255&r[5])<<8,this.r[2]=7939&(n>>>10|e<<6),o=255&r[6]|(255&r[7])<<8,this.r[3]=8191&(e>>>7|o<<9),i=255&r[8]|(255&r[9])<<8,this.r[4]=255&(o>>>4|i<<12),this.r[5]=i>>>1&8190,h=255&r[10]|(255&r[11])<<8,this.r[6]=8191&(i>>>14|h<<2),a=255&r[12]|(255&r[13])<<8,this.r[7]=8065&(h>>>11|a<<5),f=255&r[14]|(255&r[15])<<8,this.r[8]=8191&(a>>>8|f<<8),this.r[9]=f>>>5&127,this.pad[0]=255&r[16]|(255&r[17])<<8,this.pad[1]=255&r[18]|(255&r[19])<<8,this.pad[2]=255&r[20]|(255&r[21])<<8,this.pad[3]=255&r[22]|(255&r[23])<<8,this.pad[4]=255&r[24]|(255&r[25])<<8,this.pad[5]=255&r[26]|(255&r[27])<<8,this.pad[6]=255&r[28]|(255&r[29])<<8,this.pad[7]=255&r[30]|(255&r[31])<<8};function B(r,t,n,e,o,i){var h=new m(i);return h.update(n,e,o),h.finish(r,t),0}function S(r,t,n,e,o,i){var h=new Uint8Array(16);return B(h,0,n,e,o,i),b(r,t,h,0)}function k(r,t,n,e,o){var i;if(n<32)return-1;for(M(r,0,t,0,n,e,o),B(r,16,r,32,n-32,r),i=0;i<16;i++)r[i]=0;return 0}function K(r,t,n,e,o){var i,h=new Uint8Array(32);if(n<32)return-1;if(x(h,0,32,e,o),0!==S(t,16,t,32,n-32,h))return-1;for(M(r,0,t,0,n,e,o),i=0;i<32;i++)r[i]=0;return 0}function Y(r,t){var n;for(n=0;n<16;n++)r[n]=0|t[n]}function L(r){var t,n,e=1;for(t=0;t<16;t++)n=r[t]+e+65535,e=Math.floor(n/65536),r[t]=n-65536*e;r[0]+=e-1+37*(e-1)}function T(r,t,n){for(var e,o=~(n-1),i=0;i<16;i++)e=o&(r[i]^t[i]),r[i]^=e,t[i]^=e}function z(r,t){var n,e,o,i=v(),h=v();for(n=0;n<16;n++)h[n]=t[n];for(L(h),L(h),L(h),e=0;e<2;e++){for(i[0]=h[0]-65517,n=1;n<15;n++)i[n]=h[n]-65535-(i[n-1]>>16&1),i[n-1]&=65535;i[15]=h[15]-32767-(i[14]>>16&1),o=i[15]>>16&1,i[14]&=65535,T(h,i,1-o)}for(n=0;n<16;n++)r[2*n]=255&h[n],r[2*n+1]=h[n]>>8}function R(r,t){var n=new Uint8Array(32),e=new Uint8Array(32);return z(n,r),z(e,t),g(n,0,e,0)}function P(r){var t=new Uint8Array(32);return z(t,r),1&t[0]}function N(r,t){var n;for(n=0;n<16;n++)r[n]=t[2*n]+(t[2*n+1]<<8);r[15]&=32767}function O(r,t,n){for(var e=0;e<16;e++)r[e]=t[e]+n[e]}function C(r,t,n){for(var e=0;e<16;e++)r[e]=t[e]-n[e]}function F(r,t,n){var e,o,i=0,h=0,a=0,f=0,s=0,u=0,c=0,y=0,l=0,w=0,v=0,p=0,b=0,g=0,A=0,_=0,U=0,d=0,E=0,x=0,M=0,m=0,B=0,S=0,k=0,K=0,Y=0,L=0,T=0,z=0,R=0,P=n[0],N=n[1],O=n[2],C=n[3],F=n[4],I=n[5],Z=n[6],G=n[7],q=n[8],D=n[9],V=n[10],X=n[11],j=n[12],H=n[13],J=n[14],Q=n[15];i+=(e=t[0])*P,h+=e*N,a+=e*O,f+=e*C,s+=e*F,u+=e*I,c+=e*Z,y+=e*G,l+=e*q,w+=e*D,v+=e*V,p+=e*X,b+=e*j,g+=e*H,A+=e*J,_+=e*Q,h+=(e=t[1])*P,a+=e*N,f+=e*O,s+=e*C,u+=e*F,c+=e*I,y+=e*Z,l+=e*G,w+=e*q,v+=e*D,p+=e*V,b+=e*X,g+=e*j,A+=e*H,_+=e*J,U+=e*Q,a+=(e=t[2])*P,f+=e*N,s+=e*O,u+=e*C,c+=e*F,y+=e*I,l+=e*Z,w+=e*G,v+=e*q,p+=e*D,b+=e*V,g+=e*X,A+=e*j,_+=e*H,U+=e*J,d+=e*Q,f+=(e=t[3])*P,s+=e*N,u+=e*O,c+=e*C,y+=e*F,l+=e*I,w+=e*Z,v+=e*G,p+=e*q,b+=e*D,g+=e*V,A+=e*X,_+=e*j,U+=e*H,d+=e*J,E+=e*Q,s+=(e=t[4])*P,u+=e*N,c+=e*O,y+=e*C,l+=e*F,w+=e*I,v+=e*Z,p+=e*G,b+=e*q,g+=e*D,A+=e*V,_+=e*X,U+=e*j,d+=e*H,E+=e*J,x+=e*Q,u+=(e=t[5])*P,c+=e*N,y+=e*O,l+=e*C,w+=e*F,v+=e*I,p+=e*Z,b+=e*G,g+=e*q,A+=e*D,_+=e*V,U+=e*X,d+=e*j,E+=e*H,x+=e*J,M+=e*Q,c+=(e=t[6])*P,y+=e*N,l+=e*O,w+=e*C,v+=e*F,p+=e*I,b+=e*Z,g+=e*G,A+=e*q,_+=e*D,U+=e*V,d+=e*X,E+=e*j,x+=e*H,M+=e*J,m+=e*Q,y+=(e=t[7])*P,l+=e*N,w+=e*O,v+=e*C,p+=e*F,b+=e*I,g+=e*Z,A+=e*G,_+=e*q,U+=e*D,d+=e*V,E+=e*X,x+=e*j,M+=e*H,m+=e*J,B+=e*Q,l+=(e=t[8])*P,w+=e*N,v+=e*O,p+=e*C,b+=e*F,g+=e*I,A+=e*Z,_+=e*G,U+=e*q,d+=e*D,E+=e*V,x+=e*X,M+=e*j,m+=e*H,B+=e*J,S+=e*Q,w+=(e=t[9])*P,v+=e*N,p+=e*O,b+=e*C,g+=e*F,A+=e*I,_+=e*Z,U+=e*G,d+=e*q,E+=e*D,x+=e*V,M+=e*X,m+=e*j,B+=e*H,S+=e*J,k+=e*Q,v+=(e=t[10])*P,p+=e*N,b+=e*O,g+=e*C,A+=e*F,_+=e*I,U+=e*Z,d+=e*G,E+=e*q,x+=e*D,M+=e*V,m+=e*X,B+=e*j,S+=e*H,k+=e*J,K+=e*Q,p+=(e=t[11])*P,b+=e*N,g+=e*O,A+=e*C,_+=e*F,U+=e*I,d+=e*Z,E+=e*G,x+=e*q,M+=e*D,m+=e*V,B+=e*X,S+=e*j,k+=e*H,K+=e*J,Y+=e*Q,b+=(e=t[12])*P,g+=e*N,A+=e*O,_+=e*C,U+=e*F,d+=e*I,E+=e*Z,x+=e*G,M+=e*q,m+=e*D,B+=e*V,S+=e*X,k+=e*j,K+=e*H,Y+=e*J,L+=e*Q,g+=(e=t[13])*P,A+=e*N,_+=e*O,U+=e*C,d+=e*F,E+=e*I,x+=e*Z,M+=e*G,m+=e*q,B+=e*D,S+=e*V,k+=e*X,K+=e*j,Y+=e*H,L+=e*J,T+=e*Q,A+=(e=t[14])*P,_+=e*N,U+=e*O,d+=e*C,E+=e*F,x+=e*I,M+=e*Z,m+=e*G,B+=e*q,S+=e*D,k+=e*V,K+=e*X,Y+=e*j,L+=e*H,T+=e*J,z+=e*Q,_+=(e=t[15])*P,h+=38*(d+=e*O),a+=38*(E+=e*C),f+=38*(x+=e*F),s+=38*(M+=e*I),u+=38*(m+=e*Z),c+=38*(B+=e*G),y+=38*(S+=e*q),l+=38*(k+=e*D),w+=38*(K+=e*V),v+=38*(Y+=e*X),p+=38*(L+=e*j),b+=38*(T+=e*H),g+=38*(z+=e*J),A+=38*(R+=e*Q),i=(e=(i+=38*(U+=e*N))+(o=1)+65535)-65536*(o=Math.floor(e/65536)),h=(e=h+o+65535)-65536*(o=Math.floor(e/65536)),a=(e=a+o+65535)-65536*(o=Math.floor(e/65536)),f=(e=f+o+65535)-65536*(o=Math.floor(e/65536)),s=(e=s+o+65535)-65536*(o=Math.floor(e/65536)),u=(e=u+o+65535)-65536*(o=Math.floor(e/65536)),c=(e=c+o+65535)-65536*(o=Math.floor(e/65536)),y=(e=y+o+65535)-65536*(o=Math.floor(e/65536)),l=(e=l+o+65535)-65536*(o=Math.floor(e/65536)),w=(e=w+o+65535)-65536*(o=Math.floor(e/65536)),v=(e=v+o+65535)-65536*(o=Math.floor(e/65536)),p=(e=p+o+65535)-65536*(o=Math.floor(e/65536)),b=(e=b+o+65535)-65536*(o=Math.floor(e/65536)),g=(e=g+o+65535)-65536*(o=Math.floor(e/65536)),A=(e=A+o+65535)-65536*(o=Math.floor(e/65536)),_=(e=_+o+65535)-65536*(o=Math.floor(e/65536)),i=(e=(i+=o-1+37*(o-1))+(o=1)+65535)-65536*(o=Math.floor(e/65536)),h=(e=h+o+65535)-65536*(o=Math.floor(e/65536)),a=(e=a+o+65535)-65536*(o=Math.floor(e/65536)),f=(e=f+o+65535)-65536*(o=Math.floor(e/65536)),s=(e=s+o+65535)-65536*(o=Math.floor(e/65536)),u=(e=u+o+65535)-65536*(o=Math.floor(e/65536)),c=(e=c+o+65535)-65536*(o=Math.floor(e/65536)),y=(e=y+o+65535)-65536*(o=Math.floor(e/65536)),l=(e=l+o+65535)-65536*(o=Math.floor(e/65536)),w=(e=w+o+65535)-65536*(o=Math.floor(e/65536)),v=(e=v+o+65535)-65536*(o=Math.floor(e/65536)),p=(e=p+o+65535)-65536*(o=Math.floor(e/65536)),b=(e=b+o+65535)-65536*(o=Math.floor(e/65536)),g=(e=g+o+65535)-65536*(o=Math.floor(e/65536)),A=(e=A+o+65535)-65536*(o=Math.floor(e/65536)),_=(e=_+o+65535)-65536*(o=Math.floor(e/65536)),i+=o-1+37*(o-1),r[0]=i,r[1]=h,r[2]=a,r[3]=f,r[4]=s,r[5]=u,r[6]=c,r[7]=y,r[8]=l,r[9]=w,r[10]=v,r[11]=p,r[12]=b,r[13]=g,r[14]=A,r[15]=_}function I(r,t){F(r,t,t)}function Z(r,t){var n,e=v();for(n=0;n<16;n++)e[n]=t[n];for(n=253;0<=n;n--)I(e,e),2!==n&&4!==n&&F(e,e,t);for(n=0;n<16;n++)r[n]=e[n]}function G(r,t){var n,e=v();for(n=0;n<16;n++)e[n]=t[n];for(n=250;0<=n;n--)I(e,e),1!==n&&F(e,e,t);for(n=0;n<16;n++)r[n]=e[n]}function q(r,t,n){var e,o,i=new Uint8Array(32),h=new Float64Array(80),a=v(),f=v(),s=v(),u=v(),c=v(),y=v();for(o=0;o<31;o++)i[o]=t[o];for(i[31]=127&t[31]|64,i[0]&=248,N(h,n),o=0;o<16;o++)f[o]=h[o],u[o]=a[o]=s[o]=0;for(a[0]=u[0]=1,o=254;0<=o;--o)T(a,f,e=i[o>>>3]>>>(7&o)&1),T(s,u,e),O(c,a,s),C(a,a,s),O(s,f,u),C(f,f,u),I(u,c),I(y,a),F(a,s,a),F(s,f,c),O(c,a,s),C(a,a,s),I(f,a),C(s,u,y),F(a,s,p),O(a,a,u),F(s,s,a),F(a,u,y),F(u,f,h),I(f,c),T(a,f,e),T(s,u,e);for(o=0;o<16;o++)h[o+16]=a[o],h[o+32]=s[o],h[o+48]=f[o],h[o+64]=u[o];var l=h.subarray(32),w=h.subarray(16);return Z(l,l),F(w,w,l),z(r,w),0}function D(r,t){return q(r,t,n)}function V(r,t){return h(t,32),D(r,t)}function X(r,t,n){var e=new Uint8Array(32);return q(e,n,t),_(r,o,e,U)}m.prototype.blocks=function(r,t,n){for(var e,o,i,h,a,f,s,u,c,y,l,w,v,p,b,g,A,_,U,d=this.fin?0:2048,E=this.h[0],x=this.h[1],M=this.h[2],m=this.h[3],B=this.h[4],S=this.h[5],k=this.h[6],K=this.h[7],Y=this.h[8],L=this.h[9],T=this.r[0],z=this.r[1],R=this.r[2],P=this.r[3],N=this.r[4],O=this.r[5],C=this.r[6],F=this.r[7],I=this.r[8],Z=this.r[9];16<=n;)y=c=0,y+=(E+=8191&(e=255&r[t+0]|(255&r[t+1])<<8))*T,y+=(x+=8191&(e>>>13|(o=255&r[t+2]|(255&r[t+3])<<8)<<3))*(5*Z),y+=(M+=8191&(o>>>10|(i=255&r[t+4]|(255&r[t+5])<<8)<<6))*(5*I),y+=(m+=8191&(i>>>7|(h=255&r[t+6]|(255&r[t+7])<<8)<<9))*(5*F),c=(y+=(B+=8191&(h>>>4|(a=255&r[t+8]|(255&r[t+9])<<8)<<12))*(5*C))>>>13,y&=8191,y+=(S+=a>>>1&8191)*(5*O),y+=(k+=8191&(a>>>14|(f=255&r[t+10]|(255&r[t+11])<<8)<<2))*(5*N),y+=(K+=8191&(f>>>11|(s=255&r[t+12]|(255&r[t+13])<<8)<<5))*(5*P),y+=(Y+=8191&(s>>>8|(u=255&r[t+14]|(255&r[t+15])<<8)<<8))*(5*R),l=c+=(y+=(L+=u>>>5|d)*(5*z))>>>13,l+=E*z,l+=x*T,l+=M*(5*Z),l+=m*(5*I),c=(l+=B*(5*F))>>>13,l&=8191,l+=S*(5*C),l+=k*(5*O),l+=K*(5*N),l+=Y*(5*P),c+=(l+=L*(5*R))>>>13,l&=8191,w=c,w+=E*R,w+=x*z,w+=M*T,w+=m*(5*Z),c=(w+=B*(5*I))>>>13,w&=8191,w+=S*(5*F),w+=k*(5*C),w+=K*(5*O),w+=Y*(5*N),v=c+=(w+=L*(5*P))>>>13,v+=E*P,v+=x*R,v+=M*z,v+=m*T,c=(v+=B*(5*Z))>>>13,v&=8191,v+=S*(5*I),v+=k*(5*F),v+=K*(5*C),v+=Y*(5*O),p=c+=(v+=L*(5*N))>>>13,p+=E*N,p+=x*P,p+=M*R,p+=m*z,c=(p+=B*T)>>>13,p&=8191,p+=S*(5*Z),p+=k*(5*I),p+=K*(5*F),p+=Y*(5*C),b=c+=(p+=L*(5*O))>>>13,b+=E*O,b+=x*N,b+=M*P,b+=m*R,c=(b+=B*z)>>>13,b&=8191,b+=S*T,b+=k*(5*Z),b+=K*(5*I),b+=Y*(5*F),g=c+=(b+=L*(5*C))>>>13,g+=E*C,g+=x*O,g+=M*N,g+=m*P,c=(g+=B*R)>>>13,g&=8191,g+=S*z,g+=k*T,g+=K*(5*Z),g+=Y*(5*I),A=c+=(g+=L*(5*F))>>>13,A+=E*F,A+=x*C,A+=M*O,A+=m*N,c=(A+=B*P)>>>13,A&=8191,A+=S*R,A+=k*z,A+=K*T,A+=Y*(5*Z),_=c+=(A+=L*(5*I))>>>13,_+=E*I,_+=x*F,_+=M*C,_+=m*O,c=(_+=B*N)>>>13,_&=8191,_+=S*P,_+=k*R,_+=K*z,_+=Y*T,U=c+=(_+=L*(5*Z))>>>13,U+=E*Z,U+=x*I,U+=M*F,U+=m*C,c=(U+=B*O)>>>13,U&=8191,U+=S*N,U+=k*P,U+=K*R,U+=Y*z,E=y=8191&(c=(c=((c+=(U+=L*T)>>>13)<<2)+c|0)+(y&=8191)|0),x=l+=c>>>=13,M=w&=8191,m=v&=8191,B=p&=8191,S=b&=8191,k=g&=8191,K=A&=8191,Y=_&=8191,L=U&=8191,t+=16,n-=16;this.h[0]=E,this.h[1]=x,this.h[2]=M,this.h[3]=m,this.h[4]=B,this.h[5]=S,this.h[6]=k,this.h[7]=K,this.h[8]=Y,this.h[9]=L},m.prototype.finish=function(r,t){var n,e,o,i,h=new Uint16Array(10);if(this.leftover){for(i=this.leftover,this.buffer[i++]=1;i<16;i++)this.buffer[i]=0;this.fin=1,this.blocks(this.buffer,0,16)}for(n=this.h[1]>>>13,this.h[1]&=8191,i=2;i<10;i++)this.h[i]+=n,n=this.h[i]>>>13,this.h[i]&=8191;for(this.h[0]+=5*n,n=this.h[0]>>>13,this.h[0]&=8191,this.h[1]+=n,n=this.h[1]>>>13,this.h[1]&=8191,this.h[2]+=n,h[0]=this.h[0]+5,n=h[0]>>>13,h[0]&=8191,i=1;i<10;i++)h[i]=this.h[i]+n,n=h[i]>>>13,h[i]&=8191;for(h[9]-=8192,e=(1^n)-1,i=0;i<10;i++)h[i]&=e;for(e=~e,i=0;i<10;i++)this.h[i]=this.h[i]&e|h[i];for(this.h[0]=65535&(this.h[0]|this.h[1]<<13),this.h[1]=65535&(this.h[1]>>>3|this.h[2]<<10),this.h[2]=65535&(this.h[2]>>>6|this.h[3]<<7),this.h[3]=65535&(this.h[3]>>>9|this.h[4]<<4),this.h[4]=65535&(this.h[4]>>>12|this.h[5]<<1|this.h[6]<<14),this.h[5]=65535&(this.h[6]>>>2|this.h[7]<<11),this.h[6]=65535&(this.h[7]>>>5|this.h[8]<<8),this.h[7]=65535&(this.h[8]>>>8|this.h[9]<<5),o=this.h[0]+this.pad[0],this.h[0]=65535&o,i=1;i<8;i++)o=(this.h[i]+this.pad[i]|0)+(o>>>16)|0,this.h[i]=65535&o;r[t+0]=this.h[0]>>>0&255,r[t+1]=this.h[0]>>>8&255,r[t+2]=this.h[1]>>>0&255,r[t+3]=this.h[1]>>>8&255,r[t+4]=this.h[2]>>>0&255,r[t+5]=this.h[2]>>>8&255,r[t+6]=this.h[3]>>>0&255,r[t+7]=this.h[3]>>>8&255,r[t+8]=this.h[4]>>>0&255,r[t+9]=this.h[4]>>>8&255,r[t+10]=this.h[5]>>>0&255,r[t+11]=this.h[5]>>>8&255,r[t+12]=this.h[6]>>>0&255,r[t+13]=this.h[6]>>>8&255,r[t+14]=this.h[7]>>>0&255,r[t+15]=this.h[7]>>>8&255},m.prototype.update=function(r,t,n){var e,o;if(this.leftover){for(n<(o=16-this.leftover)&&(o=n),e=0;e<o;e++)this.buffer[this.leftover+e]=r[t+e];if(n-=o,t+=o,this.leftover+=o,this.leftover<16)return;this.blocks(this.buffer,0,16),this.leftover=0}if(16<=n&&(o=n-n%16,this.blocks(r,t,o),t+=o,n-=o),n){for(e=0;e<n;e++)this.buffer[this.leftover+e]=r[t+e];this.leftover+=n}};var j=k,H=K;var J=[1116352408,3609767458,1899447441,602891725,3049323471,3964484399,3921009573,2173295548,961987163,4081628472,1508970993,3053834265,2453635748,2937671579,2870763221,3664609560,3624381080,2734883394,310598401,1164996542,607225278,1323610764,1426881987,3590304994,1925078388,4068182383,2162078206,991336113,2614888103,633803317,3248222580,3479774868,3835390401,2666613458,4022224774,944711139,264347078,2341262773,604807628,2007800933,770255983,1495990901,1249150122,1856431235,1555081692,3175218132,1996064986,2198950837,2554220882,3999719339,2821834349,766784016,2952996808,2566594879,3210313671,3203337956,3336571891,1034457026,3584528711,2466948901,113926993,3758326383,338241895,168717936,666307205,1188179964,773529912,1546045734,1294757372,1522805485,1396182291,2643833823,1695183700,2343527390,1986661051,1014477480,2177026350,1206759142,2456956037,344077627,2730485921,1290863460,2820302411,3158454273,3259730800,3505952657,3345764771,106217008,3516065817,3606008344,3600352804,1432725776,4094571909,1467031594,275423344,851169720,430227734,3100823752,506948616,1363258195,659060556,3750685593,883997877,3785050280,958139571,3318307427,1322822218,3812723403,1537002063,2003034995,1747873779,3602036899,1955562222,1575990012,2024104815,1125592928,2227730452,2716904306,2361852424,442776044,2428436474,593698344,2756734187,3733110249,3204031479,2999351573,3329325298,3815920427,3391569614,3928383900,3515267271,566280711,3940187606,3454069534,4118630271,4000239992,116418474,1914138554,174292421,2731055270,289380356,3203993006,460393269,320620315,685471733,587496836,852142971,1086792851,1017036298,365543100,1126000580,2618297676,1288033470,3409855158,1501505948,4234509866,1607167915,987167468,1816402316,1246189591];function Q(r,t,n,e){for(var o,i,h,a,f,s,u,c,y,l,w,v,p,b,g,A,_,U,d,E,x,M,m,B,S=new Int32Array(16),k=new Int32Array(16),K=r[0],Y=r[1],L=r[2],T=r[3],z=r[4],R=r[5],P=r[6],N=r[7],O=t[0],C=t[1],F=t[2],I=t[3],Z=t[4],G=t[5],q=t[6],D=t[7],V=0;128<=e;){for(_=0;_<16;_++)U=8*_+V,S[_]=n[U+0]<<24|n[U+1]<<16|n[U+2]<<8|n[U+3],k[_]=n[U+4]<<24|n[U+5]<<16|n[U+6]<<8|n[U+7];for(_=0;_<80;_++)if(o=Y,i=L,h=T,c=C,y=F,l=I,x=65535&(E=D),M=E>>>16,m=65535&(d=N),B=d>>>16,x+=65535&(E=((w=Z)>>>14|(a=z)<<18)^(Z>>>18|z<<14)^(z>>>9|Z<<23)),M+=E>>>16,m+=65535&(d=(z>>>14|Z<<18)^(z>>>18|Z<<14)^(Z>>>9|z<<23)),B+=d>>>16,x+=65535&(E=Z&(v=G)^~Z&(p=q)),M+=E>>>16,m+=65535&(d=z&(f=R)^~z&(s=P)),B+=d>>>16,d=J[2*_],x+=65535&(E=J[2*_+1]),M+=E>>>16,m+=65535&d,B+=d>>>16,d=S[_%16],M+=(E=k[_%16])>>>16,m+=65535&d,B+=d>>>16,m+=(M+=(x+=65535&E)>>>16)>>>16,x=65535&(E=A=65535&x|M<<16),M=E>>>16,m=65535&(d=g=65535&m|(B+=m>>>16)<<16),B=d>>>16,x+=65535&(E=(O>>>28|K<<4)^(K>>>2|O<<30)^(K>>>7|O<<25)),M+=E>>>16,m+=65535&(d=(K>>>28|O<<4)^(O>>>2|K<<30)^(O>>>7|K<<25)),B+=d>>>16,M+=(E=O&C^O&F^C&F)>>>16,m+=65535&(d=K&Y^K&L^Y&L),B+=d>>>16,u=65535&(m+=(M+=(x+=65535&E)>>>16)>>>16)|(B+=m>>>16)<<16,b=65535&x|M<<16,x=65535&(E=l),M=E>>>16,m=65535&(d=h),B=d>>>16,M+=(E=A)>>>16,m+=65535&(d=g),B+=d>>>16,Y=K,L=o,T=i,z=h=65535&(m+=(M+=(x+=65535&E)>>>16)>>>16)|(B+=m>>>16)<<16,R=a,P=f,N=s,K=u,C=O,F=c,I=y,Z=l=65535&x|M<<16,G=w,q=v,D=p,O=b,_%16==15)for(U=0;U<16;U++)d=S[U],x=65535&(E=k[U]),M=E>>>16,m=65535&d,B=d>>>16,d=S[(U+9)%16],x+=65535&(E=k[(U+9)%16]),M+=E>>>16,m+=65535&d,B+=d>>>16,g=S[(U+1)%16],x+=65535&(E=((A=k[(U+1)%16])>>>1|g<<31)^(A>>>8|g<<24)^(A>>>7|g<<25)),M+=E>>>16,m+=65535&(d=(g>>>1|A<<31)^(g>>>8|A<<24)^g>>>7),B+=d>>>16,g=S[(U+14)%16],M+=(E=((A=k[(U+14)%16])>>>19|g<<13)^(g>>>29|A<<3)^(A>>>6|g<<26))>>>16,m+=65535&(d=(g>>>19|A<<13)^(A>>>29|g<<3)^g>>>6),B+=d>>>16,B+=(m+=(M+=(x+=65535&E)>>>16)>>>16)>>>16,S[U]=65535&m|B<<16,k[U]=65535&x|M<<16;x=65535&(E=O),M=E>>>16,m=65535&(d=K),B=d>>>16,d=r[0],M+=(E=t[0])>>>16,m+=65535&d,B+=d>>>16,B+=(m+=(M+=(x+=65535&E)>>>16)>>>16)>>>16,r[0]=K=65535&m|B<<16,t[0]=O=65535&x|M<<16,x=65535&(E=C),M=E>>>16,m=65535&(d=Y),B=d>>>16,d=r[1],M+=(E=t[1])>>>16,m+=65535&d,B+=d>>>16,B+=(m+=(M+=(x+=65535&E)>>>16)>>>16)>>>16,r[1]=Y=65535&m|B<<16,t[1]=C=65535&x|M<<16,x=65535&(E=F),M=E>>>16,m=65535&(d=L),B=d>>>16,d=r[2],M+=(E=t[2])>>>16,m+=65535&d,B+=d>>>16,B+=(m+=(M+=(x+=65535&E)>>>16)>>>16)>>>16,r[2]=L=65535&m|B<<16,t[2]=F=65535&x|M<<16,x=65535&(E=I),M=E>>>16,m=65535&(d=T),B=d>>>16,d=r[3],M+=(E=t[3])>>>16,m+=65535&d,B+=d>>>16,B+=(m+=(M+=(x+=65535&E)>>>16)>>>16)>>>16,r[3]=T=65535&m|B<<16,t[3]=I=65535&x|M<<16,x=65535&(E=Z),M=E>>>16,m=65535&(d=z),B=d>>>16,d=r[4],M+=(E=t[4])>>>16,m+=65535&d,B+=d>>>16,B+=(m+=(M+=(x+=65535&E)>>>16)>>>16)>>>16,r[4]=z=65535&m|B<<16,t[4]=Z=65535&x|M<<16,x=65535&(E=G),M=E>>>16,m=65535&(d=R),B=d>>>16,d=r[5],M+=(E=t[5])>>>16,m+=65535&d,B+=d>>>16,B+=(m+=(M+=(x+=65535&E)>>>16)>>>16)>>>16,r[5]=R=65535&m|B<<16,t[5]=G=65535&x|M<<16,x=65535&(E=q),M=E>>>16,m=65535&(d=P),B=d>>>16,d=r[6],M+=(E=t[6])>>>16,m+=65535&d,B+=d>>>16,B+=(m+=(M+=(x+=65535&E)>>>16)>>>16)>>>16,r[6]=P=65535&m|B<<16,t[6]=q=65535&x|M<<16,x=65535&(E=D),M=E>>>16,m=65535&(d=N),B=d>>>16,d=r[7],M+=(E=t[7])>>>16,m+=65535&d,B+=d>>>16,B+=(m+=(M+=(x+=65535&E)>>>16)>>>16)>>>16,r[7]=N=65535&m|B<<16,t[7]=D=65535&x|M<<16,V+=128,e-=128}return e}function W(r,t,n){var e,o=new Int32Array(8),i=new Int32Array(8),h=new Uint8Array(256),a=n;for(o[0]=1779033703,o[1]=3144134277,o[2]=1013904242,o[3]=2773480762,o[4]=1359893119,o[5]=2600822924,o[6]=528734635,o[7]=1541459225,i[0]=4089235720,i[1]=2227873595,i[2]=4271175723,i[3]=1595750129,i[4]=2917565137,i[5]=725511199,i[6]=4215389547,i[7]=327033209,Q(o,i,t,n),n%=128,e=0;e<n;e++)h[e]=t[a-n+e];for(h[n]=128,h[(n=256-128*(n<112?1:0))-9]=0,f(h,n-8,a/536870912|0,a<<3),Q(o,i,h,n),e=0;e<8;e++)f(r,8*e,o[e],i[e]);return 0}function $(r,t){var n=v(),e=v(),o=v(),i=v(),h=v(),a=v(),f=v(),s=v(),u=v();C(n,r[1],r[0]),C(u,t[1],t[0]),F(n,n,u),O(e,r[0],r[1]),O(u,t[0],t[1]),F(e,e,u),F(o,r[3],t[3]),F(o,o,y),F(i,r[2],t[2]),O(i,i,i),C(h,e,n),C(a,i,o),O(f,i,o),O(s,e,n),F(r[0],h,a),F(r[1],s,f),F(r[2],f,a),F(r[3],h,s)}function rr(r,t,n){var e;for(e=0;e<4;e++)T(r[e],t[e],n)}function tr(r,t){var n=v(),e=v(),o=v();Z(o,t[2]),F(n,t[0],o),F(e,t[1],o),z(r,e),r[31]^=P(n)<<7}function nr(r,t,n){var e,o;for(Y(r[0],s),Y(r[1],u),Y(r[2],u),Y(r[3],s),o=255;0<=o;--o)rr(r,t,e=n[o/8|0]>>(7&o)&1),$(t,r),$(r,r),rr(r,t,e)}function er(r,t){var n=[v(),v(),v(),v()];Y(n[0],e),Y(n[1],a),Y(n[2],u),F(n[3],e,a),nr(r,n,t)}function or(r,t,n){var e,o=new Uint8Array(64),i=[v(),v(),v(),v()];for(n||h(t,32),W(o,t,32),o[0]&=248,o[31]&=127,o[31]|=64,er(i,o),tr(r,i),e=0;e<32;e++)t[e+32]=r[e];return 0}var ir=new Float64Array([237,211,245,92,26,99,18,88,214,156,247,162,222,249,222,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16]);function hr(r,t){var n,e,o,i;for(e=63;32<=e;--e){for(n=0,o=e-32,i=e-12;o<i;++o)t[o]+=n-16*t[e]*ir[o-(e-32)],n=Math.floor((t[o]+128)/256),t[o]-=256*n;t[o]+=n,t[e]=0}for(o=n=0;o<32;o++)t[o]+=n-(t[31]>>4)*ir[o],n=t[o]>>8,t[o]&=255;for(o=0;o<32;o++)t[o]-=n*ir[o];for(e=0;e<32;e++)t[e+1]+=t[e]>>8,r[e]=255&t[e]}function ar(r){var t,n=new Float64Array(64);for(t=0;t<64;t++)n[t]=r[t];for(t=0;t<64;t++)r[t]=0;hr(r,n)}function fr(r,t,n,e){var o,i,h=new Uint8Array(64),a=new Uint8Array(64),f=new Uint8Array(64),s=new Float64Array(64),u=[v(),v(),v(),v()];W(h,e,32),h[0]&=248,h[31]&=127,h[31]|=64;var c=n+64;for(o=0;o<n;o++)r[64+o]=t[o];for(o=0;o<32;o++)r[32+o]=h[32+o];for(W(f,r.subarray(32),n+32),ar(f),er(u,f),tr(r,u),o=32;o<64;o++)r[o]=e[o];for(W(a,r,n+64),ar(a),o=0;o<64;o++)s[o]=0;for(o=0;o<32;o++)s[o]=f[o];for(o=0;o<32;o++)for(i=0;i<32;i++)s[o+i]+=a[o]*h[i];return hr(r.subarray(32),s),c}function sr(r,t,n,e){var o,i=new Uint8Array(32),h=new Uint8Array(64),a=[v(),v(),v(),v()],f=[v(),v(),v(),v()];if(n<64)return-1;if(function(r,t){var n=v(),e=v(),o=v(),i=v(),h=v(),a=v(),f=v();if(Y(r[2],u),N(r[1],t),I(o,r[1]),F(i,o,c),C(o,o,r[2]),O(i,r[2],i),I(h,i),I(a,h),F(f,a,h),F(n,f,o),F(n,n,i),G(n,n),F(n,n,o),F(n,n,i),F(n,n,i),F(r[0],n,i),I(e,r[0]),F(e,e,i),R(e,o)&&F(r[0],r[0],l),I(e,r[0]),F(e,e,i),R(e,o))return 1;P(r[0])===t[31]>>7&&C(r[0],s,r[0]),F(r[3],r[0],r[1])}(f,e))return-1;for(o=0;o<n;o++)r[o]=t[o];for(o=0;o<32;o++)r[o+32]=e[o];if(W(h,r,n),ar(h),nr(a,f,h),er(f,t.subarray(32)),$(a,f),tr(i,a),n-=64,g(t,0,i,0)){for(o=0;o<n;o++)r[o]=0;return-1}for(o=0;o<n;o++)r[o]=t[o+64];return n}function ur(r,t){if(32!==r.length)throw new Error("bad key size");if(24!==t.length)throw new Error("bad nonce size")}function cr(){for(var r=0;r<arguments.length;r++)if(!(arguments[r]instanceof Uint8Array))throw new TypeError("unexpected type, use Uint8Array")}function yr(r){for(var t=0;t<r.length;t++)r[t]=0}i.lowlevel={crypto_core_hsalsa20:_,crypto_stream_xor:M,crypto_stream:x,crypto_stream_salsa20_xor:d,crypto_stream_salsa20:E,crypto_onetimeauth:B,crypto_onetimeauth_verify:S,crypto_verify_16:b,crypto_verify_32:g,crypto_secretbox:k,crypto_secretbox_open:K,crypto_scalarmult:q,crypto_scalarmult_base:D,crypto_box_beforenm:X,crypto_box_afternm:j,crypto_box:function(r,t,n,e,o,i){var h=new Uint8Array(32);return X(h,o,i),j(r,t,n,e,h)},crypto_box_open:function(r,t,n,e,o,i){var h=new Uint8Array(32);return X(h,o,i),H(r,t,n,e,h)},crypto_box_keypair:V,crypto_hash:W,crypto_sign:fr,crypto_sign_keypair:or,crypto_sign_open:sr,crypto_secretbox_KEYBYTES:32,crypto_secretbox_NONCEBYTES:24,crypto_secretbox_ZEROBYTES:32,crypto_secretbox_BOXZEROBYTES:16,crypto_scalarmult_BYTES:32,crypto_scalarmult_SCALARBYTES:32,crypto_box_PUBLICKEYBYTES:32,crypto_box_SECRETKEYBYTES:32,crypto_box_BEFORENMBYTES:32,crypto_box_NONCEBYTES:24,crypto_box_ZEROBYTES:32,crypto_box_BOXZEROBYTES:16,crypto_sign_BYTES:64,crypto_sign_PUBLICKEYBYTES:32,crypto_sign_SECRETKEYBYTES:64,crypto_sign_SEEDBYTES:32,crypto_hash_BYTES:64,gf:v,D:c,L:ir,pack25519:z,unpack25519:N,M:F,A:O,S:I,Z:C,pow2523:G,add:$,set25519:Y,modL:hr,scalarmult:nr,scalarbase:er},i.randomBytes=function(r){var t=new Uint8Array(r);return h(t,r),t},i.secretbox=function(r,t,n){cr(r,t,n),ur(n,t);for(var e=new Uint8Array(32+r.length),o=new Uint8Array(e.length),i=0;i<r.length;i++)e[i+32]=r[i];return k(o,e,e.length,t,n),o.subarray(16)},i.secretbox.open=function(r,t,n){cr(r,t,n),ur(n,t);for(var e=new Uint8Array(16+r.length),o=new Uint8Array(e.length),i=0;i<r.length;i++)e[i+16]=r[i];return e.length<32||0!==K(o,e,e.length,t,n)?null:o.subarray(32)},i.secretbox.keyLength=32,i.secretbox.nonceLength=24,i.secretbox.overheadLength=16,i.scalarMult=function(r,t){if(cr(r,t),32!==r.length)throw new Error("bad n size");if(32!==t.length)throw new Error("bad p size");var n=new Uint8Array(32);return q(n,r,t),n},i.scalarMult.base=function(r){if(cr(r),32!==r.length)throw new Error("bad n size");var t=new Uint8Array(32);return D(t,r),t},i.scalarMult.scalarLength=32,i.scalarMult.groupElementLength=32,i.box=function(r,t,n,e){var o=i.box.before(n,e);return i.secretbox(r,t,o)},i.box.before=function(r,t){cr(r,t),function(r,t){if(32!==r.length)throw new Error("bad public key size");if(32!==t.length)throw new Error("bad secret key size")}(r,t);var n=new Uint8Array(32);return X(n,r,t),n},i.box.after=i.secretbox,i.box.open=function(r,t,n,e){var o=i.box.before(n,e);return i.secretbox.open(r,t,o)},i.box.open.after=i.secretbox.open,i.box.keyPair=function(){var r=new Uint8Array(32),t=new Uint8Array(32);return V(r,t),{publicKey:r,secretKey:t}},i.box.keyPair.fromSecretKey=function(r){if(cr(r),32!==r.length)throw new Error("bad secret key size");var t=new Uint8Array(32);return D(t,r),{publicKey:t,secretKey:new Uint8Array(r)}},i.box.publicKeyLength=32,i.box.secretKeyLength=32,i.box.sharedKeyLength=32,i.box.nonceLength=24,i.box.overheadLength=i.secretbox.overheadLength,i.sign=function(r,t){if(cr(r,t),64!==t.length)throw new Error("bad secret key size");var n=new Uint8Array(64+r.length);return fr(n,r,r.length,t),n},i.sign.open=function(r,t){if(cr(r,t),32!==t.length)throw new Error("bad public key size");var n=new Uint8Array(r.length),e=sr(n,r,r.length,t);if(e<0)return null;for(var o=new Uint8Array(e),i=0;i<o.length;i++)o[i]=n[i];return o},i.sign.detached=function(r,t){for(var n=i.sign(r,t),e=new Uint8Array(64),o=0;o<e.length;o++)e[o]=n[o];return e},i.sign.detached.verify=function(r,t,n){if(cr(r,t,n),64!==t.length)throw new Error("bad signature size");if(32!==n.length)throw new Error("bad public key size");var e,o=new Uint8Array(64+r.length),i=new Uint8Array(64+r.length);for(e=0;e<64;e++)o[e]=t[e];for(e=0;e<r.length;e++)o[e+64]=r[e];return 0<=sr(i,o,o.length,n)},i.sign.keyPair=function(){var r=new Uint8Array(32),t=new Uint8Array(64);return or(r,t),{publicKey:r,secretKey:t}},i.sign.keyPair.fromSecretKey=function(r){if(cr(r),64!==r.length)throw new Error("bad secret key size");for(var t=new Uint8Array(32),n=0;n<t.length;n++)t[n]=r[32+n];return{publicKey:t,secretKey:new Uint8Array(r)}},i.sign.keyPair.fromSeed=function(r){if(cr(r),32!==r.length)throw new Error("bad seed size");for(var t=new Uint8Array(32),n=new Uint8Array(64),e=0;e<32;e++)n[e]=r[e];return or(t,n,!0),{publicKey:t,secretKey:n}},i.sign.publicKeyLength=32,i.sign.secretKeyLength=64,i.sign.seedLength=32,i.sign.signatureLength=64,i.hash=function(r){cr(r);var t=new Uint8Array(64);return W(t,r,r.length),t},i.hash.hashLength=64,i.verify=function(r,t){return cr(r,t),0!==r.length&&0!==t.length&&(r.length===t.length&&0===w(r,0,t,0,r.length))},i.setPRNG=function(r){h=r},function(){var o="undefined"!=typeof self?self.crypto||self.msCrypto:null;if(o&&o.getRandomValues){i.setPRNG(function(r,t){var n,e=new Uint8Array(t);for(n=0;n<t;n+=65536)o.getRandomValues(e.subarray(n,n+Math.min(t-n,65536)));for(n=0;n<t;n++)r[n]=e[n];yr(e)})}else"undefined"!=typeof require&&(o=require("crypto"))&&o.randomBytes&&i.setPRNG(function(r,t){var n,e=o.randomBytes(t);for(n=0;n<t;n++)r[n]=e[n];yr(e)})}()}("undefined"!=typeof module&&module.exports?module.exports:self.nacl=self.nacl||{});
@@ -28205,7 +28404,9 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
  *   bytes[2..9]   = emailHash8  (SHA-256('SBL2-EMAIL:'+email) — أول 8 بايت)
  *   bytes[10..12] = expDays     (أيام منذ EPOCH 2026-01-01 — 3 بايت)
  *   bytes[13]     = plan        (1 شهر / 2 ربع / 3 سنة / 8 المالك مدى الحياة / 9 كود تجربة)
- *   bytes[14..17] = nonce4      (عشوائي لكل كود)
+ *   bytes[14]     = seats       (v1.20 — عدد الصنايعيين في كود الحزمة، 0 = بدون تحديد)
+ *   bytes[15]     = kind        (v1.20 — 0 مدير / 1 كود صنايعي)
+ *   bytes[16..17] = nonce2      (عشوائي لكل كود — v1.20: اتنين بايت بدل 4 عشان 14/15)
  *   bytes[18..81] = sig64       (Ed25519.sign(payload18, secretKey))
  * ---------------------------------------------------------------------------
  * معرفات السحابة المتفقة بين التطبيق وتطبيق المالك:
@@ -28223,7 +28424,10 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
 
   /* المفتاح العام للتوقيع (keyVer → hex 32B) — هذا *كل* ما يحمله التطبيق، ولا يكشف للتزوير */
   var PUBKEYS = {
-    1: 'b4ae8b54837acea8236c204786044dd966bcfcc5edcc05165b3924a9b51fd481'
+    1: 'b4ae8b54837acea8236c204786044dd966bcfcc5edcc05165b3924a9b51fd481',
+    /* v1.20: مفتاح التوليد الثاني (المفتاح الأول فُقد بمسح بيئة البناء مع تطبيق SB Owner القديم) —
+       الأكواد القديمة (keyVer 1) تظل تُتحقق بالمفتاح أعلاه، والأكواد الجديدة تُوقّع بالمفتاح 2 */
+    2: '694fe92781899916737f53405de7b1e75457bead02c1833937c3f4f0591dc791'
   };
   var secretKeyBytes = null; /* يُضبط فقط في تطبيق المالك عبر setSecretKey() */
 
@@ -28430,19 +28634,26 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
   function clearSecretKey() { secretKeyBytes = null; }
   function hasSecret() { return !!secretKeyBytes; }
 
-  /* ============================ توليد كود v2 (يحتاج المفتاح الخاص) ============================ */
-  function generateCode(email, expiry, plan) {
+  /* ============================ توليد كود v2 (يحتاج المفتاح الخاص) ============================
+     v1.20: opts = { seats, kind, keyVer } — seats = عدد الصنايعيين (بايت 14)، kind = نوع الجهاز (بايت 15،
+     1 = كود صنايعي فقط)، والـnonce العشوائي انقل لبايتي 16/17 عشان ما يتصادمش مع الحقول الجديدة */
+  function generateCode(email, expiry, plan, opts) {
     if (!secretKeyBytes) return Promise.reject(new Error('SBL2: no secret key loaded'));
+    opts = opts || {};
     var days = (typeof expiry === 'number') ? expiry : dateToExpDays(expiry);
     if (isNaN(days) || days < 0 || days > 16777215) return Promise.reject(new Error('expiry out of range'));
     plan = plan || 1;
+    var kv = opts.keyVer || 1;
+    if (kv !== 1 && kv !== 2) return Promise.reject(new Error('bad keyVer'));
     var p = new Uint8Array(18);
     p[0] = VER;
-    p[1] = 1; /* keyVer */
+    p[1] = kv; /* keyVer */
     p.set(emailHash8(email), 2);
     p[10] = (days >> 16) & 0xff; p[11] = (days >> 8) & 0xff; p[12] = days & 0xff;
     p[13] = plan & 0xff;
-    p.set(randomBytes(4), 14);
+    p[14] = (opts.seats || 0) & 0xff;
+    p[15] = (opts.kind || 0) & 0xff;
+    p.set(randomBytes(2), 16);
     var sig = nacl.sign.detached(p, secretKeyBytes);
     var full = new Uint8Array(CODE_BYTES);
     full.set(p); full.set(sig, 18);
@@ -28454,7 +28665,9 @@ ${payment.note ? ('*البيان:* ' + payment.note + '\n') : ''}---------------
       email: normalizeEmail(email),
       exp: expDaysToDate(days),
       expDays: days,
-      plan: plan
+      plan: plan,
+      seats: (opts.seats || 0),
+      kind: (opts.kind || 0)
     });
   }
 

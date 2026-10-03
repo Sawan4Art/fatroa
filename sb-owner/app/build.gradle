@@ -1,0 +1,40 @@
+apply plugin: 'com.android.application'
+
+android {
+    namespace 'com.sawan4art.sbowner'
+    compileSdk 34
+    defaultConfig {
+        applicationId "com.sawan4art.sbowner"
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName "2.0"
+    }
+    def ksPropsFile = rootProject.file("keystore.properties")
+    if (ksPropsFile.exists()) {
+        def ksProps = new Properties()
+        ksPropsFile.withInputStream { ksProps.load(it) }
+        signingConfigs {
+            release {
+                storeFile file(ksProps['storeFile'])
+                storePassword ksProps['storePassword']
+                keyAlias ksProps['keyAlias']
+                keyPassword ksProps['keyPassword']
+            }
+        }
+        buildTypes {
+            release { minifyEnabled false; signingConfig signingConfigs.release }
+        }
+    } else {
+        buildTypes {
+            release { minifyEnabled false }
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+}

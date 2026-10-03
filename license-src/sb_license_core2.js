@@ -19,7 +19,9 @@
  *   bytes[2..9]   = emailHash8  (SHA-256('SBL2-EMAIL:'+email) — أول 8 بايت)
  *   bytes[10..12] = expDays     (أيام منذ EPOCH 2026-01-01 — 3 بايت)
  *   bytes[13]     = plan        (1 شهر / 2 ربع / 3 سنة / 8 المالك مدى الحياة / 9 كود تجربة)
- *   bytes[14..17] = nonce4      (عشوائي لكل كود)
+ *   bytes[14]     = seats       (v1.20 — عدد الصنايعيين في كود الحزمة، 0 = بدون تحديد)
+ *   bytes[15]     = kind        (v1.20 — 0 مدير / 1 كود صنايعي)
+ *   bytes[16..17] = nonce2      (عشوائي لكل كود — v1.20: اتنين بايت بدل 4 عشان 14/15)
  *   bytes[18..81] = sig64       (Ed25519.sign(payload18, secretKey))
  * ---------------------------------------------------------------------------
  * معرفات السحابة المتفقة بين التطبيق وتطبيق المالك:
@@ -37,7 +39,10 @@
 
   /* المفتاح العام للتوقيع (keyVer → hex 32B) — هذا *كل* ما يحمله التطبيق، ولا يكشف للتزوير */
   var PUBKEYS = {
-    1: 'b4ae8b54837acea8236c204786044dd966bcfcc5edcc05165b3924a9b51fd481'
+    1: 'b4ae8b54837acea8236c204786044dd966bcfcc5edcc05165b3924a9b51fd481',
+    /* v1.20: مفتاح التوليد الثاني (المفتاح الأول فُقد بمسح بيئة البناء مع تطبيق SB Owner القديم) —
+       الأكواد القديمة (keyVer 1) تظل تُتحقق بالمفتاح أعلاه، والأكواد الجديدة تُوقّع بالمفتاح 2 */
+    2: '694fe92781899916737f53405de7b1e75457bead02c1833937c3f4f0591dc791'
   };
   var secretKeyBytes = null; /* يُضبط فقط في تطبيق المالك عبر setSecretKey() */
 
@@ -244,19 +249,26 @@
   function clearSecretKey() { secretKeyBytes = null; }
   function hasSecret() { return !!secretKeyBytes; }
 
-  /* ============================ توليد كود v2 (يحتاج المفتاح الخاص) ============================ */
-  function generateCode(email, expiry, plan) {
+  /* ============================ توليد كود v2 (يحتاج المفتاح الخاص) ============================
+     v1.20: opts = { seats, kind, keyVer } — seats = عدد الصنايعيين (بايت 14)، kind = نوع الجهاز (بايت 15،
+     1 = كود صنايعي فقط)، والـnonce العشوائي انقل لبايتي 16/17 عشان ما يتصادمش مع الحقول الجديدة */
+  function generateCode(email, expiry, plan, opts) {
     if (!secretKeyBytes) return Promise.reject(new Error('SBL2: no secret key loaded'));
+    opts = opts || {};
     var days = (typeof expiry === 'number') ? expiry : dateToExpDays(expiry);
     if (isNaN(days) || days < 0 || days > 16777215) return Promise.reject(new Error('expiry out of range'));
     plan = plan || 1;
+    var kv = opts.keyVer || 1;
+    if (kv !== 1 && kv !== 2) return Promise.reject(new Error('bad keyVer'));
     var p = new Uint8Array(18);
     p[0] = VER;
-    p[1] = 1; /* keyVer */
+    p[1] = kv; /* keyVer */
     p.set(emailHash8(email), 2);
     p[10] = (days >> 16) & 0xff; p[11] = (days >> 8) & 0xff; p[12] = days & 0xff;
     p[13] = plan & 0xff;
-    p.set(randomBytes(4), 14);
+    p[14] = (opts.seats || 0) & 0xff;
+    p[15] = (opts.kind || 0) & 0xff;
+    p.set(randomBytes(2), 16);
     var sig = nacl.sign.detached(p, secretKeyBytes);
     var full = new Uint8Array(CODE_BYTES);
     full.set(p); full.set(sig, 18);
@@ -268,7 +280,9 @@
       email: normalizeEmail(email),
       exp: expDaysToDate(days),
       expDays: days,
-      plan: plan
+      plan: plan,
+      seats: (opts.seats || 0),
+      kind: (opts.kind || 0)
     });
   }
 

@@ -48,3 +48,10 @@ keystores/
 *.jks
 secrets-backup/
 .github-token
+
+# SB Owner (build artifacts)
+sb-owner/app/build/
+sb-owner/build/
+sb-owner/.gradle/
+sb-owner/local.properties
+sb-owner/keystore.properties
